@@ -16,17 +16,6 @@ export const TEXT = {
   faint: "text-muted-foreground/70",
 } as const;
 
-/** Semantic status colours — one definition, every badge and chip reuses it. */
-export const STATUS_TONE = {
-  neutral: "bg-muted text-muted-foreground border-border",
-  success: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-  warning: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-  danger: "bg-red-500/10 text-red-600 border-red-500/20",
-  info: "bg-sky-500/10 text-sky-600 border-sky-500/20",
-} as const;
-
-export type StatusTone = keyof typeof STATUS_TONE;
-
 /** Shared surface treatments so panels look like one system. */
 export const SURFACE = {
   panel: "rounded-xl border border-border bg-card",

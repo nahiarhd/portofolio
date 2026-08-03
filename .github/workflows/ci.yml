@@ -27,11 +27,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Prisma Client must exist before tsc sees @prisma/client types.
-      - run: pnpm db:generate
-        env:
-          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
-
       # Cheapest failure first.
       - name: Typecheck
         run: pnpm typecheck
@@ -39,15 +34,15 @@ jobs:
       - name: Lint
         run: pnpm lint
 
-      # Unit tests are database-free by design, so no service container needed.
+      # No database and no API key: every test runs on a clean clone.
       - name: Unit tests
         run: pnpm test:unit
 
+      # The build must not need LLM credentials — /api/chat reads them at
+      # request time, never at build time. If this step ever starts needing a
+      # secret, that is a bug in the route, not a reason to add one here.
       - name: Build
         run: pnpm build
-        env:
-          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
-          BETTER_AUTH_SECRET: ci-placeholder-secret-not-used-at-runtime
 
   deadcode:
     name: Dead code report (informational)

@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio — Raihan Hidayatullah Djunaedi
 
-## Getting Started
+Bilingual (EN/ID) personal portfolio: a clean editorial site with a 3D hero
+graph and a tool-calling chatbot that hands back clickable project cards.
 
-First, run the development server:
+No database, no auth, no CMS. Content is typed data in the repo.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.example .env    # LLM_* vars — only needed for /api/chat
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The site runs fine without `.env`; only the chatbot needs it.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Commands
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| | |
+|---|---|
+| `pnpm dev` | Dev server. Add `-H 0.0.0.0` to test on a phone over LAN. |
+| `pnpm verify` | **The gate.** Typecheck + lint + unit tests. |
+| `pnpm build` | Production build. Must never require a secret. |
+| `pnpm knip` | Dead-code report. Advisory — verify by hand before deleting. |
 
-## Learn More
+## Documentation
 
-To learn more about Next.js, take a look at the following resources:
+| File | What it is |
+|---|---|
+| [`AGENTS.md`](./AGENTS.md) | Working rules. Read first. |
+| [`docs/spec.md`](./docs/spec.md) | What we're building, and the constraints. |
+| [`docs/ideas/agent-graph-portfolio.md`](./docs/ideas/agent-graph-portfolio.md) | Why the concept is what it is. |
+| [`tasks/plan.md`](./tasks/plan.md) | Implementation plan and spike results. |
+| [`tasks/todo.md`](./tasks/todo.md) | What to do next. |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Two things that are easy to get wrong
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+**Confidentiality.** No employer, product, or client name appears anywhere in
+this repo — including metadata and the chatbot's system prompt. See
+`AGENTS.md` § Confidentiality.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Frame rate.** The 3D hero targets ≥50fps on the reference device (Redmi Note
+11). Measure on the device; desktop numbers mean nothing here.

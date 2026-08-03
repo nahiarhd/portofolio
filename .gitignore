@@ -42,3 +42,6 @@ next-env.d.ts
 
 # .env* above would swallow the template too; it is documentation, not a secret.
 !.env.example
+
+# Claude Code local settings (machine-specific)
+.claude/settings.local.json
