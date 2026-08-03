@@ -1,0 +1,11 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "src/app/**/{page,layout,route,not-found,error,loading,template}.{ts,tsx}",
+    "src/proxy.ts",
+    "prisma/seed.ts",
+    "prisma.config.ts"
+  ],
+  "project": ["src/**/*.{ts,tsx}", "prisma/**/*.ts"],
+  "ignoreDependencies": ["tailwindcss", "@tailwindcss/postcss"]
+}
