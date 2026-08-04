@@ -2,74 +2,157 @@
 
 /*
  * Design tokens live here and in src/lib/design.ts — nowhere else.
- * Add a semantic token (e.g. --warning) rather than reaching for a raw palette
- * colour in a component. Eleven slightly different greys is how this rots.
+ *
+ * Direction: "baseline and deviation". Raihan builds systems that watch a
+ * normal signal and catch the moment it departs from it. The page works the
+ * same way: everything is calm, measured, and mono-labelled, so the one loud
+ * element reads as a deviation rather than as decoration. Boldness is spent
+ * once — adding a second accent breaks the whole idea.
+ *
+ * Ground is cool screen-white, not warm paper. Ink is near-black with a blue
+ * undertone so it settles with the ground instead of fighting it. The accent is
+ * natural indigo — indigofera, the traditional Indonesian batik dye — chosen
+ * because it belongs to him rather than to a framework's default palette.
+ *
+ * Semantic names (background/foreground/primary/...) are deliberately kept from
+ * the starter, so changing the identity needed no component edits.
  */
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 224 12% 12%;
+  --background: #f6f7f9;
+  --foreground: #101319;
 
-  --card: 0 0% 100%;
-  --card-foreground: 224 12% 12%;
+  --card: #ffffff;
+  --card-foreground: #101319;
 
-  --muted: 220 14% 96%;
-  --muted-foreground: 220 9% 46%;
+  --muted: #edeff3;
+  --muted-foreground: #565e70;
+  /*
+   * Tertiary text. A real value, not `muted-foreground/70`: that composited to
+   * 3.15:1 here and 3.95:1 in the dark, both under WCAG AA's 4.5 for normal
+   * text. Raising the opacity to 0.9 would have passed but rendered
+   * indistinguishable from `subtle`, leaving a token that means nothing.
+   * Measured: 4.77:1.
+   */
+  --muted-foreground-faint: #666e80;
 
-  --primary: 221 83% 53%;
-  --primary-foreground: 0 0% 100%;
+  --primary: #26346e;
+  --primary-foreground: #ffffff;
 
-  --border: 220 13% 91%;
-  --input: 220 13% 91%;
-  --ring: 221 83% 53%;
+  --border: #e1e4ea;
+  --input: #e1e4ea;
+  --ring: #26346e;
 
-  --destructive: 0 72% 51%;
-  --destructive-foreground: 0 0% 100%;
+  --destructive: #a4271b;
+  --destructive-foreground: #ffffff;
 
-  --radius: 0.75rem;
+  /* Precision, not softness. Fully square reads as a newspaper pastiche. */
+  --radius: 0.125rem;
 }
 
-.dark {
-  --background: 224 20% 7%;
-  --foreground: 210 20% 96%;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0c0e13;
+    --foreground: #e9ecf2;
 
-  --card: 224 18% 10%;
-  --card-foreground: 210 20% 96%;
+    --card: #12151c;
+    --card-foreground: #e9ecf2;
 
-  --muted: 223 15% 17%;
-  --muted-foreground: 218 11% 65%;
+    --muted: #1a1e27;
+    --muted-foreground: #949cad;
+    /* Measured 5.16:1 on this ground. */
+    --muted-foreground-faint: #7d8496;
 
-  --primary: 217 91% 60%;
-  --primary-foreground: 224 20% 7%;
+    /* Indigo has to lift in the dark: the dye value goes muddy on a dark ground. */
+    --primary: #93a0e0;
+    --primary-foreground: #0c0e13;
 
-  --border: 223 15% 20%;
-  --input: 223 15% 20%;
-  --ring: 217 91% 60%;
+    --border: #232833;
+    --input: #232833;
+    --ring: #93a0e0;
 
-  --destructive: 0 63% 51%;
-  --destructive-foreground: 0 0% 100%;
+    --destructive: #e0705f;
+    --destructive-foreground: #0c0e13;
+  }
 }
 
 @theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted-foreground-faint: var(--muted-foreground-faint);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
 
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /*
+   * Fluid type. Minimums are set for a 393px viewport (the reference device),
+   * so nothing needs a mobile-specific override.
+   */
+  --text-display: clamp(2.5rem, 11vw, 5.75rem);
+  --text-display--line-height: 0.92;
+  --text-display--letter-spacing: -0.035em;
+
+  --text-title: clamp(1.75rem, 5vw, 2.75rem);
+  --text-title--line-height: 1.05;
+  --text-title--letter-spacing: -0.02em;
+
+  --text-lead: clamp(1.0625rem, 2vw, 1.25rem);
+  --text-lead--line-height: 1.5;
+
+  /* Mono labels carry real data — dates, counts, stack. Never decoration. */
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1;
+  --text-eyebrow--letter-spacing: 0.14em;
+
+  --radius-sm: calc(var(--radius) * 0.5);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 0.25rem);
+  --radius-xl: calc(var(--radius) * 2);
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
+  background-color: var(--background);
+  color: var(--foreground);
+  /* Long ragged lines are the fastest way to look unconsidered. */
+  text-wrap: pretty;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+/*
+ * Declared once, globally. A component that re-implements this will drift, and
+ * a visitor who asked their OS to stop animation means it — the 3D hero must
+ * freeze, not merely slow down.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Keyboard focus stays visible everywhere. Never remove without replacing. */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }

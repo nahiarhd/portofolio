@@ -71,8 +71,39 @@ exemption added to get there.
 
 ## Phase 2 — The site (shippable on its own)
 
-- [ ] **T4** Editorial design tokens
-- [ ] **T5** Shell — nav, footer, locale toggle, skip link
+- [x] **T4** Editorial design tokens — **done 2026-08-04**
+  - **Direction: "baseline and deviation".** Raihan builds systems that watch a
+    normal signal and catch the moment it departs from it. The page works the
+    same way: everything is calm and mono-labelled so the one loud element reads
+    as a deviation. **Boldness is spent once — do not add a second accent.**
+  - Accent is **natural indigo `#26346e`** (indigofera, the Indonesian batik
+    dye), not a framework blue. Ground is cool screen-white, not warm cream.
+  - Type is **Archivo + IBM Plex Mono**, replacing Geist — Geist is the Vercel
+    default and reads as templated.
+  - `EYEBROW` (mono, uppercase) **only ever wraps real data** — a date, a count,
+    a stack entry. The moment it holds a decorative word it becomes the template
+    device it exists to avoid.
+  - ⚠️ **`TEXT.faint` was failing WCAG AA.** As `muted-foreground/70` it
+    composited to 3.15:1 light / 3.95:1 dark against the 4.5 threshold for
+    normal text. Now its own measured token (4.77 / 5.16). Raising the opacity
+    to 0.9 would also have passed but rendered identical to `subtle`, leaving a
+    token that means nothing. All three text levels now clear AA in both schemes.
+  - Semantic token *names* were kept from the starter, so the identity changed
+    with zero component edits.
+
+- [x] **T5** Shell — nav, footer, locale toggle, skip link — **done 2026-08-04**
+  - `pnpm verify` ✅ 31 tests · `pnpm build` ✅ · knip ✅
+  - Verified at 393px and 1280px, light and dark, EN and ID
+  - Header **wraps** instead of collapsing to a hamburger: three anchors do not
+    justify a menu, and every destination stays reachable without JavaScript.
+    Each control is rendered **once** — duplicating nav behind breakpoints is
+    how two copies drift apart.
+  - Locale toggle keeps the reader on the same page (`localizePath`, 5 tests).
+    Rendered as links, not buttons, so each locale is a real crawlable URL.
+  - Locale links use `aria-label` with the language name; a visible code plus an
+    sr-only name announced as "en English".
+  - **No copyright year in the footer** — pages are statically generated, so
+    `new Date()` freezes at build time and goes quietly wrong every January.
 - [ ] **T6** Work index
 - [ ] **T7** Case study page `/[lang]/work/[slug]`
 - [ ] **T8** Hero (static placeholder at final dimensions), about, contact

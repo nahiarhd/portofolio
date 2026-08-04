@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import { profile } from "@/content/profile";
 import { LOCALES, isLocale } from "@/lib/locale";
+
+import { getDictionary } from "./dictionaries";
 
 import "../globals.css";
 
@@ -17,8 +21,27 @@ import "../globals.css";
  */
 type LangParams = { params: Promise<{ lang: string }> };
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
+/**
+ * Archivo carries both display and body: a grotesque with enough width and
+ * weight range to be set very large and very tight without needing a second
+ * display face. IBM Plex Mono is structural, not ornamental — it is what the
+ * eyebrow labels are set in, and those only ever hold real data.
+ *
+ * `display: "swap"` so text paints on the reference device before the webfont
+ * arrives; a blocking font is the cheapest way to lose the LCP budget.
+ */
+const archivo = Archivo({
+  variable: "--font-archivo",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+});
 
 /**
  * The root layout lives under `[lang]` so `<html lang>` matches the locale
@@ -48,13 +71,37 @@ export default async function RootLayout({
   // defence in depth rather than the primary guard.
   if (!isLocale(lang)) notFound();
 
+  const dictionary = await getDictionary(lang);
+
   return (
     <html
       lang={lang}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${archivo.variable} ${plexMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col font-sans">{children}</body>
+      <body className="flex min-h-full flex-col font-sans">
+        {/*
+          First focusable element on the page. Visually hidden until focused,
+          so keyboard users can jump the header instead of tabbing the nav on
+          every page.
+        */}
+        <a
+          href="#content"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:text-primary-foreground"
+        >
+          {dictionary.nav.skipToContent}
+        </a>
+
+        <SiteHeader
+          lang={lang}
+          nav={dictionary.nav}
+          localeSwitch={dictionary.localeSwitch}
+        />
+
+        {children}
+
+        <SiteFooter rights={dictionary.footer.rights} />
+      </body>
     </html>
   );
 }

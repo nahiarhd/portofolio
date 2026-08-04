@@ -1,6 +1,32 @@
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_LOCALE, isLocale, resolveLocale } from "./locale";
+import { DEFAULT_LOCALE, isLocale, localizePath, resolveLocale } from "./locale";
+
+describe("localizePath", () => {
+  it("swaps the locale and keeps the rest of the path", () => {
+    expect(localizePath("/en/work/agents", "id")).toBe("/id/work/agents");
+    expect(localizePath("/id/work/agents", "en")).toBe("/en/work/agents");
+  });
+
+  it("handles the locale root", () => {
+    expect(localizePath("/en", "id")).toBe("/id");
+    expect(localizePath("/id/", "en")).toBe("/en");
+  });
+
+  it("adds a locale to a path that has none", () => {
+    expect(localizePath("/work/agents", "id")).toBe("/id/work/agents");
+    expect(localizePath("/", "en")).toBe("/en");
+  });
+
+  it("does not mistake a path segment for a locale", () => {
+    // "/enterprise" starts with "en" but is not the locale segment.
+    expect(localizePath("/enterprise", "id")).toBe("/id/enterprise");
+  });
+
+  it("is idempotent for the locale it already has", () => {
+    expect(localizePath("/en/work", "en")).toBe("/en/work");
+  });
+});
 
 describe("isLocale", () => {
   it("accepts supported locales", () => {

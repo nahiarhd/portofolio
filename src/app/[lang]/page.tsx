@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { profile } from "@/content/profile";
-import { TEXT } from "@/lib/design";
+import { CONTAINER, EYEBROW, TEXT } from "@/lib/design";
 import { isLocale } from "@/lib/locale";
 import { cn } from "@/lib/utils";
 
@@ -18,14 +18,15 @@ export default async function HomePage({
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
 
+  // `flex-1`, not `min-h-screen`: the body is already a column with a header and
+  // footer, so a full-viewport main pushes the footer off the screen.
   return (
-    <main
-      id="content"
-      className="mx-auto flex min-h-screen w-full max-w-2xl flex-col justify-center gap-3 px-6"
-    >
-      <h1 className="text-3xl font-semibold tracking-tight">{profile.name}</h1>
-      <p className={cn("text-sm", TEXT.subtle)}>{profile.tagline[lang]}</p>
-      <p className={cn("text-sm", TEXT.faint)}>{profile.location[lang]}</p>
+    <main id="content" className={`${CONTAINER} flex flex-1 flex-col justify-center py-20`}>
+      <p className={cn(EYEBROW, "mb-6")}>{profile.location[lang]}</p>
+      <h1 className="max-w-[14ch] text-display font-semibold">{profile.name}</h1>
+      <p className={cn("mt-6 max-w-[46ch] text-lead", TEXT.subtle)}>
+        {profile.tagline[lang]}
+      </p>
     </main>
   );
 }

@@ -17,6 +17,18 @@ export function isLocale(value: string): value is Locale {
 export type Localized = Record<Locale, string>;
 
 /**
+ * Rewrite a pathname to another locale, keeping the reader where they are.
+ *
+ * `/en/work/agents` → `/id/work/agents`. A language switch that dumps everyone
+ * on the home page is the most common i18n bug and the most annoying one.
+ */
+export function localizePath(pathname: string, locale: Locale): string {
+  const segments = pathname.split("/").filter(Boolean);
+  const rest = segments.length && isLocale(segments[0]) ? segments.slice(1) : segments;
+  return `/${[locale, ...rest].join("/")}`;
+}
+
+/**
  * Pick the best locale from an `Accept-Language` header.
  *
  * Written by hand rather than pulling in `negotiator` +
