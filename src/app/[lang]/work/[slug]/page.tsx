@@ -80,7 +80,7 @@ export default async function CaseStudyPage({ params }: Params) {
 
       <div className="mt-16 grid gap-8 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-10">
         <div className="space-y-4">
-          {sections.map((section, index) => (
+          {sections.map((section) => (
             <section key={section.label} className={cn(SURFACE.panel, "p-6 sm:p-8")}>
               <p className={EYEBROW}>{section.label}</p>
               <p className="mt-4 max-w-[62ch] text-lead leading-relaxed">{section.body}</p>

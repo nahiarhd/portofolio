@@ -1,5 +1,5 @@
 import { profile } from "@/content/profile";
-import { CONTAINER, EYEBROW, SURFACE, TEXT } from "@/lib/design";
+import { CONTAINER, SURFACE, TEXT } from "@/lib/design";
 import { cn } from "@/lib/utils";
 
 import { Reveal } from "./reveal";
