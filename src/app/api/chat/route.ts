@@ -9,6 +9,7 @@ import {
 
 import { buildSystemPrompt } from "@/lib/chat-prompt";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/locale";
+import { clientKey, createRateLimiter } from "@/lib/rate-limit";
 
 /**
  * The only dynamic route on the site. Everything else is static.
@@ -29,6 +30,18 @@ const MAX_CHARS_PER_MESSAGE = 2_000;
 const MAX_OUTPUT_TOKENS = 800;
 
 /**
+ * Two windows from one limiter. The burst window keeps a single visitor's
+ * conversation feeling unrestricted while stopping a script; the sustained
+ * window is what actually bounds the daily bill, since 8/minute alone would
+ * permit over 11,000 generations a day from one address.
+ *
+ * Module scope on purpose: the closure must outlive a single request. Fluid
+ * Compute reuses instances, so this survives between invocations.
+ */
+const burstLimit = createRateLimiter({ limit: 8, windowMs: 60_000 });
+const sustainedLimit = createRateLimiter({ limit: 60, windowMs: 60 * 60_000 });
+
+/**
  * Read at request time, never at module scope: the production build must never
  * need a secret, and a missing variable should fail this one request rather
  * than the whole deployment.
@@ -44,6 +57,25 @@ function requireEnv(name: string): string {
 }
 
 export async function POST(request: Request) {
+  /*
+   * Rate limiting runs before parsing and before any upstream call. This
+   * endpoint spends someone else's GPU capacity, so the cheapest possible
+   * rejection has to come first.
+   */
+  const caller = clientKey(request);
+  const decision = [burstLimit(caller), sustainedLimit(caller)].find(
+    (result) => !result.allowed,
+  );
+  if (decision) {
+    return Response.json(
+      { error: "Too many requests. Try again shortly." },
+      {
+        status: 429,
+        headers: { "retry-after": String(decision.retryAfterSeconds) },
+      },
+    );
+  }
+
   let body: { messages?: UIMessage[]; locale?: string };
   try {
     body = await request.json();

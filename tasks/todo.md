@@ -162,7 +162,25 @@ EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
     upstream host.
   - ⏳ **Blocked on Raihan:** live streaming is unverified because no
     credentials are on this machine. See the `.env.local` step below.
-- [ ] **T10** Rate limiting — **must land before the route is ever public**
+- [x] **T10** Rate limiting — **done 2026-08-04**
+  - `pnpm verify` ✅ 59 tests · `pnpm build` ✅ (`/api/chat` is the only dynamic
+    route) · knip ✅
+  - **Decision: in-function limiter, not Vercel WAF.** WAF rate-limiting rules
+    and `@vercel/firewall` are both paid-plan features configured in a
+    dashboard, so the limit could not run in dev or CI and would be unverifiable
+    until production. Open Question 2 in `docs/spec.md` is now resolved this way.
+  - Two windows from one limiter: **8/minute** (stops a script without making a
+    real conversation feel restricted) and **60/hour** (what actually bounds the
+    bill — 8/min alone permits >11,000 generations a day from one address).
+  - Runs **before** parsing and before any upstream call: the cheapest rejection
+    must come first when the endpoint spends someone else's GPU capacity.
+  - **Known limit, accepted:** state is per instance, so the real ceiling is
+    (limit × instances). It stops the realistic threat; Vercel's DDoS protection
+    covers volume. Swapping in a shared store later does not change the call site.
+  - Verified live: requests 1–8 pass, 9th and 10th return **429 with
+    `retry-after: 60`**, and a different IP is unaffected.
+  - ➡️ **T11 must render 429** — map status → localized copy client-side, since
+    the client already knows the locale. The route returns English fallback text.
 - [ ] **T11** Chat UI — three suggested questions, streaming, error states, focus trap
 - [ ] **T12** `showProject(slug)` tool + project card
 
