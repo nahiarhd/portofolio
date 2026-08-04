@@ -2,6 +2,8 @@ import { profile } from "@/content/profile";
 import { CONTAINER, TEXT } from "@/lib/design";
 import { cn } from "@/lib/utils";
 
+import { Reveal } from "./reveal";
+
 /**
  * Two links, no form. There is no backend to receive a submission, and a form
  * that silently drops messages is worse than an address someone can copy.
@@ -12,8 +14,10 @@ export function ContactSection({ heading, body }: { heading: string; body: strin
       id="contact"
       className={`${CONTAINER} scroll-mt-20 border-t border-border py-16 sm:py-24`}
     >
-      <h2 className="text-title font-semibold">{heading}</h2>
-      <p className={cn("mt-6 max-w-[48ch] text-lead", TEXT.subtle)}>{body}</p>
+      <Reveal>
+        <h2 className="text-title font-semibold">{heading}</h2>
+        <p className={cn("mt-6 max-w-[48ch] text-lead", TEXT.subtle)}>{body}</p>
+      </Reveal>
 
       <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3">
         <a

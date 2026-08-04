@@ -44,7 +44,9 @@ exemption added to get there.
     That is on his public LinkedIn already, so it is not in the denylist —
     confirm that is intended.
 
-- [ ] **Launch gate:** no `DRAFT` string survives anywhere in `src/content/`.
+- [x] **Launch gate:** no `DRAFT` string survives anywhere in `src/content/` — cleared 2026-08-04
+  - AI case studies rewritten NDA-safe (architecture narrative; numbers still optional
+    for Raihan to add when publishable). Enforced by `content.test.ts`.
   Checked by hand at Checkpoint 2 and by grep in **T16**. Deliberately not a
   unit test — a permanently red gate trains people to ignore red.
 - [x] **T3** i18n routing — `app/[lang]/`, dictionaries, locale-detecting `proxy.ts` — **done 2026-08-04**

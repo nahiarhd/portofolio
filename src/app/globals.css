@@ -156,3 +156,51 @@ h3 {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
+
+/*
+ * Section reveal — used by <Reveal>. Baseline is visible if JS never runs
+ * (progressive enhancement): we only hide when the class is present and
+ * motion is allowed. Reduced-motion media query keeps everything opaque.
+ */
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal:not(.reveal-visible) {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+
+  .reveal.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 0.55s var(--ease-out-quart),
+      transform 0.55s var(--ease-out-quart);
+  }
+}
+
+/* Work row: thin indigo rule on the left when focused/hovered — the single
+ * accent, not a second brand color. */
+.work-row {
+  position: relative;
+}
+
+.work-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--primary);
+  opacity: 0;
+  transition: opacity 0.2s var(--ease-out-quart);
+}
+
+.work-row:hover::before,
+.work-row:focus-within::before {
+  opacity: 1;
+}

@@ -5,6 +5,8 @@ import { formatRange } from "@/lib/format";
 import type { Locale } from "@/lib/locale";
 import { cn } from "@/lib/utils";
 
+import { Reveal } from "./reveal";
+
 export function AboutSection({
   lang,
   heading,
@@ -19,7 +21,9 @@ export function AboutSection({
       id="about"
       className={`${CONTAINER} scroll-mt-20 border-t border-border py-16 sm:py-24`}
     >
-      <h2 className="text-title font-semibold">{heading}</h2>
+      <Reveal>
+        <h2 className="text-title font-semibold">{heading}</h2>
+      </Reveal>
 
       <div className="mt-10 grid gap-12 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div>

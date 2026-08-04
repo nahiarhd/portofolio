@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { projects } from "@/content/projects";
-import { CONTAINER, EYEBROW, TEXT } from "@/lib/design";
+import { CONTAINER, EYEBROW, SURFACE, TEXT } from "@/lib/design";
 import { formatMonth } from "@/lib/format";
 import { LOCALES, isLocale } from "@/lib/locale";
 import { buildPageMetadata } from "@/lib/metadata";
@@ -22,8 +22,6 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const project = projects.find((entry) => entry.slug === slug);
   if (!isLocale(lang) || !project) return {};
 
-  // Content passes the confidentiality denylist test, so titles and
-  // descriptions built from it are safe to publish.
   return buildPageMetadata({
     lang,
     pathAfterLocale: `/work/${project.slug}`,
@@ -57,72 +55,86 @@ export default async function CaseStudyPage({ params }: Params) {
         ← {copy.back}
       </Link>
 
-      <div className="mt-10 flex flex-wrap items-center gap-x-3 gap-y-2">
-        <span className={EYEBROW}>
-          {copy.pillars[project.pillar]} · {formatMonth(project.started, lang)}
-        </span>
-        {project.confidential ? (
-          <span
-            className={cn(EYEBROW, "rounded-sm border border-border px-1.5 py-0.5")}
-          >
-            {copy.confidential}
+      <header className="mt-10 max-w-[40rem]">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span className={EYEBROW}>
+            {copy.pillars[project.pillar]} · {formatMonth(project.started, lang)}
           </span>
-        ) : null}
-      </div>
+          {project.confidential ? (
+            <span
+              className={cn(
+                EYEBROW,
+                "rounded-sm border border-border px-1.5 py-0.5",
+              )}
+            >
+              {copy.confidential}
+            </span>
+          ) : null}
+        </div>
 
-      <h1 className="mt-4 max-w-[20ch] text-title font-semibold">{project.title[lang]}</h1>
-      <p className={cn("mt-6 max-w-[56ch] text-lead", TEXT.subtle)}>
-        {project.summary[lang]}
-      </p>
+        <h1 className="mt-4 text-title font-semibold tracking-tight">
+          {project.title[lang]}
+        </h1>
+        <p className={cn("mt-6 text-lead", TEXT.subtle)}>{project.summary[lang]}</p>
+      </header>
 
-      <div className="mt-16 space-y-12">
-        {sections.map((section) => (
-          <section key={section.label}>
-            <h2 className={cn(EYEBROW, "mb-4")}>{section.label}</h2>
-            <p className="max-w-[62ch] text-lead">{section.body}</p>
-          </section>
-        ))}
+      {/* Architecture-note layout: narrative + sticky meta on wide screens. */}
+      <div className="mt-16 grid gap-12 lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-16">
+        <div className="space-y-14">
+          {sections.map((section, index) => (
+            <section
+              key={section.label}
+              className="border-t border-border pt-10 first:border-t-0 first:pt-0"
+            >
+              <p className={cn(EYEBROW, "mb-1", TEXT.faint)}>
+                {String(index + 1).padStart(2, "0")}
+              </p>
+              <h2 className={cn(EYEBROW, "mb-4 text-foreground")}>{section.label}</h2>
+              <p className="max-w-[62ch] text-lead leading-relaxed">{section.body}</p>
+            </section>
+          ))}
+        </div>
 
-        <section>
-          <h2 className={cn(EYEBROW, "mb-4")}>{copy.stack}</h2>
-          <ul className="flex flex-wrap gap-2">
-            {project.stack.map((item) => (
-              <li
-                key={item}
-                className="rounded-sm border border-border px-2.5 py-1 font-mono text-eyebrow"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
-        </section>
+        <aside className="lg:sticky lg:top-24 lg:self-start">
+          <div className={cn(SURFACE.panel, "p-4")}>
+            <h2 className={cn(EYEBROW, "mb-3")}>{copy.stack}</h2>
+            <ul className="flex flex-col gap-2">
+              {project.stack.map((item) => (
+                <li
+                  key={item}
+                  className="border-b border-border/60 pb-2 font-mono text-eyebrow last:border-0 last:pb-0"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        {/* Confidential work has no links by construction — enforced by the
-            content integrity test, not by a check here. */}
-        {project.links ? (
-          <section className="flex flex-wrap gap-x-6 gap-y-2">
-            {project.links.repo ? (
-              <a
-                href={project.links.repo}
-                rel="noreferrer"
-                target="_blank"
-                className="text-primary underline decoration-primary/30 underline-offset-4"
-              >
-                Repository
-              </a>
-            ) : null}
-            {project.links.live ? (
-              <a
-                href={project.links.live}
-                rel="noreferrer"
-                target="_blank"
-                className="text-primary underline decoration-primary/30 underline-offset-4"
-              >
-                Live
-              </a>
-            ) : null}
-          </section>
-        ) : null}
+          {project.links ? (
+            <div className="mt-4 flex flex-col gap-2 px-1">
+              {project.links.repo ? (
+                <a
+                  href={project.links.repo}
+                  rel="noreferrer"
+                  target="_blank"
+                  className="text-sm text-primary underline decoration-primary/30 underline-offset-4"
+                >
+                  Repository
+                </a>
+              ) : null}
+              {project.links.live ? (
+                <a
+                  href={project.links.live}
+                  rel="noreferrer"
+                  target="_blank"
+                  className="text-sm text-primary underline decoration-primary/30 underline-offset-4"
+                >
+                  Live
+                </a>
+              ) : null}
+            </div>
+          ) : null}
+        </aside>
       </div>
     </main>
   );

@@ -108,6 +108,13 @@ describe("projects", () => {
     }
   });
 
+  it("has no DRAFT placeholders left in published content", () => {
+    const offenders = allContent
+      .filter(({ text }) => /\bDRAFT\b/i.test(text))
+      .map((o) => o.path);
+    expect(offenders).toEqual([]);
+  });
+
   it("gives confidential work no links", () => {
     for (const project of projects) {
       if (!project.confidential) continue;
