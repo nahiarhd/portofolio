@@ -22,5 +22,28 @@
   },
   "footer": {
     "rights": "Raihan Hidayatullah Djunaedi. All rights reserved."
+  },
+  "work": {
+    "confidential": "Under NDA",
+    "problem": "Problem",
+    "role": "Role",
+    "outcome": "Outcome",
+    "stack": "Stack",
+    "read": "Read case study",
+    "back": "All work",
+    "pillars": {
+      "ai": "AI",
+      "blockchain": "Blockchain",
+      "data": "Data"
+    }
+  },
+  "about": {
+    "experience": "Experience",
+    "education": "Education",
+    "certifications": "Certifications",
+    "present": "Present"
+  },
+  "contact": {
+    "body": "Open to conversations about AI engineering, data, and blockchain work."
   }
 }

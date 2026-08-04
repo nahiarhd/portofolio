@@ -18,3 +18,6 @@ const dictionaries = {
 // without a dictionary here is a type error. A `satisfies` clause would widen
 // the return type to `unknown` and lose every key.
 export const getDictionary = (locale: Locale) => dictionaries[locale]();
+
+/** Shape of one locale's strings, so sections can take the slice they need. */
+export type Dictionary = Awaited<ReturnType<typeof getDictionary>>;

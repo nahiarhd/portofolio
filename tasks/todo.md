@@ -104,11 +104,39 @@ exemption added to get there.
     sr-only name announced as "en English".
   - **No copyright year in the footer** — pages are statically generated, so
     `new Date()` freezes at build time and goes quietly wrong every January.
-- [ ] **T6** Work index
-- [ ] **T7** Case study page `/[lang]/work/[slug]`
-- [ ] **T8** Hero (static placeholder at final dimensions), about, contact
+- [x] **T6** Work index — **done 2026-08-04**
+  - **Deviation from the original acceptance criteria:** ordered by pillar with a
+    pillar label on each entry, *not* split under group headings. Grouping was
+    tried and reads badly at 4/1/1. The counts eyebrow (`4 AI · 1 BLOCKCHAIN ·
+    1 DATA`) states the three-pillar claim without the lopsided structure — and
+    it is real data, so it obeys the EYEBROW rule.
+  - Confidential entries carry an "Under NDA" / "Terikat NDA" badge. Naming the
+    constraint is more credible than an unexplained gap.
+- [x] **T7** Case study page `/[lang]/work/[slug]` — **done 2026-08-04**
+  - 17 static pages build (6 projects × 2 locales + shell). Unknown slug → 404.
+  - Per-locale `generateMetadata`; verified `<title>` differs EN vs ID.
+  - Confidential projects render **zero** external links (grep-verified).
+- [x] **T8** Hero, about, contact — **done 2026-08-04**
+  - **Built the static graph now, not in T13.** The hero must reserve the
+    canvas's exact box to avoid layout shift, and an empty reserved box looks
+    broken on a site that is supposed to be deployable at this checkpoint. T13
+    needs this still as its WebGL-blocked / reduced-motion fallback anyway, so
+    it is the fallback built early rather than a throwaway placeholder.
+  - Graph geometry is a **literal generated from a seeded LCG** — nothing is
+    computed at render. `Math.random()` during render is an error under the
+    React Compiler purity rule (see S2), and a graph that reshuffles per render
+    would be noise, not a signature. One node is accent-coloured: the deviation.
+  - Contact is two links, **no form** — there is no backend, and a form that
+    silently drops messages is worse than an address.
+  - Dates via `Intl` (`src/lib/format.ts`), not a month-name table in the
+    dictionaries: 12 names × 2 locales is content to translate and keep in
+    parity forever when the platform already knows them. UTC pinned so January
+    cannot render as the previous December.
 
-**Checkpoint 2:** Lighthouse mobile ≥90 · LCP <2.5s · CLS <0.1 · keyboard pass both locales · **deployable · human review**
+**Checkpoint 2:** ✅ verify 36 tests · build 17 static pages · knip clean ·
+no confidential term in build output (grep) · 393px + 1280px, light + dark,
+EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
+⚠️ **8 built pages still contain `DRAFT`** — blocked on Raihan's case studies.
 
 ---
 

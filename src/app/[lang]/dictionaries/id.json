@@ -22,5 +22,28 @@
   },
   "footer": {
     "rights": "Raihan Hidayatullah Djunaedi. Seluruh hak cipta dilindungi."
+  },
+  "work": {
+    "confidential": "Terikat NDA",
+    "problem": "Masalah",
+    "role": "Peran",
+    "outcome": "Hasil",
+    "stack": "Teknologi",
+    "read": "Baca studi kasus",
+    "back": "Semua karya",
+    "pillars": {
+      "ai": "AI",
+      "blockchain": "Blockchain",
+      "data": "Data"
+    }
+  },
+  "about": {
+    "experience": "Pengalaman",
+    "education": "Pendidikan",
+    "certifications": "Sertifikasi",
+    "present": "Sekarang"
+  },
+  "contact": {
+    "body": "Terbuka untuk berdiskusi soal AI engineering, data, dan blockchain."
   }
 }
