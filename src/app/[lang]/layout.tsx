@@ -9,6 +9,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { profile } from "@/content/profile";
 import { LOCALES, isLocale } from "@/lib/locale";
+import { buildPageMetadata, titleTemplate } from "@/lib/metadata";
 
 import { getDictionary } from "./dictionaries";
 
@@ -65,7 +66,14 @@ export async function generateMetadata({ params }: LangParams): Promise<Metadata
   if (!isLocale(lang)) return {};
 
   return {
-    title: profile.name,
+    ...buildPageMetadata({
+      lang,
+      pathAfterLocale: "",
+      title: profile.name,
+      description: profile.tagline[lang],
+    }),
+    // Case-study pages supply their own title segment; home uses the default.
+    title: titleTemplate,
     description: profile.tagline[lang],
   };
 }

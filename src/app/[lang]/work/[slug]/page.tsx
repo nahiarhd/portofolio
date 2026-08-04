@@ -6,6 +6,7 @@ import { projects } from "@/content/projects";
 import { CONTAINER, EYEBROW, TEXT } from "@/lib/design";
 import { formatMonth } from "@/lib/format";
 import { LOCALES, isLocale } from "@/lib/locale";
+import { buildPageMetadata } from "@/lib/metadata";
 import { cn } from "@/lib/utils";
 
 import { getDictionary } from "../../dictionaries";
@@ -23,10 +24,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   // Content passes the confidentiality denylist test, so titles and
   // descriptions built from it are safe to publish.
-  return {
+  return buildPageMetadata({
+    lang,
+    pathAfterLocale: `/work/${project.slug}`,
     title: project.title[lang],
     description: project.summary[lang],
-  };
+  });
 }
 
 export default async function CaseStudyPage({ params }: Params) {

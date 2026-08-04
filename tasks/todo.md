@@ -267,7 +267,16 @@ EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
   - **Locale parity / verify:** dictionary tests + `pnpm verify` 75 tests.
   - ⏳ **Not re-measured here:** on-device graph fps, chat first-token on 4G
     (need phone + live network). Lighthouse is lab, not field.
-- [ ] **T16** Metadata, OG, `hreflang`, sitemap, `robots.txt` — denylist grep on build output
+- [x] **T16** Metadata / SEO — **done 2026-08-04**
+  - `pnpm verify` ✅ 79 tests · build ✅ · knip ✅
+  - Per-locale title/description + title template (`%s · Name`)
+  - `hreflang` + canonical via `alternates.languages` (en, id, x-default)
+  - Open Graph + Twitter cards; generated OG images (home + case study)
+  - `sitemap.xml` — all locale homes + case studies with xhtml hreflang
+  - `robots.txt` — allow `/`, disallow `/api/`, points at sitemap
+  - `NEXT_PUBLIC_SITE_URL` in `.env.example` (falls back to VERCEL_URL / localhost)
+  - Metadata denylist unit tests (same hashed terms as content)
+  - Verified live: robots, sitemap, og:image PNG 200, case study title template
 - [ ] **T17** Deploy — Vercel, env vars in dashboard, custom domain, rate limiting verified **in production**
 
 **Checkpoint 5:** every spec Success Criterion measured · live on the domain
