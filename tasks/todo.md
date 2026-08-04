@@ -142,7 +142,26 @@ EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
 
 ## Phase 3 — The chat
 
-- [ ] **T9** `POST /api/chat` — streaming, env-only config, locale-aware, denylist in system prompt, token caps
+- [x] **T9** `POST /api/chat` — **code done 2026-08-04, live streaming NOT yet verified**
+  - `pnpm verify` ✅ 46 tests · knip ✅
+  - AI SDK is **v7** (`ai@7.0.50`), not the v6 the plan assumed. Current API is
+    `streamText` → `toUIMessageStream` → `createUIMessageStreamResponse`, and
+    tools take `inputSchema` (not `parameters`). Read `node_modules/ai/docs/`
+    before writing T11/T12 — do not write these from memory.
+  - 🐞 **Found and fixed a bug that killed the whole feature.** The T3 proxy
+    matcher did not exclude `/api`, so `POST /api/chat` was 307-redirected to
+    `/en/api/chat` and the route never ran. A redirect also downgrades POST to
+    GET, so it presented as a routing bug rather than a proxy one. Now covered
+    by `src/proxy.test.ts` (4 tests) so it cannot regress.
+  - Verified by request: 400 non-JSON · 400 empty · 413 too many messages ·
+    413 oversized message · 502 with a loud server-side log when `LLM_*` is
+    unset · pages still redirect (`/` → `/en`).
+  - Caps: 20 messages, 2000 chars/message, 800 output tokens. Env is read at
+    **request** time so the build never needs a secret.
+  - Upstream errors are logged, never returned — the message can name the
+    upstream host.
+  - ⏳ **Blocked on Raihan:** live streaming is unverified because no
+    credentials are on this machine. See the `.env.local` step below.
 - [ ] **T10** Rate limiting — **must land before the route is ever public**
 - [ ] **T11** Chat UI — three suggested questions, streaming, error states, focus trap
 - [ ] **T12** `showProject(slug)` tool + project card

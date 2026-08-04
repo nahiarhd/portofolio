@@ -26,7 +26,14 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip Next internals and anything with a file extension (favicon, images,
-  // robots.txt) — those must not be pushed under a locale prefix.
-  matcher: ["/((?!_next|.*\\..*).*)"],
+  /**
+   * Skip Next internals, API routes, and anything with a file extension
+   * (favicon, images, robots.txt) — none of those belong under a locale prefix.
+   *
+   * `api` is not optional: without it, `POST /api/chat` is 307-redirected to
+   * `/en/api/chat`, the route never runs, and the chat is dead. A redirect also
+   * turns the POST into a GET, so the failure looks like a routing bug rather
+   * than a proxy one.
+   */
+  matcher: ["/((?!_next|api|.*\\..*).*)"],
 };
