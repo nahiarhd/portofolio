@@ -45,5 +45,25 @@
   },
   "contact": {
     "body": "Terbuka untuk berdiskusi soal AI engineering, data, dan blockchain."
+  },
+  "chat": {
+    "open": "Tanya seputar karya",
+    "close": "Tutup chat",
+    "title": "Tanya seputar karya",
+    "placeholder": "Ajukan pertanyaan…",
+    "send": "Kirim",
+    "stop": "Berhenti",
+    "thinking": "Sedang berpikir…",
+    "emptyHint": "Coba salah satu ini:",
+    "suggestions": {
+      "ai": "Sistem AI apa yang dia bangun?",
+      "blockchain": "Ceritakan karya blockchain-nya.",
+      "background": "Bagaimana latarbelakangnya?"
+    },
+    "rateLimited": "Terlalu banyak pertanyaan. Coba lagi dalam satu menit.",
+    "unavailable": "Asisten sedang tidak tersedia.",
+    "retry": "Coba lagi",
+    "you": "Anda",
+    "assistant": "Asisten"
   }
 }

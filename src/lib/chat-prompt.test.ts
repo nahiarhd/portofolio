@@ -34,6 +34,12 @@ describe("buildSystemPrompt", () => {
     }
   });
 
+  it("tells the model to call showProject for specific projects", () => {
+    const prompt = buildSystemPrompt("en");
+    expect(prompt).toContain("showProject");
+    expect(prompt.toLowerCase()).toContain("slug");
+  });
+
   it("instructs the model to refuse naming the employer", () => {
     const prompt = buildSystemPrompt("en").toLowerCase();
     expect(prompt).toContain("nda");

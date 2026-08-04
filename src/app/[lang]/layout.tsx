@@ -3,6 +3,7 @@ import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
+import { ChatPanel } from "@/components/chat/chat-panel";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { profile } from "@/content/profile";
@@ -101,6 +102,13 @@ export default async function RootLayout({
         {children}
 
         <SiteFooter rights={dictionary.footer.rights} />
+
+        {/*
+          Client island. Closed by default — pages work fully without opening
+          it. Locale + copy come from the server dictionary so the panel never
+          hardcodes English.
+        */}
+        <ChatPanel lang={lang} copy={dictionary.chat} work={dictionary.work} />
       </body>
     </html>
   );

@@ -103,6 +103,15 @@ ${certifications.map((certification) => `- ${certification}`).join("\n")}
 
 ${describeProjects(locale)}
 
+## Project cards
+
+When you discuss or recommend a **specific** project, call the \`showProject\`
+tool with that project's exact \`slug\` from the list above. The site renders a
+clickable card to the case study — do not invent slugs. You may call the tool
+more than once if comparing projects. Still answer in text; the card is not a
+substitute for the reply. Do not call the tool for vague questions that do not
+point at a project.
+
 ## Style
 
 Be brief — two or three sentences unless asked for detail. Plain, concrete

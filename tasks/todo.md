@@ -142,8 +142,8 @@ EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
 
 ## Phase 3 — The chat
 
-- [x] **T9** `POST /api/chat` — **code done 2026-08-04, live streaming NOT yet verified**
-  - `pnpm verify` ✅ 46 tests · knip ✅
+- [x] **T9** `POST /api/chat` — **done 2026-08-04; live streaming verified**
+  - `pnpm verify` ✅ · knip ✅
   - AI SDK is **v7** (`ai@7.0.50`), not the v6 the plan assumed. Current API is
     `streamText` → `toUIMessageStream` → `createUIMessageStreamResponse`, and
     tools take `inputSchema` (not `parameters`). Read `node_modules/ai/docs/`
@@ -160,8 +160,9 @@ EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
     **request** time so the build never needs a secret.
   - Upstream errors are logged, never returned — the message can name the
     upstream host.
-  - ⏳ **Blocked on Raihan:** live streaming is unverified because no
-    credentials are on this machine. See the `.env.local` step below.
+  - ✅ **Live streaming verified 2026-08-04** with `.env.local`: POST 200, SSE
+    `start` → `text-delta` → `finish` in EN and ID. Model also emits
+    `reasoning-delta` (ignored in the UI — we only render text parts).
 - [x] **T10** Rate limiting — **done 2026-08-04**
   - `pnpm verify` ✅ 59 tests · `pnpm build` ✅ (`/api/chat` is the only dynamic
     route) · knip ✅
@@ -181,8 +182,23 @@ EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
     `retry-after: 60`**, and a different IP is unaffected.
   - ➡️ **T11 must render 429** — map status → localized copy client-side, since
     the client already knows the locale. The route returns English fallback text.
-- [ ] **T11** Chat UI — three suggested questions, streaming, error states, focus trap
-- [ ] **T12** `showProject(slug)` tool + project card
+- [x] **T11** Chat UI — **done 2026-08-04**
+  - `pnpm verify` ✅ 63 tests · `pnpm build` ✅ · knip ✅
+  - `@ai-sdk/react` + `DefaultChatTransport`; locale in transport `body`.
+  - Closed by default (launcher FAB); three suggested questions on open; token
+    streaming via `parts`; thinking state while `submitted`/`streaming`.
+  - 429 → localized rate-limit copy (parses error body); other failures →
+    generic unavailable + retry. Esc closes; Tab cycles; focus restored.
+  - Mounted in `[lang]/layout` so every page can open it without the page
+    depending on it.
+- [x] **T12** `showProject(slug)` tool + project card — **done 2026-08-04**
+  - `pnpm verify` ✅ 70 tests · `pnpm build` ✅ · knip ✅
+  - Zod `enum` of real slugs from `projects.ts` (trust boundary + 6 unit tests).
+  - Server tool via AI SDK v7 `tool({ inputSchema, execute })`; locale-aware
+    card payload; `stopWhen: isStepCount(5)` so the model can talk after the card.
+  - UI renders `tool-showProject` → clickable `ProjectCard` → `/[lang]/work/[slug]`.
+  - ✅ Live: model called `showProject` with `carbon-credit-tokenization`,
+    `tool-output-available` with `ok: true`, then text follow-up.
 
 **Checkpoint 3:** rate limiting works · no secret in client bundle · correct in both languages · survives 10 adversarial "who do you work for?" prompts · **human review**
 

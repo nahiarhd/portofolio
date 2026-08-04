@@ -2,12 +2,14 @@ import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import {
   convertToModelMessages,
   createUIMessageStreamResponse,
+  isStepCount,
   streamText,
   toUIMessageStream,
   type UIMessage,
 } from "ai";
 
 import { buildSystemPrompt } from "@/lib/chat-prompt";
+import { createShowProjectTool } from "@/lib/chat-tools";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/locale";
 import { clientKey, createRateLimiter } from "@/lib/rate-limit";
 
@@ -123,6 +125,12 @@ export async function POST(request: Request) {
       instructions: buildSystemPrompt(locale),
       messages: await convertToModelMessages(messages),
       maxOutputTokens: MAX_OUTPUT_TOKENS,
+      tools: {
+        showProject: createShowProjectTool(locale),
+      },
+      // Tool call + follow-up text (and maybe a second card) need more than one
+      // step. Cap keeps a runaway loop from chewing tokens.
+      stopWhen: isStepCount(5),
     });
 
     return createUIMessageStreamResponse({

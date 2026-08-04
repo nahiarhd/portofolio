@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^3.0.21",
+    "@ai-sdk/react": "^4.0.54",
     "@react-three/fiber": "9.7.0",
     "ai": "^7.0.50",
     "class-variance-authority": "^0.7.1",

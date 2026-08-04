@@ -45,5 +45,25 @@
   },
   "contact": {
     "body": "Open to conversations about AI engineering, data, and blockchain work."
+  },
+  "chat": {
+    "open": "Ask about the work",
+    "close": "Close chat",
+    "title": "Ask about the work",
+    "placeholder": "Ask a question…",
+    "send": "Send",
+    "stop": "Stop",
+    "thinking": "Thinking…",
+    "emptyHint": "Try one of these:",
+    "suggestions": {
+      "ai": "What AI systems has he built?",
+      "blockchain": "Tell me about the blockchain work.",
+      "background": "What's his background?"
+    },
+    "rateLimited": "Too many questions for now. Try again in a minute.",
+    "unavailable": "The assistant is unavailable right now.",
+    "retry": "Retry",
+    "you": "You",
+    "assistant": "Assistant"
   }
 }
