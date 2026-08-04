@@ -3,7 +3,7 @@ import { CONTAINER, EYEBROW, TEXT } from "@/lib/design";
 import type { Locale } from "@/lib/locale";
 import { cn } from "@/lib/utils";
 
-import { GraphStill } from "./graph-still";
+import { HeroGraph } from "./graph/hero-graph";
 
 export function Hero({ lang }: { lang: Locale }) {
   return (
@@ -15,14 +15,14 @@ export function Hero({ lang }: { lang: Locale }) {
       <p className={cn("mt-8 max-w-[52ch] text-lead", TEXT.subtle)}>{profile.bio[lang]}</p>
 
       {/*
-        The graph's final home. T13 replaces `GraphStill` with the R3F canvas at
-        exactly these dimensions, so the swap costs no layout shift — and the
-        still stays as the fallback for blocked WebGL and reduced motion.
-        `aspect-ratio` rather than a fixed height: the SVG viewBox is 800×480,
-        and a mismatched box would letterbox it.
+        Exact final dimensions for the graph. Still and canvas share this box —
+        no layout shift when the live scene mounts or when WebGL is blocked.
+        `aspect-ratio` matches the SVG viewBox (800×480). The R3F canvas is
+        dynamically imported with ssr:false inside HeroGraph (client island);
+        Next 16 forbids that option on Server Components.
       */}
       <div className="mt-14 aspect-[800/480] w-full text-foreground">
-        <GraphStill className="h-full w-full" />
+        <HeroGraph className="h-full w-full" />
       </div>
     </section>
   );

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai-compatible": "^3.0.21",
+    "@react-three/fiber": "9.7.0",
     "ai": "^7.0.50",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -28,6 +29,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "tailwind-merge": "^3.6.0",
+    "three": "0.185.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -35,6 +37,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "0.185.3",
     "@vitejs/plugin-react": "^6.0.4",
     "eslint": "^9",
     "eslint-config-next": "16.2.12",

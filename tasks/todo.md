@@ -190,7 +190,26 @@ EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
 
 ## Phase 4 — The graph
 
-- [ ] **T13** Idle graph — dynamic import, ≥50fps on device, reduced-motion freeze, WebGL-off fallback
+- [x] **T13** Idle graph — **code done 2026-08-04; on-device fps NOT yet re-measured**
+  - `pnpm verify` ✅ 63 tests · `pnpm build` ✅ · knip ✅
+  - Exact S2 versions: `three@0.185.1`, `@react-three/fiber@9.7.0`, `@types/three@0.185.3`.
+    **No `@react-three/drei`.**
+  - Scene: 400 instanced spheres + ≤600 line segments, seeded LCG geometry at
+    module load (never during render — React Compiler purity). One accent
+    signal node. Slow group drift only.
+  - Canvas: `dpr={[1,2]}`, `antialias`, `powerPreference: "high-performance"`,
+    `alpha: true`, `pointer-events: none` so mobile scroll is not stolen.
+  - **Next 16 gotcha:** `next/dynamic` with `ssr: false` is illegal in Server
+    Components. Dynamic lives inside the client island (`hero-graph.tsx`),
+    which the server Hero imports normally. Server snapshots force the still
+    so SSR HTML never assumes WebGL.
+  - Fallbacks: `prefers-reduced-motion` → `GraphStill` (frozen, not slowed);
+    WebGL unavailable → `GraphStill`; loading → `GraphStill`. Same aspect box.
+  - Graph client chunk ~234KB gzip (three + R3F). Lazy — not in the
+    graph-excluded first paint budget.
+  - ⏳ **On-device fps** still needs a Redmi Note 11 check (S2 was 58fps on a
+    near-empty page; do not spend the headroom). Cannot measure from the
+    in-app browser pane.
 - [ ] **T14** Graph ↔ chat wiring — pulse while streaming, highlight returned project
 
 **Checkpoint 4:** ask → graph reacts → card → click → case study · fps holds · **human review**
@@ -209,7 +228,7 @@ EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
 
 ## Blocked / needs an answer
 
-- [ ] WAF rate limiting on Hobby, or in-function fallback? → blocks **T10**
+- [x] WAF rate limiting on Hobby, or in-function fallback? → **T10 chose in-function**
 - [ ] Custom domain name? → blocks **T17**
 - [ ] Usable photo? → affects **T8**
 - [ ] Publish `Playground/` projects? → would add entries to **T2**. Deferred.
