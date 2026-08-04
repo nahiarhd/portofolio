@@ -32,10 +32,9 @@ export function LocaleSwitch({
             href={localizePath(pathname, locale)}
             hrefLang={locale}
             aria-current={isCurrent ? "true" : undefined}
-            // Sighted readers get the two-letter code; screen readers get the
-            // language name. A visible code plus an sr-only name announces as
-            // "en English", which is noise.
-            aria-label={names[locale]}
+            // Visible label is the locale code; accessible name must include that
+            // code (Lighthouse label-content-name-mismatch) plus the language name.
+            aria-label={`${locale} — ${names[locale]}`}
             className={cn(
               "rounded-sm px-1.5 py-1 font-mono text-eyebrow uppercase transition-colors",
               isCurrent

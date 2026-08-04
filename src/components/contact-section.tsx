@@ -26,6 +26,8 @@ export function ContactSection({ heading, body }: { heading: string; body: strin
           href={profile.linkedin}
           rel="me noreferrer"
           target="_blank"
+          // Name the new tab for screen readers; visible label stays "LinkedIn".
+          aria-label="LinkedIn (opens in a new tab)"
           className="text-lead font-medium text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:decoration-primary"
         >
           LinkedIn

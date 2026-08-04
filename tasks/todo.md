@@ -242,7 +242,31 @@ EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
 
 ## Phase 5 — Ship
 
-- [ ] **T15** Performance + accessibility pass, numbers recorded
+- [x] **T15** Performance + accessibility pass — **measured 2026-08-04**
+  - **Changes:** Archivo weights 400/500/600 + preload + fallback metrics;
+    chat idle-loaded via `ChatMount` (no `@ai-sdk/react` on first paint);
+    removed unused starter SVGs; LinkedIn `aria-label` for new tab; locale
+    switch accessible name includes visible code; chat launcher
+    `aria-expanded` / `aria-haspopup`.
+  - **Lighthouse mobile** (`localhost` production, simulated throttle):
+    | Metric | Target | Measured |
+    |---|---|---|
+    | Performance | ≥ 90 | **99** |
+    | Accessibility | — | **100** |
+    | LCP | < 2.5s | **2.11s** |
+    | CLS | < 0.1 | **0** |
+    | FCP | — | 0.76s |
+    | TBT | — | 22ms |
+  - **JS first-load (HTML script tags, gzip), graph excluded:** ~**205 KB**.
+    Graph chunk (~234 KB gzip) is **not** in first-load HTML (dynamic). Spec
+    target &lt;150 KB is below Next 16 + React 19 framework floor here; the
+    intentional split (graph/chat deferred) is what we control. Recorded
+    honestly rather than redefined.
+  - **Secret exposure:** LLM_API_KEY not present in `.next/static` (grep).
+  - **WebGL-off / reduced-motion:** still uses `GraphStill` (T13).
+  - **Locale parity / verify:** dictionary tests + `pnpm verify` 75 tests.
+  - ⏳ **Not re-measured here:** on-device graph fps, chat first-token on 4G
+    (need phone + live network). Lighthouse is lab, not field.
 - [ ] **T16** Metadata, OG, `hreflang`, sitemap, `robots.txt` — denylist grep on build output
 - [ ] **T17** Deploy — Vercel, env vars in dashboard, custom domain, rate limiting verified **in production**
 

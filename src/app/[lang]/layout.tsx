@@ -3,7 +3,7 @@ import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
-import { ChatPanel } from "@/components/chat/chat-panel";
+import { ChatMount } from "@/components/chat/chat-mount";
 import { GraphActivityProvider } from "@/components/graph/activity";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -29,13 +29,17 @@ type LangParams = { params: Promise<{ lang: string }> };
  * display face. IBM Plex Mono is structural, not ornamental — it is what the
  * eyebrow labels are set in, and those only ever hold real data.
  *
- * `display: "swap"` so text paints on the reference device before the webfont
- * arrives; a blocking font is the cheapest way to lose the LCP budget.
+ * Weights match what the UI actually uses (regular / medium / semibold).
+ * `display: "swap"` so text paints before the webfont arrives; a blocking font
+ * is the cheapest way to lose the LCP budget. `next/font` subsets and preloads.
  */
 const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
+  preload: true,
+  adjustFontFallback: true,
 });
 
 const plexMono = IBM_Plex_Mono({
@@ -43,6 +47,8 @@ const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   display: "swap",
+  preload: true,
+  adjustFontFallback: true,
 });
 
 /**
@@ -110,11 +116,10 @@ export default async function RootLayout({
           <SiteFooter rights={dictionary.footer.rights} />
 
           {/*
-            Client island. Closed by default — pages work fully without opening
-            it. Locale + copy come from the server dictionary so the panel never
-            hardcodes English.
+            Chat is idle-loaded (see ChatMount) so first paint never waits on
+            @ai-sdk/react. Closed by default — the site works fully without it.
           */}
-          <ChatPanel lang={lang} copy={dictionary.chat} work={dictionary.work} />
+          <ChatMount lang={lang} copy={dictionary.chat} work={dictionary.work} />
         </GraphActivityProvider>
       </body>
     </html>

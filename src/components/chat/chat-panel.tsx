@@ -264,6 +264,8 @@ export function ChatPanel({
           type="button"
           onClick={() => setOpen(true)}
           onKeyDown={onLauncherKey}
+          aria-expanded={false}
+          aria-haspopup="dialog"
           className={cn(
             "fixed bottom-5 right-5 z-40 max-w-[min(100%-2.5rem,16rem)]",
             "border border-border bg-card px-4 py-3 text-left text-sm font-medium shadow-sm",
