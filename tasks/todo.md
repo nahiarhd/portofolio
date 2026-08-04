@@ -279,7 +279,16 @@ EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
   - `NEXT_PUBLIC_SITE_URL` in `.env.example` (falls back to VERCEL_URL / localhost)
   - Metadata denylist unit tests (same hashed terms as content)
   - Verified live: robots, sitemap, og:image PNG 200, case study title template
-- [ ] **T17** Deploy — Vercel, env vars in dashboard, custom domain, rate limiting verified **in production**
+- [x] **T17** Deploy — **live 2026-08-04 (partial)**
+  - Linked `raihanhd12s-projects/portofolio-website`, GitHub connected
+  - Production: https://portofolio-website-eta-ten.vercel.app
+  - Env set: `LLM_*` + `NEXT_PUBLIC_SITE_URL` (production)
+  - Smoke: home/work **200**, robots/sitemap **200**
+  - ⚠️ **`/api/chat` streams an error in production** while local works.
+    Route finds env (not 502); upstream call fails after stream start — likely
+    company LLM host rejects or blocks Vercel egress. Fix: allowlist Vercel IPs
+    / use a public OpenAI-compatible URL for prod, then re-test.
+  - ⏳ Custom domain + Speed Insights + rate-limit hammer in prod still open.
 
 **Checkpoint 5:** every spec Success Criterion measured · live on the domain
 
