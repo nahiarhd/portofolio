@@ -29,8 +29,24 @@ exemption added to get there.
     `STATUS_TONE`/`StatusTone` (orphan exports), CI's `db:generate` step and
     build secrets, `.env.example` rewritten to `LLM_*`, `README.md` rewritten,
     package renamed `next-js-starter` → `portfolio-website`
-- [ ] **T2** Content model — `src/content/projects.ts`, `src/content/profile.ts`
-  - Verify: `pnpm test:unit` (unique slugs, both locales, confidential⇒no links, denylist)
+- [x] **T2** Content model — `src/content/projects.ts`, `src/content/profile.ts` — **structure done 2026-08-04**
+  - `pnpm verify` ✅ green again (12 tests) — closes T1's "No test files found"
+  - Denylist stores **SHA-256 hashes, not plaintext**: a test file listing the
+    employer's product names would be the leak it exists to prevent. Includes a
+    control test proving the detector actually fires, and a floor on how much
+    content it scans, so the guard cannot silently become vacuous.
+  - ⚠️ **Blocked on Raihan:** the four `pillar: "ai"` projects are **DRAFTS**
+    written from folder names alone. Every `problem` / `role` / `outcome` string
+    on them starts with `DRAFT —` and must be replaced with what he actually
+    built. Truthful already: `carbon-credit-tokenization`, `social-media-analytics`,
+    and all of `profile.ts` (sourced from his public LinkedIn).
+  - Open decision: `profile.ts` names **ADS Digital Partner** as a 2023 role.
+    That is on his public LinkedIn already, so it is not in the denylist —
+    confirm that is intended.
+
+- [ ] **Launch gate:** no `DRAFT` string survives anywhere in `src/content/`.
+  Checked by hand at Checkpoint 2 and by grep in **T16**. Deliberately not a
+  unit test — a permanently red gate trains people to ignore red.
 - [ ] **T3** i18n routing — `app/[lang]/`, dictionaries, locale-detecting `proxy.ts`
   - Verify: `pnpm test:unit` · `pnpm build` prerenders both locales
 
