@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "work": "Karya",
+    "about": "Tentang",
+    "contact": "Kontak",
+    "skipToContent": "Lewati ke konten"
+  },
+  "localeSwitch": {
+    "label": "Bahasa",
+    "en": "Inggris",
+    "id": "Indonesia"
+  },
+  "notFound": {
+    "title": "Halaman tidak ditemukan",
+    "body": "Halaman itu tidak ada, atau sudah dipindahkan.",
+    "home": "Kembali ke beranda"
+  },
+  "error": {
+    "title": "Terjadi kesalahan",
+    "body": "Halaman gagal dimuat. Biasanya aman untuk mencoba lagi.",
+    "retry": "Coba lagi"
+  },
+  "footer": {
+    "rights": "Seluruh hak cipta dilindungi."
+  }
+}

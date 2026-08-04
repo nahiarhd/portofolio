@@ -1,0 +1,26 @@
+{
+  "nav": {
+    "work": "Work",
+    "about": "About",
+    "contact": "Contact",
+    "skipToContent": "Skip to content"
+  },
+  "localeSwitch": {
+    "label": "Language",
+    "en": "English",
+    "id": "Indonesian"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "That page does not exist, or it moved.",
+    "home": "Back to home"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "body": "The page failed to render. Retrying is usually safe.",
+    "retry": "Try again"
+  },
+  "footer": {
+    "rights": "All rights reserved."
+  }
+}

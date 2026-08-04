@@ -47,8 +47,23 @@ exemption added to get there.
 - [ ] **Launch gate:** no `DRAFT` string survives anywhere in `src/content/`.
   Checked by hand at Checkpoint 2 and by grep in **T16**. Deliberately not a
   unit test — a permanently red gate trains people to ignore red.
-- [ ] **T3** i18n routing — `app/[lang]/`, dictionaries, locale-detecting `proxy.ts`
-  - Verify: `pnpm test:unit` · `pnpm build` prerenders both locales
+- [x] **T3** i18n routing — `app/[lang]/`, dictionaries, locale-detecting `proxy.ts` — **done 2026-08-04**
+  - `pnpm verify` ✅ 26 tests · `pnpm build` ✅ prerenders `/en` and `/id` · knip ✅
+  - Verified live: `/`+`id-ID`→`/id`, `/`+`fr-FR`→`/en`, `en;q=0.3,id;q=0.9`→`/id`,
+    `/fr/about`→`/en/fr/about`→404, `/id` renders `lang="id"` with Indonesian copy
+  - **`Accept-Language` parsed by hand** (`src/lib/locale.ts`) instead of adding
+    `negotiator` + `@formatjs/intl-localematcher`. Two dependencies to rank two
+    locales is a bad trade, and it runs on every cold request. 10 tests cover it.
+  - **The proxy guarantees a valid `lang`.** Anything without a supported locale
+    prefix is redirected under one, so no page has to defend against a bogus
+    locale — `/fr/about` 404s as `/en/fr/about` rather than reaching a layout
+    that would load a dictionary that does not exist.
+  - ⚠️ **Do not use Next's global `PageProps`/`LayoutProps` helpers.** They are
+    generated into `.next/types` by a build, and CI runs `typecheck` **before**
+    `build` — on a clean clone they do not exist and the gate fails for a reason
+    unrelated to the code. Params are typed explicitly instead.
+  - Known gap: `not-found.tsx` receives no params, so it renders in the default
+    locale. Noted in the file; revisit only if it proves to matter.
 
 **Checkpoint 1:** verify green · build clean · zero auth/db references · **human review**
 

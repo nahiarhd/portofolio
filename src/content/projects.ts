@@ -11,7 +11,7 @@ import type { Localized } from "@/lib/locale";
  * make content pass. See AGENTS.md § Confidentiality.
  */
 
-export type Pillar = "ai" | "blockchain" | "data";
+type Pillar = "ai" | "blockchain" | "data";
 
 export type Project = {
   slug: string;
