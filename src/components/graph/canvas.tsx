@@ -40,8 +40,8 @@ function IdleScene() {
   const group = useRef<THREE.Group>(null);
   const mesh = useRef<THREE.InstancedMesh>(null);
   const edgeMaterial = useRef<THREE.LineBasicMaterial>(null);
-  const foreground = useCssColor("--foreground", "#101319");
-  const primary = useCssColor("--primary", "#26346e");
+  const foreground = useCssColor("--foreground", "#fafafa");
+  const primary = useCssColor("--primary", "#10b981");
   const { positions, edgePositions, nodeCount, signalIndex } = IDLE_GRAPH;
   const { streaming, highlightSlugs } = useGraphActivity();
 

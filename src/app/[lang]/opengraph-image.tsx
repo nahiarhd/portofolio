@@ -7,10 +7,6 @@ export const alt = profile.name;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-/**
- * Editorial OG card — cool ground + indigo accent, matching the site tokens.
- * No photos, no employer branding.
- */
 export default async function OpenGraphImage({
   params,
 }: {
@@ -28,8 +24,8 @@ export default async function OpenGraphImage({
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#f6f7f9",
-          color: "#101319",
+          background: "#0a0a0a",
+          color: "#fafafa",
           padding: "72px 80px",
           fontFamily: "ui-sans-serif, system-ui, sans-serif",
         }}
@@ -37,25 +33,35 @@ export default async function OpenGraphImage({
         <div
           style={{
             display: "flex",
-            fontSize: 22,
-            letterSpacing: "0.14em",
+            alignItems: "center",
+            gap: 12,
+            fontSize: 20,
+            letterSpacing: "0.16em",
             textTransform: "uppercase",
-            color: "#565e70",
+            color: "rgba(255,255,255,0.5)",
             fontFamily: "ui-monospace, monospace",
           }}
         >
-          {profile.location[lang]}
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: 999,
+              background: "#10b981",
+            }}
+          />
+          {profile.location[lang]} · ACTIVE
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div
             style={{
               display: "flex",
-              fontSize: 72,
+              fontSize: 68,
               fontWeight: 600,
-              letterSpacing: "-0.03em",
-              lineHeight: 1.05,
-              maxWidth: 980,
+              letterSpacing: "-0.04em",
+              lineHeight: 1.02,
+              maxWidth: 1000,
             }}
           >
             {profile.name}
@@ -63,8 +69,8 @@ export default async function OpenGraphImage({
           <div
             style={{
               display: "flex",
-              fontSize: 32,
-              color: "#565e70",
+              fontSize: 30,
+              color: "rgba(255,255,255,0.6)",
               maxWidth: 900,
               lineHeight: 1.35,
             }}
@@ -76,9 +82,10 @@ export default async function OpenGraphImage({
         <div
           style={{
             display: "flex",
-            width: 48,
+            width: 56,
             height: 4,
-            background: "#26346e",
+            borderRadius: 999,
+            background: "#10b981",
           }}
         />
       </div>

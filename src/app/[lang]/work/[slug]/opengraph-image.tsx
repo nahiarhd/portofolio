@@ -29,8 +29,8 @@ export default async function OpenGraphImage({
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#f6f7f9",
-          color: "#101319",
+          background: "#0a0a0a",
+          color: "#fafafa",
           padding: "72px 80px",
           fontFamily: "ui-sans-serif, system-ui, sans-serif",
         }}
@@ -38,21 +38,21 @@ export default async function OpenGraphImage({
         <div
           style={{
             display: "flex",
-            fontSize: 22,
-            letterSpacing: "0.14em",
+            fontSize: 20,
+            letterSpacing: "0.16em",
             textTransform: "uppercase",
-            color: "#565e70",
+            color: "#10b981",
             fontFamily: "ui-monospace, monospace",
           }}
         >
           {pillar} · {profile.name}
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
           <div
             style={{
               display: "flex",
-              fontSize: 56,
+              fontSize: 52,
               fontWeight: 600,
               letterSpacing: "-0.03em",
               lineHeight: 1.08,
@@ -64,8 +64,8 @@ export default async function OpenGraphImage({
           <div
             style={{
               display: "flex",
-              fontSize: 28,
-              color: "#565e70",
+              fontSize: 26,
+              color: "rgba(255,255,255,0.6)",
               maxWidth: 960,
               lineHeight: 1.4,
             }}
@@ -77,9 +77,10 @@ export default async function OpenGraphImage({
         <div
           style={{
             display: "flex",
-            width: 48,
+            width: 56,
             height: 4,
-            background: "#26346e",
+            borderRadius: 999,
+            background: "#10b981",
           }}
         />
       </div>

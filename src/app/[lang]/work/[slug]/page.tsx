@@ -47,16 +47,17 @@ export default async function CaseStudyPage({ params }: Params) {
   ];
 
   return (
-    <main id="content" className={`${CONTAINER} flex-1 py-14 sm:py-20`}>
+    <main id="content" className={`${CONTAINER} flex-1 py-28 sm:py-32`}>
       <Link
         href={`/${lang}#work`}
-        className={cn(EYEBROW, "transition-colors hover:text-foreground")}
+        className={cn(EYEBROW, "transition-colors hover:text-primary")}
       >
         ← {copy.back}
       </Link>
 
-      <header className="mt-10 max-w-[40rem]">
+      <header className="mt-10 max-w-[42rem]">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span className="hud-pulse size-1.5 rounded-full bg-primary" aria-hidden />
           <span className={EYEBROW}>
             {copy.pillars[project.pillar]} · {formatMonth(project.started, lang)}
           </span>
@@ -64,7 +65,7 @@ export default async function CaseStudyPage({ params }: Params) {
             <span
               className={cn(
                 EYEBROW,
-                "rounded-sm border border-border px-1.5 py-0.5",
+                "rounded-full border border-border px-2 py-0.5 text-primary/90",
               )}
             >
               {copy.confidential}
@@ -72,37 +73,32 @@ export default async function CaseStudyPage({ params }: Params) {
           ) : null}
         </div>
 
-        <h1 className="mt-4 text-title font-semibold tracking-tight">
+        <h1 className="mt-5 font-display text-title font-semibold tracking-tight text-glow">
           {project.title[lang]}
         </h1>
         <p className={cn("mt-6 text-lead", TEXT.subtle)}>{project.summary[lang]}</p>
       </header>
 
-      {/* Architecture-note layout: narrative + sticky meta on wide screens. */}
-      <div className="mt-16 grid gap-12 lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-16">
-        <div className="space-y-14">
+      <div className="mt-16 grid gap-8 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-10">
+        <div className="space-y-4">
           {sections.map((section, index) => (
-            <section
-              key={section.label}
-              className="border-t border-border pt-10 first:border-t-0 first:pt-0"
-            >
-              <p className={cn(EYEBROW, "mb-1", TEXT.faint)}>
-                {String(index + 1).padStart(2, "0")}
+            <section key={section.label} className={cn(SURFACE.panel, "p-6 sm:p-8")}>
+              <p className={cn(EYEBROW, "text-primary/90")}>
+                {String(index + 1).padStart(2, "0")} · {section.label}
               </p>
-              <h2 className={cn(EYEBROW, "mb-4 text-foreground")}>{section.label}</h2>
-              <p className="max-w-[62ch] text-lead leading-relaxed">{section.body}</p>
+              <p className="mt-4 max-w-[62ch] text-lead leading-relaxed">{section.body}</p>
             </section>
           ))}
         </div>
 
-        <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div className={cn(SURFACE.panel, "p-4")}>
-            <h2 className={cn(EYEBROW, "mb-3")}>{copy.stack}</h2>
-            <ul className="flex flex-col gap-2">
+        <aside className="lg:sticky lg:top-28 lg:self-start">
+          <div className={cn(SURFACE.panelStrong, "p-5")}>
+            <h2 className={cn(EYEBROW, "mb-4 text-primary/90")}>{copy.stack}</h2>
+            <ul className="flex flex-col gap-2.5">
               {project.stack.map((item) => (
                 <li
                   key={item}
-                  className="border-b border-border/60 pb-2 font-mono text-eyebrow last:border-0 last:pb-0"
+                  className="border-b border-border/50 pb-2.5 font-mono text-eyebrow last:border-0 last:pb-0"
                 >
                   {item}
                 </li>

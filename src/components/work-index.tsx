@@ -9,13 +9,6 @@ import { cn } from "@/lib/utils";
 
 import { Reveal } from "./reveal";
 
-/**
- * Pillar order, not date order. The three pillars together are the point —
- * blockchain, AI, and data in one person is the unusual part — so the list is
- * ordered to make that legible. Separate group headings were tried and read
- * badly at 4/1/1; the pillar label on each entry plus the counts line above
- * carries the same information without the lopsided structure.
- */
 const PILLAR_ORDER = ["ai", "blockchain", "data"] as const;
 
 export function WorkIndex({
@@ -38,26 +31,35 @@ export function WorkIndex({
   ).join(" · ");
 
   return (
-    <section id="work" className={`${CONTAINER} scroll-mt-20 border-t border-border py-16 sm:py-24`}>
+    <section id="work" className={`${CONTAINER} scroll-mt-28 border-t border-border/60 py-24 sm:py-32`}>
       <Reveal>
-        <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <h2 className="text-title font-semibold">{heading}</h2>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className={EYEBROW}>{'// missions'}</p>
+            <h2 className="mt-3 font-display text-title font-semibold tracking-tight">
+              {heading}
+            </h2>
+          </div>
           <p className={EYEBROW}>{counts}</p>
         </div>
       </Reveal>
 
-      <ul className="mt-10">
-        {ordered.map((project) => (
-          <li key={project.slug} className="border-t border-border">
+      <ul className="mt-12 space-y-3">
+        {ordered.map((project, index) => (
+          <li key={project.slug}>
             <Reveal>
               <Link
                 href={`/${lang}/work/${project.slug}`}
                 className={cn(
-                  "work-row group block py-7 pl-4 transition-colors hover:bg-muted/40",
-                  "focus-visible:bg-muted/40",
+                  "work-row group glass block rounded-2xl px-5 py-6 pl-6 transition-all",
+                  "hover:border-primary/40 hover:bg-white/[0.04]",
+                  "focus-visible:border-primary/40",
                 )}
               >
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <span className={cn(EYEBROW, TEXT.faint)}>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
                   <span className={EYEBROW}>
                     {dictionary.pillars[project.pillar]} ·{" "}
                     {formatMonth(project.started, lang)}
@@ -66,7 +68,7 @@ export function WorkIndex({
                     <span
                       className={cn(
                         EYEBROW,
-                        "rounded-sm border border-border px-1.5 py-0.5 text-muted-foreground",
+                        "rounded-full border border-border px-2 py-0.5 text-primary/90",
                       )}
                     >
                       {dictionary.confidential}
@@ -74,7 +76,7 @@ export function WorkIndex({
                   ) : null}
                 </div>
 
-                <h3 className="mt-3 max-w-[32ch] text-xl font-medium tracking-tight transition-colors group-hover:text-primary">
+                <h3 className="mt-3 max-w-[36ch] font-display text-xl font-medium tracking-tight transition-colors group-hover:text-primary sm:text-2xl">
                   {project.title[lang]}
                 </h3>
 
@@ -84,8 +86,8 @@ export function WorkIndex({
 
                 <p
                   className={cn(
-                    "mt-3 font-mono text-eyebrow uppercase tracking-wider",
-                    "text-primary opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100",
+                    "mt-4 font-mono text-eyebrow uppercase tracking-wider text-primary",
+                    "opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100",
                   )}
                 >
                   {dictionary.read} →

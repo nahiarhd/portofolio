@@ -1,79 +1,39 @@
 @import "tailwindcss";
 
 /*
- * Design tokens live here and in src/lib/design.ts — nowhere else.
+ * Velos-inspired dark system, adapted for this portfolio.
  *
- * Direction: "baseline and deviation". Raihan builds systems that watch a
- * normal signal and catch the moment it departs from it. The page works the
- * same way: everything is calm, measured, and mono-labelled, so the one loud
- * element reads as a deviation rather than as decoration. Boldness is spent
- * once — adding a second accent breaks the whole idea.
- *
- * Ground is cool screen-white, not warm paper. Ink is near-black with a blue
- * undertone so it settles with the ground instead of fighting it. The accent is
- * natural indigo — indigofera, the traditional Indonesian batik dye — chosen
- * because it belongs to him rather than to a framework's default palette.
- *
- * Semantic names (background/foreground/primary/...) are deliberately kept from
- * the starter, so changing the identity needed no component edits.
+ * Direction: cinematic dark ground + one emerald “active” accent (the deviation).
+ * Not a clone of the Aura VELOS logistics template — same craft language applied
+ * to Raihan’s content, graph, and chat.
  */
 
 :root {
-  --background: #f6f7f9;
-  --foreground: #101319;
+  --background: #0a0a0a;
+  --foreground: #fafafa;
 
-  --card: #ffffff;
-  --card-foreground: #101319;
+  --card: rgba(23, 23, 23, 0.72);
+  --card-foreground: #fafafa;
 
-  --muted: #edeff3;
-  --muted-foreground: #565e70;
-  /*
-   * Tertiary text. A real value, not `muted-foreground/70`: that composited to
-   * 3.15:1 here and 3.95:1 in the dark, both under WCAG AA's 4.5 for normal
-   * text. Raising the opacity to 0.9 would have passed but rendered
-   * indistinguishable from `subtle`, leaving a token that means nothing.
-   * Measured: 4.77:1.
-   */
-  --muted-foreground-faint: #666e80;
+  --muted: #171717;
+  --muted-foreground: rgba(255, 255, 255, 0.6);
+  /* Measured ~4.6:1 on #0a0a0a for small mono labels. */
+  --muted-foreground-faint: rgba(255, 255, 255, 0.45);
 
-  --primary: #26346e;
-  --primary-foreground: #ffffff;
+  --primary: #10b981;
+  --primary-foreground: #0a0a0a;
 
-  --border: #e1e4ea;
-  --input: #e1e4ea;
-  --ring: #26346e;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #10b981;
 
-  --destructive: #a4271b;
-  --destructive-foreground: #ffffff;
+  --destructive: #f87171;
+  --destructive-foreground: #0a0a0a;
 
-  /* Precision, not softness. Fully square reads as a newspaper pastiche. */
-  --radius: 0.125rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0c0e13;
-    --foreground: #e9ecf2;
-
-    --card: #12151c;
-    --card-foreground: #e9ecf2;
-
-    --muted: #1a1e27;
-    --muted-foreground: #949cad;
-    /* Measured 5.16:1 on this ground. */
-    --muted-foreground-faint: #7d8496;
-
-    /* Indigo has to lift in the dark: the dye value goes muddy on a dark ground. */
-    --primary: #93a0e0;
-    --primary-foreground: #0c0e13;
-
-    --border: #232833;
-    --input: #232833;
-    --ring: #93a0e0;
-
-    --destructive: #e0705f;
-    --destructive-foreground: #0c0e13;
-  }
+  --radius: 0.75rem;
+  --radius-pill: 999px;
+  --glass: rgba(10, 10, 10, 0.6);
+  --glass-strong: rgba(23, 23, 23, 0.72);
 }
 
 @theme inline {
@@ -92,54 +52,124 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
-  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-inter), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-space-mono), ui-monospace, monospace;
 
-  /*
-   * Fluid type. Minimums are set for a 393px viewport (the reference device),
-   * so nothing needs a mobile-specific override.
-   */
-  --text-display: clamp(2.5rem, 11vw, 5.75rem);
-  --text-display--line-height: 0.92;
-  --text-display--letter-spacing: -0.035em;
+  --text-display: clamp(2.75rem, 12vw, 6.5rem);
+  --text-display--line-height: 0.88;
+  --text-display--letter-spacing: -0.04em;
 
-  --text-title: clamp(1.75rem, 5vw, 2.75rem);
+  --text-title: clamp(1.75rem, 5vw, 3rem);
   --text-title--line-height: 1.05;
-  --text-title--letter-spacing: -0.02em;
+  --text-title--letter-spacing: -0.03em;
 
   --text-lead: clamp(1.0625rem, 2vw, 1.25rem);
-  --text-lead--line-height: 1.5;
+  --text-lead--line-height: 1.55;
 
-  /* Mono labels carry real data — dates, counts, stack. Never decoration. */
   --text-eyebrow: 0.6875rem;
   --text-eyebrow--line-height: 1;
-  --text-eyebrow--letter-spacing: 0.14em;
+  --text-eyebrow--letter-spacing: 0.16em;
 
-  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-sm: 0.25rem;
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 2);
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
 
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  /* Long ragged lines are the fastest way to look unconsidered. */
   text-wrap: pretty;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 h1,
 h2,
 h3 {
   text-wrap: balance;
+  font-family: var(--font-display);
 }
 
-/*
- * Declared once, globally. A component that re-implements this will drift, and
- * a visitor who asked their OS to stop animation means it — the 3D hero must
- * freeze, not merely slow down.
- */
+/* Fixed HUD layers */
+.bg-grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.bg-grid-lines {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: calc(100% / 6) 100%;
+  opacity: 0.5;
+}
+
+.ambient-glow {
+  pointer-events: none;
+  position: fixed;
+  z-index: 0;
+  width: 40vw;
+  height: 40vw;
+  border-radius: 999px;
+  filter: blur(120px);
+  opacity: 0.18;
+}
+
+.ambient-glow--emerald {
+  top: -10%;
+  right: -5%;
+  background: #10b981;
+}
+
+.ambient-glow--blue {
+  bottom: 10%;
+  left: -10%;
+  background: #3b82f6;
+  opacity: 0.12;
+}
+
+/* Glass surfaces */
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.glass-strong {
+  background: var(--glass-strong);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.nav-pill {
+  background: rgba(23, 23, 23, 0.65);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: var(--radius-pill);
+}
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.35);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -151,39 +181,69 @@ h3 {
   }
 }
 
-/* Keyboard focus stays visible everywhere. Never remove without replacing. */
 :focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
 
-/*
- * Section reveal — used by <Reveal>. Baseline is visible if JS never runs
- * (progressive enhancement): we only hide when the class is present and
- * motion is allowed. Reduced-motion media query keeps everything opaque.
- */
+/* Scroll reveal (armed by <Reveal>) */
 .reveal {
   opacity: 1;
   transform: none;
+  filter: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .reveal:not(.reveal-visible) {
     opacity: 0;
-    transform: translateY(0.75rem);
+    transform: translateY(1.5rem);
+    filter: blur(6px);
   }
 
   .reveal.reveal-visible {
     opacity: 1;
     transform: translateY(0);
+    filter: blur(0);
     transition:
-      opacity 0.55s var(--ease-out-quart),
-      transform 0.55s var(--ease-out-quart);
+      opacity 0.9s var(--ease-cinematic),
+      transform 0.9s var(--ease-cinematic),
+      filter 0.9s var(--ease-cinematic);
+  }
+
+  .hero-cinematic {
+    animation: cinematicEntrance 3.2s var(--ease-cinematic) both;
+  }
+
+  @keyframes cinematicEntrance {
+    from {
+      opacity: 0;
+      transform: scale(1.12);
+      filter: blur(12px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+      filter: blur(0);
+    }
+  }
+
+  .hud-pulse {
+    animation: hudPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes hudPulse {
+    0%,
+    100% {
+      opacity: 0.45;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.15);
+    }
   }
 }
 
-/* Work row: thin indigo rule on the left when focused/hovered — the single
- * accent, not a second brand color. */
 .work-row {
   position: relative;
 }
@@ -192,12 +252,13 @@ h3 {
   content: "";
   position: absolute;
   left: 0;
-  top: 0;
-  bottom: 0;
+  top: 0.75rem;
+  bottom: 0.75rem;
   width: 2px;
+  border-radius: 999px;
   background: var(--primary);
   opacity: 0;
-  transition: opacity 0.2s var(--ease-out-quart);
+  transition: opacity 0.25s var(--ease-out-quart);
 }
 
 .work-row:hover::before,

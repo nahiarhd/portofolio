@@ -267,9 +267,9 @@ export function ChatPanel({
           aria-expanded={false}
           aria-haspopup="dialog"
           className={cn(
-            "fixed bottom-5 right-5 z-40 max-w-[min(100%-2.5rem,16rem)]",
-            "border border-border bg-card px-4 py-3 text-left text-sm font-medium shadow-sm",
-            "transition-colors hover:border-primary hover:text-primary",
+            "fixed bottom-5 right-5 z-50 max-w-[min(100%-2.5rem,16rem)]",
+            "glass-strong rounded-full px-5 py-3 text-left text-sm font-medium",
+            "transition-colors hover:border-primary/50 hover:text-primary",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
           )}
         >
@@ -285,7 +285,7 @@ export function ChatPanel({
           <button
             type="button"
             aria-label={copy.close}
-            className="absolute inset-0 bg-foreground/20"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={close}
           />
 
@@ -296,14 +296,17 @@ export function ChatPanel({
             aria-labelledby={titleId}
             className={cn(
               SURFACE.panelStrong,
-              "relative flex h-[min(85vh,36rem)] w-full flex-col sm:w-[min(100%,24rem)]",
+              "relative flex h-[min(85vh,36rem)] w-full flex-col overflow-hidden sm:w-[min(100%,24rem)]",
             )}
             onClick={(event) => event.stopPropagation()}
           >
             <header className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
-              <h2 id={titleId} className="text-sm font-semibold tracking-tight">
-                {copy.title}
-              </h2>
+              <div className="flex items-center gap-2">
+                <span className="hud-pulse size-1.5 rounded-full bg-primary" aria-hidden />
+                <h2 id={titleId} className="text-sm font-semibold tracking-tight">
+                  {copy.title}
+                </h2>
+              </div>
               <button
                 type="button"
                 data-chat-close
@@ -334,8 +337,8 @@ export function ChatPanel({
                           disabled={busy}
                           onClick={() => submitText(copy.suggestions[key])}
                           className={cn(
-                            "w-full border border-border bg-muted/30 px-3 py-2 text-left text-sm",
-                            "transition-colors hover:border-primary hover:bg-muted/50",
+                            "w-full rounded-xl border border-border bg-white/5 px-3 py-2.5 text-left text-sm",
+                            "transition-colors hover:border-primary/40 hover:bg-white/[0.07]",
                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                             "disabled:opacity-50",
                           )}
@@ -403,7 +406,7 @@ export function ChatPanel({
                   maxLength={2000}
                   autoComplete="off"
                   className={cn(
-                    "min-w-0 flex-1 border border-border bg-background px-3 py-2 text-sm",
+                    "min-w-0 flex-1 rounded-full border border-border bg-black/40 px-4 py-2 text-sm",
                     "placeholder:text-muted-foreground-faint",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     "disabled:opacity-50",

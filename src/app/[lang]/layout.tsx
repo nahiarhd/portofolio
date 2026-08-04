@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, IBM_Plex_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Inter, Space_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
@@ -15,48 +15,35 @@ import { getDictionary } from "./dictionaries";
 
 import "../globals.css";
 
-/**
- * Typed explicitly rather than with Next's global `LayoutProps` helper: those
- * globals are generated into `.next/types` by a build, and CI runs `typecheck`
- * before `build`. On a clean clone the generated types do not exist yet, so
- * depending on them makes the gate fail for a reason that has nothing to do
- * with the code.
- */
 type LangParams = { params: Promise<{ lang: string }> };
 
-/**
- * Archivo carries both display and body: a grotesque with enough width and
- * weight range to be set very large and very tight without needing a second
- * display face. IBM Plex Mono is structural, not ornamental — it is what the
- * eyebrow labels are set in, and those only ever hold real data.
- *
- * Weights match what the UI actually uses (regular / medium / semibold).
- * `display: "swap"` so text paints before the webfont arrives; a blocking font
- * is the cheapest way to lose the LCP budget. `next/font` subsets and preloads.
- */
-const archivo = Archivo({
-  variable: "--font-archivo",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["300", "400", "500", "600"],
   display: "swap",
   preload: true,
   adjustFontFallback: true,
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-plex-mono",
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
   preload: true,
   adjustFontFallback: true,
 });
 
-/**
- * The root layout lives under `[lang]` so `<html lang>` matches the locale
- * being rendered. Next supports a root layout inside a top-level dynamic
- * segment; see the internationalization guide in `next/dist/docs`.
- */
+const spaceMono = Space_Mono({
+  variable: "--font-space-mono",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+  preload: true,
+  adjustFontFallback: true,
+});
+
 export async function generateStaticParams() {
   return LOCALES.map((lang) => ({ lang }));
 }
@@ -72,7 +59,6 @@ export async function generateMetadata({ params }: LangParams): Promise<Metadata
       title: profile.name,
       description: profile.tagline[lang],
     }),
-    // Case-study pages supply their own title segment; home uses the default.
     title: titleTemplate,
     description: profile.tagline[lang],
   };
@@ -83,8 +69,6 @@ export default async function RootLayout({
   params,
 }: LangParams & { children: ReactNode }) {
   const { lang } = await params;
-  // The proxy prefixes every request with a supported locale, so this is a
-  // defence in depth rather than the primary guard.
   if (!isLocale(lang)) notFound();
 
   const dictionary = await getDictionary(lang);
@@ -92,23 +76,19 @@ export default async function RootLayout({
   return (
     <html
       lang={lang}
-      className={`${archivo.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${bricolage.variable} ${spaceMono.variable} dark h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col font-sans">
-        {/*
-          Shared chat ↔ graph activity. No-ops when the graph is missing or
-          WebGL is off; chat does not depend on the scene.
-        */}
+      <body className="relative flex min-h-full flex-col bg-background font-sans text-foreground">
+        <div className="bg-grid-lines" aria-hidden />
+        <div className="ambient-glow ambient-glow--emerald" aria-hidden />
+        <div className="ambient-glow ambient-glow--blue" aria-hidden />
+        <div className="bg-grain" aria-hidden />
+
         <GraphActivityProvider>
-          {/*
-            First focusable element on the page. Visually hidden until focused,
-            so keyboard users can jump the header instead of tabbing the nav on
-            every page.
-          */}
           <a
             href="#content"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:text-primary-foreground"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:text-primary-foreground"
           >
             {dictionary.nav.skipToContent}
           </a>
@@ -123,10 +103,6 @@ export default async function RootLayout({
 
           <SiteFooter rights={dictionary.footer.rights} />
 
-          {/*
-            Chat is idle-loaded (see ChatMount) so first paint never waits on
-            @ai-sdk/react. Closed by default — the site works fully without it.
-          */}
           <ChatMount lang={lang} copy={dictionary.chat} work={dictionary.work} />
         </GraphActivityProvider>
       </body>

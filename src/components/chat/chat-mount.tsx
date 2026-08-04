@@ -52,9 +52,9 @@ export function ChatMount({ lang, copy, work }: Props) {
       type="button"
       onClick={() => setLoad(true)}
       className={cn(
-        "fixed bottom-5 right-5 z-40 max-w-[min(100%-2.5rem,16rem)]",
-        "border border-border bg-card px-4 py-3 text-left text-sm font-medium shadow-sm",
-        "transition-colors hover:border-primary hover:text-primary",
+        "fixed bottom-5 right-5 z-50 max-w-[min(100%-2.5rem,16rem)]",
+        "glass-strong rounded-full px-5 py-3 text-left text-sm font-medium",
+        "transition-colors hover:border-primary/50 hover:text-primary",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
       )}
     >

@@ -1,15 +1,12 @@
 import Link from "next/link";
 
 import { profile } from "@/content/profile";
-import { CONTAINER } from "@/lib/design";
+import { CONTAINER, TEXT } from "@/lib/design";
 import type { Locale } from "@/lib/locale";
+import { cn } from "@/lib/utils";
 
 import { LocaleSwitch } from "./locale-switch";
 
-/**
- * Section links are absolute (`/en#work`) rather than bare fragments so they
- * also work from a case study page, where `#work` would point at nothing.
- */
 const SECTIONS = ["work", "about", "contact"] as const;
 
 export function SiteHeader({
@@ -21,43 +18,48 @@ export function SiteHeader({
   nav: Record<(typeof SECTIONS)[number], string>;
   localeSwitch: { label: string } & Record<Locale, string>;
 }) {
+  const first = profile.name.split(" ")[0] ?? profile.name;
+
   return (
-    <header className="border-b border-border">
-      {/*
-        Wraps rather than collapsing into a hamburger: three anchor links do not
-        justify a menu, and a wrapped row keeps every destination reachable
-        without JavaScript. On the 393px reference device the name and locale
-        sit on the first line and the nav falls to the second; from `sm` up it
-        is a single 56px row. Each control is rendered once — duplicating the
-        nav behind breakpoints is how two copies drift apart.
-      */}
-      <div
-        className={`${CONTAINER} flex flex-wrap items-center gap-x-6 gap-y-3 py-3 sm:h-14 sm:flex-nowrap sm:py-0`}
-      >
-        <Link
-          href={`/${lang}`}
-          className="mr-auto whitespace-nowrap text-sm font-medium tracking-tight transition-colors hover:text-primary"
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-50 pt-4 sm:pt-5">
+      <div className={`${CONTAINER} flex justify-center`}>
+        <div
+          className={cn(
+            "nav-pill pointer-events-auto flex max-w-full flex-wrap items-center gap-x-1 gap-y-2 px-2 py-2 sm:gap-x-2 sm:px-3",
+          )}
         >
-          {profile.name}
-        </Link>
+          <Link
+            href={`/${lang}`}
+            className="rounded-full px-3 py-1.5 text-sm font-medium tracking-tight transition-opacity hover:opacity-80"
+          >
+            <span className="text-foreground">{first}</span>
+            <span className={cn("ml-1.5 hidden sm:inline", TEXT.faint)}>· SYS</span>
+          </Link>
 
-        <nav className="order-last flex w-full items-center gap-5 sm:order-none sm:w-auto">
-          {SECTIONS.map((section) => (
-            <Link
-              key={section}
-              href={`/${lang}#${section}`}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {nav[section]}
-            </Link>
-          ))}
-        </nav>
+          <nav className="flex items-center gap-0.5" aria-label="Primary">
+            {SECTIONS.map((section) => (
+              <Link
+                key={section}
+                href={`/${lang}#${section}`}
+                className={cn(
+                  "rounded-full px-3 py-1.5 text-sm transition-colors",
+                  TEXT.subtle,
+                  "hover:bg-white/5 hover:text-foreground",
+                )}
+              >
+                {nav[section]}
+              </Link>
+            ))}
+          </nav>
 
-        <LocaleSwitch
-          current={lang}
-          label={localeSwitch.label}
-          names={{ en: localeSwitch.en, id: localeSwitch.id }}
-        />
+          <div className="mx-1 hidden h-4 w-px bg-white/10 sm:block" aria-hidden />
+
+          <LocaleSwitch
+            current={lang}
+            label={localeSwitch.label}
+            names={{ en: localeSwitch.en, id: localeSwitch.id }}
+          />
+        </div>
       </div>
     </header>
   );
