@@ -34,18 +34,15 @@ export function WorkIndex({
     <section id="work" className={`${CONTAINER} scroll-mt-28 border-t border-border/60 py-24 sm:py-32`}>
       <Reveal>
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className={EYEBROW}>{'// missions'}</p>
-            <h2 className="mt-3 font-display text-title font-semibold tracking-tight">
-              {heading}
-            </h2>
-          </div>
+          <h2 className="font-display text-title font-semibold tracking-tight">
+            {heading}
+          </h2>
           <p className={EYEBROW}>{counts}</p>
         </div>
       </Reveal>
 
       <ul className="mt-12 space-y-3">
-        {ordered.map((project, index) => (
+        {ordered.map((project) => (
           <li key={project.slug}>
             <Reveal>
               <Link
@@ -57,9 +54,6 @@ export function WorkIndex({
                 )}
               >
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                  <span className={cn(EYEBROW, TEXT.faint)}>
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
                   <span className={EYEBROW}>
                     {dictionary.pillars[project.pillar]} ·{" "}
                     {formatMonth(project.started, lang)}

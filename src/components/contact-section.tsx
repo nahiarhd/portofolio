@@ -16,8 +16,7 @@ export function ContactSection({ heading, body }: { heading: string; body: strin
             className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full bg-primary/20 blur-3xl"
             aria-hidden
           />
-          <p className={EYEBROW}>{'// uplink'}</p>
-          <h2 className="mt-3 font-display text-title font-semibold tracking-tight">
+          <h2 className="font-display text-title font-semibold tracking-tight">
             {heading}
           </h2>
           <p className={cn("mt-5 max-w-[48ch] text-lead", TEXT.subtle)}>{body}</p>

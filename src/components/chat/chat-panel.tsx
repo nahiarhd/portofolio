@@ -301,12 +301,9 @@ export function ChatPanel({
             onClick={(event) => event.stopPropagation()}
           >
             <header className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
-              <div className="flex items-center gap-2">
-                <span className="hud-pulse size-1.5 rounded-full bg-primary" aria-hidden />
-                <h2 id={titleId} className="text-sm font-semibold tracking-tight">
-                  {copy.title}
-                </h2>
-              </div>
+              <h2 id={titleId} className="text-sm font-semibold tracking-tight">
+                {copy.title}
+              </h2>
               <button
                 type="button"
                 data-chat-close

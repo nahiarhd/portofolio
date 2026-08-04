@@ -57,7 +57,6 @@ export default async function CaseStudyPage({ params }: Params) {
 
       <header className="mt-10 max-w-[42rem]">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <span className="hud-pulse size-1.5 rounded-full bg-primary" aria-hidden />
           <span className={EYEBROW}>
             {copy.pillars[project.pillar]} · {formatMonth(project.started, lang)}
           </span>
@@ -83,9 +82,7 @@ export default async function CaseStudyPage({ params }: Params) {
         <div className="space-y-4">
           {sections.map((section, index) => (
             <section key={section.label} className={cn(SURFACE.panel, "p-6 sm:p-8")}>
-              <p className={cn(EYEBROW, "text-primary/90")}>
-                {String(index + 1).padStart(2, "0")} · {section.label}
-              </p>
+              <p className={EYEBROW}>{section.label}</p>
               <p className="mt-4 max-w-[62ch] text-lead leading-relaxed">{section.body}</p>
             </section>
           ))}
@@ -93,7 +90,7 @@ export default async function CaseStudyPage({ params }: Params) {
 
         <aside className="lg:sticky lg:top-28 lg:self-start">
           <div className={cn(SURFACE.panelStrong, "p-5")}>
-            <h2 className={cn(EYEBROW, "mb-4 text-primary/90")}>{copy.stack}</h2>
+            <h2 className={cn(EYEBROW, "mb-4")}>{copy.stack}</h2>
             <ul className="flex flex-col gap-2.5">
               {project.stack.map((item) => (
                 <li

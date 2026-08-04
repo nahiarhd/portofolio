@@ -1,5 +1,5 @@
 import { profile } from "@/content/profile";
-import { CONTAINER, EYEBROW, TEXT } from "@/lib/design";
+import { CONTAINER, TEXT } from "@/lib/design";
 import { cn } from "@/lib/utils";
 
 export function SiteFooter({ rights }: { rights: string }) {
@@ -8,10 +8,7 @@ export function SiteFooter({ rights }: { rights: string }) {
       <div
         className={`${CONTAINER} flex flex-col gap-6 py-12 sm:flex-row sm:items-end sm:justify-between`}
       >
-        <div>
-          <p className={EYEBROW}>{'// end of line'}</p>
-          <p className={cn("mt-3 max-w-sm text-sm", TEXT.faint)}>© {rights}</p>
-        </div>
+        <p className={cn("max-w-sm text-sm", TEXT.faint)}>© {rights}</p>
 
         <div className="flex flex-wrap items-center gap-5">
           <a

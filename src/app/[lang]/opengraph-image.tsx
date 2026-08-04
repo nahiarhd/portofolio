@@ -50,7 +50,7 @@ export default async function OpenGraphImage({
               background: "#10b981",
             }}
           />
-          {profile.location[lang]} · ACTIVE
+          {profile.location[lang]}
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>

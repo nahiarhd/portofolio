@@ -32,8 +32,7 @@ export function SiteHeader({
             href={`/${lang}`}
             className="rounded-full px-3 py-1.5 text-sm font-medium tracking-tight transition-opacity hover:opacity-80"
           >
-            <span className="text-foreground">{first}</span>
-            <span className={cn("ml-1.5 hidden sm:inline", TEXT.faint)}>· SYS</span>
+            {first}
           </Link>
 
           <nav className="flex items-center gap-0.5" aria-label="Primary">

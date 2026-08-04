@@ -22,8 +22,7 @@ export function AboutSection({
       className={`${CONTAINER} scroll-mt-28 border-t border-border/60 py-24 sm:py-32`}
     >
       <Reveal>
-        <p className={EYEBROW}>{'// telemetry'}</p>
-        <h2 className="mt-3 font-display text-title font-semibold tracking-tight">
+        <h2 className="font-display text-title font-semibold tracking-tight">
           {heading}
         </h2>
       </Reveal>
@@ -31,7 +30,7 @@ export function AboutSection({
       <div className="mt-12 grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <Reveal>
           <div className={cn(SURFACE.panel, "p-6 sm:p-8")}>
-            <h3 className={cn(EYEBROW, "mb-6 text-primary/90")}>{dictionary.experience}</h3>
+            <h3 className={cn(EYEBROW, "mb-6")}>{dictionary.experience}</h3>
             <ol className="space-y-10">
               {experience.map((entry) => (
                 <li key={`${entry.organization}-${entry.start}`}>
@@ -63,7 +62,7 @@ export function AboutSection({
         <div className="space-y-6">
           <Reveal>
             <div className={cn(SURFACE.panel, "p-6")}>
-              <h3 className={cn(EYEBROW, "mb-5 text-primary/90")}>{dictionary.education}</h3>
+              <h3 className={cn(EYEBROW, "mb-5")}>{dictionary.education}</h3>
               {education.map((entry) => (
                 <div key={entry.institution}>
                   <p className={cn("font-mono text-eyebrow", TEXT.faint)}>
@@ -78,9 +77,7 @@ export function AboutSection({
 
           <Reveal>
             <div className={cn(SURFACE.panel, "p-6")}>
-              <h3 className={cn(EYEBROW, "mb-5 text-primary/90")}>
-                {dictionary.certifications}
-              </h3>
+              <h3 className={cn(EYEBROW, "mb-5")}>{dictionary.certifications}</h3>
               <ul className={cn("space-y-2.5 text-sm", TEXT.subtle)}>
                 {certifications.map((certification) => (
                   <li key={certification} className="flex gap-3">
