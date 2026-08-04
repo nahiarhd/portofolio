@@ -284,10 +284,17 @@ EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
   - Production: https://portofolio-website-eta-ten.vercel.app
   - Env set: `LLM_*` + `NEXT_PUBLIC_SITE_URL` (production)
   - Smoke: home/work **200**, robots/sitemap **200**
-  - ⚠️ **`/api/chat` streams an error in production** while local works.
-    Route finds env (not 502); upstream call fails after stream start — likely
-    company LLM host rejects or blocks Vercel egress. Fix: allowlist Vercel IPs
-    / use a public OpenAI-compatible URL for prod, then re-test.
+  - ⚠️ **`/api/chat` fails in production: Cloudflare bot challenge (403).**
+    Verified in Vercel logs: `AI_APICallError: Forbidden`,
+    `cf-mitigated: challenge`, body is CF “Just a moment…” HTML — not a bad
+    API key. Local works (home IP not challenged). **Fix is on the LLM host
+    Cloudflare zone** (not more app code):
+    1. WAF / Security → skip Bot Fight / Managed Challenge for
+       `/api/proxy/v1/*` when `Authorization: Bearer …` is present, **or**
+    2. Allowlist Vercel serverless egress / create an API bypass token, **or**
+    3. Point production `LLM_BASE_URL` at a public OpenAI-compatible endpoint.
+    After CF is fixed, redeploy is not required (env already set) — just re-test
+    POST `/api/chat`.
   - ⏳ Custom domain + Speed Insights + rate-limit hammer in prod still open.
 
 **Checkpoint 5:** every spec Success Criterion measured · live on the domain

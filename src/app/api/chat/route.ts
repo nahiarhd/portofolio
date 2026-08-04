@@ -131,18 +131,64 @@ export async function POST(request: Request) {
       // Tool call + follow-up text (and maybe a second card) need more than one
       // step. Cap keeps a runaway loop from chewing tokens.
       stopWhen: isStepCount(5),
+      onError: ({ error }) => {
+        // Stream failures (e.g. upstream 403/HTML) never hit the outer catch.
+        console.error("[chat] stream", summarizeUpstreamError(error));
+      },
     });
 
     return createUIMessageStreamResponse({
-      stream: toUIMessageStream({ stream: result.stream }),
+      stream: toUIMessageStream({
+        stream: result.stream,
+        // Never stream raw AI_APICallError / Cloudflare HTML to the browser.
+        onError: () => "The assistant is unavailable right now.",
+      }),
     });
   } catch (error) {
     // The message may name the upstream host, so it is logged rather than
     // returned. The client gets something it can render without leaking config.
-    console.error("[chat]", error);
+    console.error("[chat]", summarizeUpstreamError(error));
     return Response.json(
       { error: "The assistant is unavailable right now." },
       { status: 502 },
     );
+  }
+}
+
+/**
+ * Log shape for operators — status + whether Cloudflare challenged us — without
+ * dumping challenge HTML or keys into the log stream.
+ */
+function summarizeUpstreamError(error: unknown): Record<string, unknown> {
+  if (!error || typeof error !== "object") {
+    return { message: String(error) };
+  }
+  const err = error as {
+    name?: string;
+    message?: string;
+    statusCode?: number;
+    url?: string;
+    responseHeaders?: Record<string, string>;
+  };
+  const headers = err.responseHeaders ?? {};
+  const cfChallenge =
+    headers["cf-mitigated"] === "challenge" ||
+    /just a moment/i.test(String((error as { responseBody?: string }).responseBody ?? ""));
+
+  return {
+    name: err.name,
+    message: err.message,
+    statusCode: err.statusCode,
+    // Host only — helps confirm which upstream blocked us.
+    host: err.url ? safeHost(err.url) : undefined,
+    cloudflareChallenge: cfChallenge || undefined,
+  };
+}
+
+function safeHost(url: string): string | undefined {
+  try {
+    return new URL(url).host;
+  } catch {
+    return undefined;
   }
 }
