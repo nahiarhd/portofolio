@@ -24,6 +24,7 @@ import {
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { Button } from "@/components/ui/button";
+import { useGraphActivity } from "@/components/graph/activity";
 import { SURFACE, TEXT } from "@/lib/design";
 import type { ShowProjectOutput } from "@/lib/chat-tools";
 import type { Locale } from "@/lib/locale";
@@ -46,6 +47,24 @@ function isShowProjectOutput(value: unknown): value is ShowProjectOutput {
     typeof record.title === "string" &&
     typeof record.summary === "string"
   );
+}
+
+/** Project slugs the model has already shown cards for — drives graph highlights. */
+function highlightSlugsFromMessages(messages: UIMessage[]): string[] {
+  const slugs: string[] = [];
+  const seen = new Set<string>();
+  for (const message of messages) {
+    if (message.role !== "assistant") continue;
+    for (const part of message.parts) {
+      if (part.type !== "tool-showProject") continue;
+      if (part.state !== "output-available") continue;
+      if (!isShowProjectOutput(part.output) || !part.output.ok) continue;
+      if (seen.has(part.output.slug)) continue;
+      seen.add(part.output.slug);
+      slugs.push(part.output.slug);
+    }
+  }
+  return slugs;
 }
 
 function renderParts(
@@ -179,6 +198,8 @@ export function ChatPanel({
   const close = useCallback(() => setOpen(false), []);
   useFocusTrap(open, panelRef, close);
 
+  const { setStreaming, setHighlightSlugs } = useGraphActivity();
+
   const transport = useMemo(
     () =>
       new DefaultChatTransport({
@@ -194,6 +215,17 @@ export function ChatPanel({
 
   const busy = status === "submitted" || status === "streaming";
   const errText = errorCopy(error, copy);
+
+  // Graph activity: pulse while the bot works; light project nodes for cards.
+  // No-ops when the graph is absent (case study pages) or WebGL is off.
+  useEffect(() => {
+    setStreaming(busy);
+    return () => setStreaming(false);
+  }, [busy, setStreaming]);
+
+  useEffect(() => {
+    setHighlightSlugs(highlightSlugsFromMessages(messages));
+  }, [messages, setHighlightSlugs]);
 
   useEffect(() => {
     if (!open) return;

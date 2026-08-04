@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { ChatPanel } from "@/components/chat/chat-panel";
+import { GraphActivityProvider } from "@/components/graph/activity";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { profile } from "@/content/profile";
@@ -82,33 +83,39 @@ export default async function RootLayout({
     >
       <body className="flex min-h-full flex-col font-sans">
         {/*
-          First focusable element on the page. Visually hidden until focused,
-          so keyboard users can jump the header instead of tabbing the nav on
-          every page.
+          Shared chat ↔ graph activity. No-ops when the graph is missing or
+          WebGL is off; chat does not depend on the scene.
         */}
-        <a
-          href="#content"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:text-primary-foreground"
-        >
-          {dictionary.nav.skipToContent}
-        </a>
+        <GraphActivityProvider>
+          {/*
+            First focusable element on the page. Visually hidden until focused,
+            so keyboard users can jump the header instead of tabbing the nav on
+            every page.
+          */}
+          <a
+            href="#content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:text-primary-foreground"
+          >
+            {dictionary.nav.skipToContent}
+          </a>
 
-        <SiteHeader
-          lang={lang}
-          nav={dictionary.nav}
-          localeSwitch={dictionary.localeSwitch}
-        />
+          <SiteHeader
+            lang={lang}
+            nav={dictionary.nav}
+            localeSwitch={dictionary.localeSwitch}
+          />
 
-        {children}
+          {children}
 
-        <SiteFooter rights={dictionary.footer.rights} />
+          <SiteFooter rights={dictionary.footer.rights} />
 
-        {/*
-          Client island. Closed by default — pages work fully without opening
-          it. Locale + copy come from the server dictionary so the panel never
-          hardcodes English.
-        */}
-        <ChatPanel lang={lang} copy={dictionary.chat} work={dictionary.work} />
+          {/*
+            Client island. Closed by default — pages work fully without opening
+            it. Locale + copy come from the server dictionary so the panel never
+            hardcodes English.
+          */}
+          <ChatPanel lang={lang} copy={dictionary.chat} work={dictionary.work} />
+        </GraphActivityProvider>
       </body>
     </html>
   );

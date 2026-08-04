@@ -226,7 +226,15 @@ EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
   - ⏳ **On-device fps** still needs a Redmi Note 11 check (S2 was 58fps on a
     near-empty page; do not spend the headroom). Cannot measure from the
     in-app browser pane.
-- [ ] **T14** Graph ↔ chat wiring — pulse while streaming, highlight returned project
+- [x] **T14** Graph ↔ chat wiring — **code done 2026-08-04; on-device fps during chat NOT re-measured**
+  - `GraphActivityProvider` in layout bridges chat → graph without coupling modules.
+  - Streaming (`submitted`/`streaming`) → edge opacity pulse + brightness wave +
+    slightly faster drift.
+  - `showProject` outputs → stable slug→node index (`project-nodes.ts`) lights
+    those instances in accent colour (scale 2.2).
+  - Chat still works with graph absent / WebGL off / reduced-motion still (context
+    setters are no-ops or the still simply ignores them).
+  - ⏳ On-device fps during an active chat still needs Redmi Note 11 check.
 
 **Checkpoint 4:** ask → graph reacts → card → click → case study · fps holds · **human review**
 
