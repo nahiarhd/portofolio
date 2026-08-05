@@ -1,16 +1,20 @@
+import { GraphStill } from "@/components/graph-still";
 import { profile } from "@/content/profile";
 import { BUTTON, CONTAINER, TEXT } from "@/lib/design";
 import type { Locale } from "@/lib/locale";
 import { mediaDropHint, resolvePublicMedia } from "@/lib/public-media";
 import { cn } from "@/lib/utils";
 
-import { HeroGraph } from "./graph/hero-graph";
 import { MediaFrame } from "./media-frame";
 
 /**
  * Editorial hero for One Object Portfolio.
- * The immersive setpiece is the shelf — not a full-bleed graph stage here.
- * A thin signal strip stays so chat activity can still light the mesh.
+ * Immersive 3D lives on #shelf only.
+ *
+ * Signal strip uses GraphStill (SVG), not R3F Canvas: three@0.185 deprecates
+ * THREE.Clock for THREE.Timer, but @react-three/fiber@9.7.0 still constructs
+ * Clock on every Canvas mount (upstream: pmndrs/react-three-fiber#3741).
+ * Sources: three Clock.js @deprecated r183; threejs.org docs Timer.
  */
 export function Hero({ lang }: { lang: Locale }) {
   const portraitSrc = resolvePublicMedia(profile.portrait.src);
@@ -61,7 +65,6 @@ export function Hero({ lang }: { lang: Locale }) {
             sizes="200px"
             className={cn(
               "rounded-none border-0",
-              // Stub SVG gets monochrome treatment; real photos keep natural tone.
               !isPhoto && "grayscale contrast-[1.05] saturate-0",
             )}
           />
@@ -72,14 +75,14 @@ export function Hero({ lang }: { lang: Locale }) {
         </div>
       </div>
 
-      {/* Thin signal strip only — full stage lives on #shelf. Chat can still pulse this. */}
+      {/* Static signal mark — not a live R3F canvas (avoids Clock deprecation noise). */}
       <div
         className="hero-cinematic relative mt-10 overflow-hidden rounded-xl border border-border bg-surface-1 text-foreground"
         style={{ animationDelay: "0.3s" }}
         aria-hidden
       >
         <div className="h-16 w-full opacity-70 sm:h-20">
-          <HeroGraph className="h-full w-full" />
+          <GraphStill className="h-full w-full" />
         </div>
       </div>
     </section>
