@@ -681,6 +681,7 @@ export function ShelfExperience({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const openChipRef = useRef<HTMLButtonElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
   const chipScaleRef = useRef(new Spring(1, 190, 18));
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [currentState, setCurrentState] = useState<ShelfState>("SHELF");
@@ -696,6 +697,18 @@ export function ShelfExperience({
     stateRef.current = currentState;
     pageProgressRef.current = pageProgress;
   }, [selectedIndex, currentState, pageProgress]);
+
+  // Focus management only on transitions (not initial mount).
+  const prevShelfState = useRef(currentState);
+  useEffect(() => {
+    const prev = prevShelfState.current;
+    prevShelfState.current = currentState;
+    if (prev === "SHELF" && currentState !== "SHELF") {
+      closeBtnRef.current?.focus({ preventScroll: true });
+    } else if (prev !== "SHELF" && currentState === "SHELF") {
+      openChipRef.current?.focus({ preventScroll: true });
+    }
+  }, [currentState]);
 
   // Spring-scale the Open chip when a book is under the pointer (example/books pill feel).
   useEffect(() => {
@@ -1260,6 +1273,11 @@ export function ShelfExperience({
   const volumeIndex = String(selectedIndex + 1).padStart(2, "0");
   const volumeTotal = String(books.length).padStart(2, "0");
   const detailOpen = currentState !== "SHELF";
+  const pageCount = selectedBook.pages.length;
+  const pageLabel =
+    currentState === "READING"
+      ? `${Math.min(Math.floor(pageProgress) + 1, pageCount)} / ${pageCount}`
+      : null;
 
   return (
     <div
@@ -1283,22 +1301,22 @@ export function ShelfExperience({
         aria-hidden
       />
 
-      {/* Books-style hero word: exits when detail opens so the volume owns the stage. */}
+      {/* Books-style hero word — smaller on mobile so chrome stays usable. */}
       <div
         className={cn(
-          "pointer-events-none absolute inset-x-0 top-[12vh] z-[2] flex justify-center transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:top-[14vh]",
-          detailOpen ? "translate-y-[-1.5rem] opacity-0" : "opacity-100",
+          "pointer-events-none absolute inset-x-0 top-[9vh] z-[2] flex justify-center transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:top-[14vh]",
+          detailOpen ? "-translate-y-6 opacity-0" : "opacity-100",
         )}
         aria-hidden
       >
-        <p className="font-display text-[clamp(3.5rem,14vw,9rem)] font-bold leading-none tracking-tight text-primary/90">
+        <p className="font-display text-[clamp(2.75rem,12vw,9rem)] font-bold leading-none tracking-tight text-primary/90">
           Shelf
         </p>
       </div>
 
       <header
         className={cn(
-          "pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-6 px-5 pt-20 transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-8 sm:pt-24",
+          "pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-6 px-4 pt-[max(4.5rem,env(safe-area-inset-top))] transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-8 sm:pt-24",
           detailOpen && "opacity-0 -translate-y-3 sm:opacity-50 sm:translate-y-0",
         )}
       >
@@ -1306,10 +1324,10 @@ export function ShelfExperience({
           <p className="font-mono text-[0.58rem] uppercase tracking-[0.16em] text-muted-foreground">
             Editorial library
           </p>
-          <h2 className="mt-1 font-display text-lg font-medium tracking-tight text-foreground sm:text-xl">
+          <h2 className="mt-1 font-display text-base font-medium tracking-tight text-foreground sm:text-xl">
             The Complete Shelf
             <span className="ml-2 align-middle border border-border bg-surface-2/80 px-2 py-0.5 font-mono text-[0.6rem] font-normal uppercase tracking-[0.14em] text-muted-foreground">
-              {books.length} volumes
+              {books.length}
             </span>
           </h2>
         </div>
@@ -1320,25 +1338,25 @@ export function ShelfExperience({
         </div>
       </header>
 
-      {/* Shelf chrome: volume strip + foil Open chip */}
+      {/* Shelf chrome: mobile stacks title → controls; desktop 3-col. */}
       {currentState === "SHELF" && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 pb-5 sm:px-8 sm:pb-7">
-          <div className="pointer-events-auto mx-auto grid max-w-5xl grid-cols-1 items-end gap-4 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-6">
-            <div className="flex min-w-0 items-start gap-3">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:px-8 sm:pb-7">
+          <div className="pointer-events-auto mx-auto flex max-w-5xl flex-col gap-3 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:items-end sm:gap-6">
+            <div className="flex min-w-0 items-start gap-3 order-1">
               <span className="pt-1.5 font-mono text-[0.58rem] tabular-nums tracking-[0.12em] text-muted-foreground">
                 {volumeIndex} / {volumeTotal}
               </span>
               <div className="min-w-0">
-                <p className="truncate font-display text-2xl tracking-tight text-foreground sm:text-3xl sm:leading-none">
+                <p className="truncate font-display text-xl tracking-tight text-foreground sm:text-3xl sm:leading-none">
                   {selectedBook.title}
                 </p>
-                <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground sm:text-sm">
+                <p className="mt-1 line-clamp-1 text-xs leading-relaxed text-muted-foreground sm:line-clamp-2 sm:text-sm">
                   {selectedBook.subtitle}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center justify-center gap-2 sm:justify-self-center">
+            <div className="order-2 flex items-center justify-center gap-2 sm:justify-self-center">
               <button type="button" onClick={handlePrev} className={FOIL_ICON} aria-label="Previous volume">
                 <span aria-hidden>{"←"}</span>
               </button>
@@ -1348,8 +1366,9 @@ export function ShelfExperience({
                 onClick={handleInspect}
                 className={cn(
                   FOIL_CHIP,
-                  "origin-center will-change-transform",
-                  hoverBook && "border-primary bg-primary text-primary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_10px_32px_rgba(124,58,237,0.35)]",
+                  "min-h-11 origin-center will-change-transform px-7",
+                  hoverBook &&
+                    "border-primary bg-primary text-primary-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_10px_32px_rgba(124,58,237,0.35)]",
                 )}
               >
                 Open
@@ -1359,8 +1378,11 @@ export function ShelfExperience({
               </button>
             </div>
 
-            <nav className="flex flex-col items-start gap-2 sm:items-end" aria-label="Volume index">
-              <div className="flex items-center gap-1" role="tablist">
+            <nav
+              className="order-3 flex items-center justify-between gap-3 sm:flex-col sm:items-end sm:gap-2"
+              aria-label="Volume index"
+            >
+              <div className="flex max-w-full items-center gap-0.5 overflow-x-auto" role="tablist">
                 {books.map((book, idx) => (
                   <button
                     key={book.id}
@@ -1369,7 +1391,7 @@ export function ShelfExperience({
                     aria-selected={idx === selectedIndex}
                     aria-label={`Volume ${idx + 1}: ${book.title}`}
                     onClick={() => setSelectedIndex(idx)}
-                    className="flex h-7 w-6 items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    className="flex h-9 w-7 shrink-0 items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     <span
                       className={cn(
@@ -1380,116 +1402,140 @@ export function ShelfExperience({
                   </button>
                 ))}
               </div>
-              <p className="font-mono text-[0.53rem] uppercase tracking-[0.14em] text-primary/60">
-                Wheel - arrows - click book
+              <p className="hidden font-mono text-[0.53rem] uppercase tracking-[0.14em] text-primary/60 sm:block">
+                Wheel - arrows - click
               </p>
             </nav>
           </div>
         </div>
       )}
 
-      {/* Detail: desktop right rail, mobile bottom sheet + staggered reveal */}
+      {/* Detail: mobile bottom sheet (handle + sticky actions); desktop right rail. */}
       {detailOpen && (
         <aside
           className={cn(
-            "pointer-events-auto absolute z-10 flex max-h-[min(72vh,36rem)] flex-col overflow-y-auto border border-border/80 bg-surface-1/90 shadow-[0_24px_60px_rgba(0,0,0,0.55)] backdrop-blur-md",
-            // Mobile: bottom sheet
-            "inset-x-3 bottom-3 rounded-2xl p-5",
-            // Desktop: right panel
-            "sm:inset-x-auto sm:bottom-auto sm:right-8 sm:top-28 sm:w-[min(34vw,26rem)] sm:rounded-2xl sm:p-6",
+            "shelf-detail-sheet pointer-events-auto absolute z-20 flex flex-col border border-border/80 bg-surface-1/95 shadow-[0_24px_60px_rgba(0,0,0,0.55)] backdrop-blur-md",
+            // Mobile bottom sheet — leave ~half viewport for the book
+            "inset-x-0 bottom-0 max-h-[min(52dvh,26rem)] rounded-t-2xl border-b-0",
+            "sm:inset-x-auto sm:bottom-auto sm:right-8 sm:top-28 sm:max-h-[min(72vh,36rem)] sm:w-[min(34vw,26rem)] sm:rounded-2xl sm:border-b",
           )}
           aria-live="polite"
           role="dialog"
+          aria-modal="true"
           aria-label={selectedBook.title}
         >
-          <div
-            className="shelf-detail-stagger flex items-start justify-between gap-3"
-            style={{ animationDelay: "0.05s" }}
-          >
-            <p className="font-mono text-[0.58rem] uppercase tracking-[0.16em] text-muted-foreground">
-              {selectedBook.number}
-            </p>
-            <button
-              type="button"
-              onClick={handleReturn}
-              className={FOIL_ICON}
-              aria-label="Return to shelf"
-            >
-              ×
-            </button>
+          <div className="flex justify-center pt-2 sm:hidden" aria-hidden>
+            <span className="h-1 w-10 rounded-full bg-white/20" />
           </div>
-          <h3
-            className="shelf-detail-stagger mt-2 font-display text-3xl font-medium leading-[0.95] tracking-tight text-primary sm:text-4xl md:text-5xl"
-            style={{ animationDelay: "0.12s" }}
-          >
-            {selectedBook.title}
-          </h3>
-          <p
-            className="shelf-detail-stagger mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base"
-            style={{ animationDelay: "0.2s" }}
-          >
-            {selectedBook.description}
-          </p>
 
-          <dl
-            className="shelf-detail-stagger mt-6 grid grid-cols-2 gap-x-5 gap-y-4 border-t border-border pt-5"
-            style={{ animationDelay: "0.28s" }}
-          >
-            {(
-              [
-                ["Binding", selectedBook.binding],
-                ["Stack", selectedBook.paper],
-                ["Extent", selectedBook.extent],
-                ["Pillar", selectedBook.motif],
-              ] as const
-            ).map(([label, value]) => (
-              <div key={label}>
-                <dt className="font-mono text-[0.55rem] uppercase tracking-[0.14em] text-primary/65">
-                  {label}
-                </dt>
-                <dd className="mt-1 text-xs leading-snug text-foreground">{value}</dd>
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 sm:p-6 sm:pb-6">
+            <div
+              className="shelf-detail-stagger flex shrink-0 items-start justify-between gap-3"
+              style={{ animationDelay: "0.05s" }}
+            >
+              <div className="min-w-0">
+                <p className="font-mono text-[0.58rem] uppercase tracking-[0.16em] text-muted-foreground">
+                  {selectedBook.number}
+                  {pageLabel ? (
+                    <span className="text-primary/70"> · page {pageLabel}</span>
+                  ) : null}
+                </p>
               </div>
-            ))}
-          </dl>
+              <button
+                ref={closeBtnRef}
+                type="button"
+                onClick={handleReturn}
+                className={cn(FOIL_ICON, "h-11 w-11 shrink-0")}
+                aria-label="Return to shelf"
+              >
+                ×
+              </button>
+            </div>
 
-          <div
-            className="shelf-detail-stagger mt-6 flex flex-wrap items-center gap-2 border-t border-border pt-5"
-            style={{ animationDelay: "0.34s" }}
-          >
-            <Link
-              href={`/${lang}/work/${selectedBook.slug}`}
-              className={cn(FOIL_CHIP, "bg-primary text-primary-foreground border-primary")}
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-0.5">
+              <h3
+                className="shelf-detail-stagger mt-2 font-display text-2xl font-medium leading-[0.98] tracking-tight text-primary sm:text-4xl md:text-5xl"
+                style={{ animationDelay: "0.12s" }}
+              >
+                {selectedBook.title}
+              </h3>
+              <p
+                className="shelf-detail-stagger mt-3 text-sm leading-relaxed text-muted-foreground sm:mt-4 sm:text-base"
+                style={{ animationDelay: "0.2s" }}
+              >
+                {selectedBook.description}
+              </p>
+
+              <dl
+                className="shelf-detail-stagger mt-5 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-border pt-4 sm:mt-6 sm:gap-y-4 sm:pt-5"
+                style={{ animationDelay: "0.28s" }}
+              >
+                {(
+                  [
+                    ["Binding", selectedBook.binding],
+                    ["Stack", selectedBook.paper],
+                    ["Extent", selectedBook.extent],
+                    ["Pillar", selectedBook.motif],
+                  ] as const
+                ).map(([label, value]) => (
+                  <div key={label}>
+                    <dt className="font-mono text-[0.55rem] uppercase tracking-[0.14em] text-primary/65">
+                      {label}
+                    </dt>
+                    <dd className="mt-1 text-xs leading-snug text-foreground">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+
+              <p
+                className="shelf-detail-stagger mt-4 hidden font-mono text-[0.53rem] uppercase tracking-[0.12em] text-primary/55 sm:block"
+                style={{ animationDelay: "0.4s" }}
+              >
+                Drag to orbit · Esc returns
+              </p>
+            </div>
+
+            {/* Sticky actions — always visible above the home indicator */}
+            <div
+              className="shelf-detail-stagger mt-4 flex shrink-0 flex-wrap items-center gap-2 border-t border-border pt-4"
+              style={{ animationDelay: "0.34s" }}
             >
-              {readLabel}
-            </Link>
-            <button type="button" onClick={handleToggleOpen} className={FOIL_CHIP}>
-              {currentState === "READING" ? "Close book" : "Open book"}
-            </button>
-            {currentState === "READING" && (
-              <>
-                <button
-                  type="button"
-                  onClick={handlePrevPage}
-                  className="rounded-full border border-border px-4 py-2 font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
-                >
-                  Prev page
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNextPage}
-                  className="rounded-full border border-border px-4 py-2 font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
-                >
-                  Next page
-                </button>
-              </>
-            )}
+              <Link
+                href={`/${lang}/work/${selectedBook.slug}`}
+                className={cn(
+                  FOIL_CHIP,
+                  "min-h-11 bg-primary text-primary-foreground border-primary",
+                )}
+              >
+                {readLabel}
+              </Link>
+              <button
+                type="button"
+                onClick={handleToggleOpen}
+                className={cn(FOIL_CHIP, "min-h-11")}
+              >
+                {currentState === "READING" ? "Close book" : "Open book"}
+              </button>
+              {currentState === "READING" && (
+                <>
+                  <button
+                    type="button"
+                    onClick={handlePrevPage}
+                    className="inline-flex min-h-11 items-center rounded-full border border-border px-4 font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+                  >
+                    Prev
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleNextPage}
+                    className="inline-flex min-h-11 items-center rounded-full border border-border px-4 font-mono text-[0.6rem] uppercase tracking-[0.12em] text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+                  >
+                    Next
+                  </button>
+                </>
+              )}
+            </div>
           </div>
-          <p
-            className="shelf-detail-stagger mt-4 font-mono text-[0.53rem] uppercase tracking-[0.12em] text-primary/55"
-            style={{ animationDelay: "0.4s" }}
-          >
-            Drag to orbit - Esc returns to shelf
-          </p>
         </aside>
       )}
     </div>
