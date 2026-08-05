@@ -95,6 +95,9 @@ type BookUserData = {
   pageBlock: THREE.Mesh;
   disposables: THREE.Object3D[];
   springs: BookSprings;
+  /** Per-book idle phase for ambient bob (books demo life). */
+  phase: number;
+  contactShadow: THREE.Mesh;
 };
 
 // BoxGeometry face order: +x, -x, +y, -y, +z, -z
@@ -613,6 +616,35 @@ function buildBook(
     cover: new Spring(0, 90, 12),
   };
 
+  // Soft contact blob under each volume (books demo ground presence).
+  const shadowCanvas = mkCanvas(128, 128);
+  const sctx = shadowCanvas.getContext("2d");
+  if (sctx) {
+    const g = sctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    g.addColorStop(0, "rgba(0,0,0,0.55)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    sctx.fillStyle = g;
+    sctx.fillRect(0, 0, 128, 128);
+  }
+  const shadowTex = new THREE.CanvasTexture(shadowCanvas);
+  const contactShadow = new THREE.Mesh(
+    new THREE.PlaneGeometry(w * 1.15, t * 2.2),
+    new THREE.MeshBasicMaterial({
+      map: shadowTex,
+      transparent: true,
+      opacity: 0.55,
+      depthWrite: false,
+    }),
+  );
+  contactShadow.rotation.x = -Math.PI / 2;
+  contactShadow.position.set(0, -h / 2 + 0.01, 0);
+  contactShadow.renderOrder = -1;
+  group.add(contactShadow);
+
+  pageSheets.forEach((sheet) => {
+    sheet.userData.pageSpring = new Spring(0, 70, 11);
+  });
+
   group.userData = {
     index,
     bookData: data,
@@ -621,6 +653,8 @@ function buildBook(
     pageBlock,
     disposables,
     springs,
+    phase: Math.random() * Math.PI * 2,
+    contactShadow,
   } satisfies BookUserData;
 
   group.traverse((obj) => {
@@ -715,17 +749,21 @@ export function ShelfExperience({
     scene.background = new THREE.Color(PALETTE.void);
     scene.fog = new THREE.FogExp2(0x08080a, 0.026);
 
-    const camera = new THREE.PerspectiveCamera(36, startW / startH, 0.1, 80);
-    const homeCam = { x: 0, y: 0.85, z: 6.8 };
-    const inspectCam = { x: 0.55, y: 0.45, z: 4.1 };
-    const homeLook = { x: 0, y: 0.15 };
-    const inspectLook = { x: -0.35, y: 0.1 };
+    const camera = new THREE.PerspectiveCamera(32, startW / startH, 0.1, 80);
+    const homeCam = { x: 0, y: 0.72, z: 7.2 };
+    const inspectCam = { x: 0.35, y: 0.38, z: 4.35 };
+    const homeLook = { x: 0, y: 0.12 };
+    const inspectLook = { x: -0.55, y: 0.08 };
 
-    const camX = new Spring(homeCam.x, 14, 6.8);
-    const camY = new Spring(homeCam.y, 14, 6.8);
-    const camZ = new Spring(homeCam.z, 14, 6.8);
-    const lookX = new Spring(homeLook.x, 14, 6.8);
-    const lookY = new Spring(homeLook.y, 14, 6.8);
+    const camX = new Spring(homeCam.x, 13, 6.5);
+    const camY = new Spring(homeCam.y, 13, 6.5);
+    const camZ = new Spring(homeCam.z, 13, 6.5);
+    const lookX = new Spring(homeLook.x, 13, 6.5);
+    const lookY = new Spring(homeLook.y, 13, 6.5);
+    const parX = new Spring(0, 55, 10);
+    const parY = new Spring(0, 55, 10);
+    let ptrNdcX = 0;
+    let ptrNdcY = 0;
 
     camera.position.set(homeCam.x, homeCam.y, homeCam.z);
     camera.lookAt(homeLook.x, homeLook.y, 0);
@@ -736,7 +774,8 @@ export function ShelfExperience({
       powerPreference: "high-performance",
     });
     renderer.setSize(startW, startH);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Cap DPR for mobile headroom on the full-viewport setpiece.
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
     renderer.shadowMap.enabled = true;
     // PCFSoftShadowMap is deprecated in three@0.185 — soft quality no longer differs.
     renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -881,13 +920,20 @@ export function ShelfExperience({
       const pages = pageProgressRef.current;
 
       controls.enabled = mode !== "SHELF";
+      const tSec = now * 0.001;
+
       if (mode === "SHELF") {
         inspectSettled = false;
-        camX.t = homeCam.x;
-        camY.t = homeCam.y;
+        // Subtle pointer parallax on the idle shelf (books parX/parY craft).
+        parX.t = snap ? 0 : ptrNdcX * 0.18;
+        parY.t = snap ? 0 : ptrNdcY * 0.1;
+        parX.update(dt, snap);
+        parY.update(dt, snap);
+        camX.t = homeCam.x + parX.v;
+        camY.t = homeCam.y + parY.v;
         camZ.t = homeCam.z;
-        lookX.t = homeLook.x;
-        lookY.t = homeLook.y;
+        lookX.t = homeLook.x + parX.v * 0.35;
+        lookY.t = homeLook.y + parY.v * 0.25;
         camX.update(dt, snap);
         camY.update(dt, snap);
         camZ.update(dt, snap);
@@ -897,6 +943,10 @@ export function ShelfExperience({
         camera.lookAt(lookX.v, lookY.v, 0);
         controls.target.set(lookX.v, lookY.v, 0);
       } else if (!inspectSettled) {
+        parX.t = 0;
+        parY.t = 0;
+        parX.update(dt, snap);
+        parY.update(dt, snap);
         camX.t = inspectCam.x;
         camY.t = inspectCam.y;
         camZ.t = inspectCam.z;
@@ -927,36 +977,49 @@ export function ShelfExperience({
 
         const isSelected = idx === sel;
         const restY = data.bookData.height / 2 - 1.1;
+        const bob = snap ? 0 : Math.sin(tSec * 0.9 + data.phase) * 0.025;
 
         if (mode === "SHELF") {
+          // Fan: side volumes yaw slightly so the row reads as a real shelf.
+          const fan = THREE.MathUtils.clamp(rawOffset, -2.5, 2.5) * 0.06;
           s.px.t = rawOffset * bookSpacing;
-          s.pz.t = Math.abs(rawOffset) < 0.5 ? 0.4 : 0;
-          s.py.t = restY;
+          s.pz.t = Math.abs(rawOffset) < 0.5 ? 0.45 : Math.abs(rawOffset) * -0.08;
+          s.py.t = restY + (isSelected ? bob * 1.4 : bob);
           s.rx.t = 0;
-          s.ry.t = 0;
-          s.rz.t = 0;
-          s.sc.t = isSelected ? 1.05 : 1;
+          s.ry.t = fan;
+          s.rz.t = fan * 0.15;
+          s.sc.t = isSelected ? 1.07 : 1 - Math.min(Math.abs(rawOffset), 2) * 0.02;
           mesh.visible = true;
+          data.contactShadow.visible = true;
+          const shadowMat = data.contactShadow.material as THREE.MeshBasicMaterial;
+          shadowMat.opacity = isSelected ? 0.62 : 0.4;
         } else if (isSelected) {
-          s.px.t = -0.55;
-          s.py.t = data.bookData.height / 2 - 1.05;
-          s.pz.t = 0.55;
-          s.rx.t = 0.08;
-          s.ry.t = 0.55;
-          s.rz.t = 0;
-          s.sc.t = 1.08;
+          // Stage left so the detail panel owns the right half (books detail slot).
+          s.px.t = -1.15;
+          s.py.t = data.bookData.height / 2 - 1.0 + bob * 0.6;
+          s.pz.t = 0.75;
+          s.rx.t = 0.06;
+          s.ry.t = 0.48;
+          s.rz.t = 0.04;
+          s.sc.t = 1.12;
           mesh.visible = true;
+          data.contactShadow.visible = true;
+          (data.contactShadow.material as THREE.MeshBasicMaterial).opacity = 0.7;
         } else {
-          s.pz.t = -2.5;
-          s.py.t = restY;
-          mesh.visible = Math.abs(s.pz.v + 2.5) > 0.04;
+          // Exit: drop below the plank (books sendOut), not just slide back.
+          s.pz.t = -1.2;
+          s.py.t = restY - 3.8;
+          s.rx.t = 0.2;
+          s.sc.t = 0.88;
+          mesh.visible = s.py.v > restY - 3.5;
+          data.contactShadow.visible = false;
         }
 
         let coverTarget = 0;
         let pageTarget = 0;
-        if (isSelected && mode === "INSPECT") coverTarget = -0.25;
+        if (isSelected && mode === "INSPECT") coverTarget = -0.32;
         else if (isSelected && mode === "READING") {
-          coverTarget = -Math.PI * 0.88;
+          coverTarget = -Math.PI * 0.9;
           pageTarget = pages;
         }
         s.cover.t = coverTarget;
@@ -981,26 +1044,33 @@ export function ShelfExperience({
         data.pageBlock.visible = !openEnough || mode !== "READING";
 
         data.pageSheets.forEach((sheet, sIdx) => {
-          sheet.visible = isSelected && mode === "READING" && openEnough;
-          if (!sheet.visible) {
-            sheet.rotation.y = THREE.MathUtils.lerp(sheet.rotation.y, 0, snap ? 1 : 0.18);
-            return;
+          const pageSpring = (sheet.userData.pageSpring as Spring | undefined) ?? null;
+          const reading = isSelected && mode === "READING" && openEnough;
+          const targetAngle = reading
+            ? -THREE.MathUtils.clamp(pageTarget - sIdx, 0, 1) * Math.PI * 0.92
+            : 0;
+
+          if (pageSpring) {
+            pageSpring.t = targetAngle;
+            pageSpring.update(dt, snap);
+            sheet.rotation.y = pageSpring.v;
+          } else {
+            sheet.rotation.y = THREE.MathUtils.lerp(
+              sheet.rotation.y,
+              targetAngle,
+              snap ? 1 : 0.16,
+            );
           }
 
-          const sheetProgress = THREE.MathUtils.clamp(pageTarget - sIdx, 0, 1);
-          const targetAngle = -sheetProgress * Math.PI * 0.9;
-          sheet.rotation.y = THREE.MathUtils.lerp(
-            sheet.rotation.y,
-            targetAngle,
-            snap ? 1 : 0.16,
-          );
+          sheet.visible = Math.abs(sheet.rotation.y) > 0.02;
+          if (!sheet.visible) return;
 
           const geo = sheet.userData.geo as THREE.BufferGeometry;
           const posAttr = geo.attributes.position as THREE.BufferAttribute;
           const orig = sheet.userData.origPositions as Float32Array;
           const blockW = sheet.userData.blockW as number;
           const currentRot = Math.abs(sheet.rotation.y);
-          const bendAmount = Math.sin((currentRot / (Math.PI * 0.9)) * Math.PI) * 0.1;
+          const bendAmount = Math.sin((currentRot / (Math.PI * 0.92)) * Math.PI) * 0.12;
 
           for (let v = 0; v < posAttr.count; v++) {
             const vx = orig[v * 3]!;
@@ -1064,6 +1134,10 @@ export function ShelfExperience({
 
     let lastHoverIdx: number | null | undefined = undefined;
     const onPointerMove = (event: PointerEvent) => {
+      const rect = renderer.domElement.getBoundingClientRect();
+      ptrNdcX = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      ptrNdcY = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
+
       if (stateRef.current !== "SHELF") {
         renderer.domElement.style.cursor = controls.enabled ? "grab" : "default";
         if (lastHoverIdx !== null && lastHoverIdx !== undefined) {
@@ -1201,39 +1275,46 @@ export function ShelfExperience({
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
           background: `
-            linear-gradient(180deg, rgba(8,8,10,0.55) 0%, transparent 22%),
-            linear-gradient(0deg, rgba(8,8,10,0.7) 0%, transparent 28%),
-            radial-gradient(ellipse at 50% 40%, ${selectedBook.clothColor}55 0%, transparent 62%)
+            linear-gradient(180deg, rgba(8,8,10,0.5) 0%, transparent 20%),
+            linear-gradient(0deg, rgba(8,8,10,0.72) 0%, transparent 26%),
+            radial-gradient(ellipse at 50% 38%, ${selectedBook.clothColor}44 0%, transparent 58%)
           `,
         }}
         aria-hidden
       />
 
+      {/* Books-style hero word: exits when detail opens so the volume owns the stage. */}
+      <div
+        className={cn(
+          "pointer-events-none absolute inset-x-0 top-[12vh] z-[2] flex justify-center transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:top-[14vh]",
+          detailOpen ? "translate-y-[-1.5rem] opacity-0" : "opacity-100",
+        )}
+        aria-hidden
+      >
+        <p className="font-display text-[clamp(3.5rem,14vw,9rem)] font-bold leading-none tracking-tight text-primary/90">
+          Shelf
+        </p>
+      </div>
+
       <header
         className={cn(
           "pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-6 px-5 pt-20 transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-8 sm:pt-24",
-          detailOpen && "opacity-40 -translate-y-2 sm:opacity-100 sm:translate-y-0",
+          detailOpen && "opacity-0 -translate-y-3 sm:opacity-50 sm:translate-y-0",
         )}
       >
         <div>
           <p className="font-mono text-[0.58rem] uppercase tracking-[0.16em] text-muted-foreground">
             Editorial library
           </p>
-          <h2 className="mt-1 font-display text-2xl font-medium tracking-tight text-foreground sm:text-[1.75rem]">
+          <h2 className="mt-1 font-display text-lg font-medium tracking-tight text-foreground sm:text-xl">
             The Complete Shelf
             <span className="ml-2 align-middle border border-border bg-surface-2/80 px-2 py-0.5 font-mono text-[0.6rem] font-normal uppercase tracking-[0.14em] text-muted-foreground">
               {books.length} volumes
             </span>
           </h2>
-          <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-            Black clothbound - browse, inspect, open.
-          </p>
         </div>
         <div className="hidden text-right sm:block">
-          <p className="font-mono text-[0.58rem] uppercase tracking-[0.14em] text-muted-foreground">
-            Edition 01 - 2026
-          </p>
-          <p className="mt-1 font-mono text-[0.58rem] uppercase tracking-[0.14em] text-primary/70">
+          <p className="font-mono text-[0.58rem] uppercase tracking-[0.14em] text-primary/70">
             From the work
           </p>
         </div>
