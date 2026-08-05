@@ -9,8 +9,8 @@ import type { Localized } from "@/lib/locale";
  */
 
 /**
- * A photo under `/public`. `MediaFrame` probes the path at runtime, so a missing
- * file degrades to a skeleton rather than a broken image.
+ * Logical path under `/public` (extension optional). Resolved via
+ * `resolvePublicMedia` — jpg/png win over svg stubs. See public/MEDIA.md.
  */
 type Photo = {
   src: string;
@@ -47,8 +47,8 @@ export type Certification = {
   /** Credential ID exactly as printed on the certificate. */
   credentialId?: string;
   /**
-   * Scan under `/public/certifications/`. Export as JPG or PNG: `MediaFrame`
-   * probes with an `<img>`, so a PDF will never load.
+   * Logical path under `/public/certifications/` (no extension required).
+   * PDF will never resolve — use JPG or PNG.
    */
   image?: string;
 };
@@ -70,7 +70,7 @@ export const profile = {
   email: "raihanhd.dev@gmail.com",
   linkedin: "https://www.linkedin.com/in/raihanhd/",
   portrait: {
-    src: "/portrait.svg",
+    src: "/portrait",
     alt: {
       en: "Raihan Hidayatullah Djunaedi",
       id: "Raihan Hidayatullah Djunaedi",
@@ -121,7 +121,7 @@ export const experience: readonly Experience[] = [
       },
     ],
     photo: {
-      src: "/about/ads-team.svg",
+      src: "/about/ads-team",
       alt: {
         en: "The ADS Digital Partner team in Surabaya, 2023",
         id: "Tim ADS Digital Partner di Surabaya, 2023",
@@ -151,26 +151,26 @@ export const certifications: readonly Certification[] = [
   {
     name: "Dataiku Generative AI Practitioner",
     issuer: "Dataiku",
-    image: "/certifications/dataiku-generative-ai-practitioner.svg",
+    image: "/certifications/dataiku-generative-ai-practitioner",
   },
   {
     name: "Dataiku ML Practitioner",
     issuer: "Dataiku",
-    image: "/certifications/dataiku-ml-practitioner.svg",
+    image: "/certifications/dataiku-ml-practitioner",
   },
   {
     name: "Dataiku Advanced Designer",
     issuer: "Dataiku",
-    image: "/certifications/dataiku-advanced-designer.svg",
+    image: "/certifications/dataiku-advanced-designer",
   },
   {
     name: "Dataiku Developer",
     issuer: "Dataiku",
-    image: "/certifications/dataiku-developer.svg",
+    image: "/certifications/dataiku-developer",
   },
   {
     name: "Sertifikat MSIB",
     issuer: "Kampus Merdeka",
-    image: "/certifications/msib.svg",
+    image: "/certifications/msib",
   },
 ];

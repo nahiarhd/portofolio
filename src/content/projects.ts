@@ -36,10 +36,10 @@ export type Project = {
   links?: { repo?: string; live?: string };
   confidential: boolean;
   /**
-   * Optional media under `/public`. Leave unset to show a drop-in skeleton.
-   * Paths are site-root absolute, e.g. `/work/agent-orchestration/cover.svg`.
-   * Confidential work: never drop real employer product UI — use abstract
-   * diagrams only, or leave empty.
+   * Optional media under `/public`. Logical path without required extension
+   * (e.g. `/work/agent-orchestration/cover`). `resolvePublicMedia` prefers
+   * jpg/png/webp over svg stubs — see `public/MEDIA.md`.
+   * Confidential work: never drop real employer product UI.
    */
   coverImage?: string;
   /** Extra case-study frames; same path rules as `coverImage`. */
@@ -72,10 +72,10 @@ export const projects: readonly Project[] = [
       id: "Temuan dapat memicu aksi berbasis tool tanpa keluar jaringan. Operator mendapat satu jejak prompt, pemanggilan, dan error. Agensi closed-loop di batasan air-gapped - pola yang sama dipakai chat situs ini untuk kartu proyek.",
     },
     stack: ["Python", "LLM tool calling", "on-premises deployment"],
-    coverImage: "/work/agent-orchestration/cover.svg",
+    coverImage: "/work/agent-orchestration/cover",
     screenshots: [
-      "/work/agent-orchestration/01.svg",
-      "/work/agent-orchestration/02.svg",
+      "/work/agent-orchestration/01",
+      "/work/agent-orchestration/02",
     ],
     confidential: true,
   },
@@ -104,10 +104,10 @@ export const projects: readonly Project[] = [
       id: "Rekaman menjadi transkrip dan brief terstruktur tanpa dengar penuh manual. Analis mulai dari dokumen, bukan file mentah. Throughput mengikuti kedalaman antrean, bukan waktu kalender dengan headphone.",
     },
     stack: ["Python", "speech-to-text", "LLM summarization"],
-    coverImage: "/work/media-processing/cover.svg",
+    coverImage: "/work/media-processing/cover",
     screenshots: [
-      "/work/media-processing/01.svg",
-      "/work/media-processing/02.svg",
+      "/work/media-processing/01",
+      "/work/media-processing/02",
     ],
     confidential: true,
   },
@@ -136,10 +136,10 @@ export const projects: readonly Project[] = [
       id: "Korpus pindaian bisa dicari dan ditanyakan tanpa mengetik ulang. Operator mengkueri konten yang dulu hanya gambar. Produknya struktur dan retrieval - bukan OCR sebagai centang.",
     },
     stack: ["Python", "PaddleOCR", "document parsing"],
-    coverImage: "/work/document-ingestion/cover.svg",
+    coverImage: "/work/document-ingestion/cover",
     screenshots: [
-      "/work/document-ingestion/01.svg",
-      "/work/document-ingestion/02.svg",
+      "/work/document-ingestion/01",
+      "/work/document-ingestion/02",
     ],
     confidential: true,
   },
@@ -168,10 +168,10 @@ export const projects: readonly Project[] = [
       id: "Operator melihat hasil parsial dan status nyata, bukan spinner yang berbohong. Pekerjaan panjang bisa dioperasikan dari browser. Stream bila bisa, state eksplisit bila harus - aturan yang sama dipakai chat portofolio ini untuk kartu tool.",
     },
     stack: ["Next.js", "React", "TypeScript", "streaming"],
-    coverImage: "/work/ai-service-interfaces/cover.svg",
+    coverImage: "/work/ai-service-interfaces/cover",
     screenshots: [
-      "/work/ai-service-interfaces/01.svg",
-      "/work/ai-service-interfaces/02.svg",
+      "/work/ai-service-interfaces/01",
+      "/work/ai-service-interfaces/02",
     ],
     confidential: true,
   },
@@ -204,10 +204,10 @@ export const projects: readonly Project[] = [
       id: "Lima mahasiswa berhasil merilis smart contract yang berjalan di jaringan berizin, dan mampu menjelaskan trade-off desainnya - itulah inti mentorship ini, bukan tokennya.",
     },
     stack: ["Solidity", "Hyperledger Besu", "ERC-20"],
-    coverImage: "/work/carbon-credit-tokenization/cover.svg",
+    coverImage: "/work/carbon-credit-tokenization/cover",
     screenshots: [
-      "/work/carbon-credit-tokenization/01.svg",
-      "/work/carbon-credit-tokenization/02.svg",
+      "/work/carbon-credit-tokenization/01",
+      "/work/carbon-credit-tokenization/02",
     ],
     confidential: false,
   },
@@ -236,10 +236,10 @@ export const projects: readonly Project[] = [
       id: "Pelaporan berpindah dari penggabungan manual ke satu dasbor - proyek pertama saya membawa produk dari tampilan hingga integrasi yang berjalan.",
     },
     stack: ["Bootstrap", "JavaScript", "REST integration"],
-    coverImage: "/work/social-media-analytics/cover.svg",
+    coverImage: "/work/social-media-analytics/cover",
     screenshots: [
-      "/work/social-media-analytics/01.svg",
-      "/work/social-media-analytics/02.svg",
+      "/work/social-media-analytics/01",
+      "/work/social-media-analytics/02",
     ],
     confidential: false,
   },

@@ -6,6 +6,7 @@ import { projects } from "@/content/projects";
 import { CONTAINER, EYEBROW, SECTION, TEXT } from "@/lib/design";
 import { formatMonth } from "@/lib/format";
 import type { Locale } from "@/lib/locale";
+import { mediaDropHint, resolvePublicMedia } from "@/lib/public-media";
 import { cn } from "@/lib/utils";
 
 import { Reveal } from "./reveal";
@@ -75,11 +76,14 @@ export function WorkIndex({
           >
             <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-center lg:gap-10">
               <MediaFrame
-                src={featured.coverImage}
+                src={resolvePublicMedia(featured.coverImage)}
                 alt={featured.title[lang]}
                 label={dictionary.cover}
+                slot={mediaDropHint(featured.coverImage)}
                 aspectClassName="aspect-[16/10]"
-                className="w-full rounded-xl border-0 object-cover transition-transform duration-500 group-hover:scale-[1.015]"
+                priority
+                sizes="(max-width: 1024px) 100vw, 55vw"
+                className="w-full rounded-xl border-0 transition-transform duration-500 group-hover:scale-[1.015]"
               />
               <div className="min-w-0 px-1 sm:px-2">
                 <div className="flex flex-wrap items-center gap-2">
@@ -132,11 +136,13 @@ export function WorkIndex({
                 )}
               >
                 <MediaFrame
-                  src={project.coverImage}
+                  src={resolvePublicMedia(project.coverImage)}
                   alt={project.title[lang]}
                   label={dictionary.cover}
+                  slot={mediaDropHint(project.coverImage)}
                   aspectClassName="aspect-[16/10] sm:aspect-square"
-                  className="w-full max-w-[12rem] rounded-lg border-0 object-cover sm:max-w-none"
+                  sizes="(max-width: 640px) 100vw, 120px"
+                  className="w-full max-w-[12rem] rounded-lg border-0 sm:max-w-none"
                 />
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-1">

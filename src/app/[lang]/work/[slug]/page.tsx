@@ -8,6 +8,7 @@ import { CONTAINER, EYEBROW, SURFACE, TEXT } from "@/lib/design";
 import { formatMonth } from "@/lib/format";
 import { LOCALES, isLocale } from "@/lib/locale";
 import { buildPageMetadata } from "@/lib/metadata";
+import { mediaDropHint, resolveMediaList, resolvePublicMedia } from "@/lib/public-media";
 import { cn } from "@/lib/utils";
 
 import { getDictionary } from "../../dictionaries";
@@ -40,7 +41,8 @@ export default async function CaseStudyPage({ params }: Params) {
 
   const dictionary = await getDictionary(lang);
   const copy = dictionary.work;
-  const frames = project.screenshots ?? [];
+  const coverSrc = resolvePublicMedia(project.coverImage);
+  const frames = resolveMediaList(project.screenshots);
 
   const sections = [
     { label: copy.problem, body: project.problem[lang] },
@@ -94,10 +96,13 @@ export default async function CaseStudyPage({ params }: Params) {
       {/* Cover is the primary media beat — full container width, not a small inset. */}
       <div className={`${CONTAINER} mt-12`}>
         <MediaFrame
-          src={project.coverImage}
+          src={coverSrc}
           alt={project.title[lang]}
           label={copy.cover}
+          slot={mediaDropHint(project.coverImage)}
           aspectClassName="aspect-[16/9] sm:aspect-[21/9]"
+          priority
+          sizes="100vw"
           className="w-full max-w-none rounded-2xl border-border"
         />
         {process.env.NODE_ENV !== "production" ? (
@@ -121,6 +126,7 @@ export default async function CaseStudyPage({ params }: Params) {
                 alt={`${project.title[lang]} ${copy.frame} ${index + 1}`}
                 label={`${copy.frame} ${String(index + 1).padStart(2, "0")}`}
                 aspectClassName="aspect-[16/10]"
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="rounded-xl"
               />
             ))}

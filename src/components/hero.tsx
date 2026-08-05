@@ -1,6 +1,7 @@
 import { profile } from "@/content/profile";
 import { BUTTON, CONTAINER, TEXT } from "@/lib/design";
 import type { Locale } from "@/lib/locale";
+import { mediaDropHint, resolvePublicMedia } from "@/lib/public-media";
 import { cn } from "@/lib/utils";
 
 import { HeroGraph } from "./graph/hero-graph";
@@ -12,6 +13,9 @@ import { MediaFrame } from "./media-frame";
  * A thin signal strip stays so chat activity can still light the mesh.
  */
 export function Hero({ lang }: { lang: Locale }) {
+  const portraitSrc = resolvePublicMedia(profile.portrait.src);
+  const isPhoto = Boolean(portraitSrc && !portraitSrc.endsWith(".svg"));
+
   return (
     <section className={`${CONTAINER} relative pb-14 pt-24 sm:pb-20 sm:pt-32`}>
       <div className="hero-cinematic flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
@@ -48,11 +52,18 @@ export function Hero({ lang }: { lang: Locale }) {
           style={{ animationDelay: "0.2s" }}
         >
           <MediaFrame
-            src={profile.portrait.src}
+            src={portraitSrc}
             alt={profile.portrait.alt[lang]}
             label="Portrait"
+            slot={mediaDropHint(profile.portrait.src)}
             aspectClassName="aspect-[4/5]"
-            className="rounded-none border-0 object-cover grayscale contrast-[1.05] saturate-0"
+            priority
+            sizes="200px"
+            className={cn(
+              "rounded-none border-0",
+              // Stub SVG gets monochrome treatment; real photos keep natural tone.
+              !isPhoto && "grayscale contrast-[1.05] saturate-0",
+            )}
           />
           <div
             className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/50 via-transparent to-primary/5"

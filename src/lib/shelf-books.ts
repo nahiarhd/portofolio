@@ -5,6 +5,7 @@
 
 import { projects, type Project } from "@/content/projects";
 import type { Locale } from "@/lib/locale";
+import { resolvePublicMedia } from "@/lib/public-media";
 
 /** Black clothbound. Varied just enough to tell six spines apart. */
 const CLOTH = [
@@ -83,7 +84,7 @@ export function shelfBooksForLocale(
       ...size,
       clothColor: CLOTH[index % CLOTH.length]!,
       foilColor: FOIL[index % FOIL.length]!,
-      coverImage: project.coverImage,
+      coverImage: resolvePublicMedia(project.coverImage),
       pages: [
         {
           title: project.title[lang],

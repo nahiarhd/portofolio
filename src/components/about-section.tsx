@@ -3,6 +3,7 @@ import { education, experience } from "@/content/profile";
 import { CONTAINER, EYEBROW, SECTION, TEXT } from "@/lib/design";
 import { formatRange } from "@/lib/format";
 import type { Locale } from "@/lib/locale";
+import { mediaDropHint, resolvePublicMedia } from "@/lib/public-media";
 import { cn } from "@/lib/utils";
 
 import { MediaFrame } from "./media-frame";
@@ -50,10 +51,12 @@ export function AboutSection({
 
                   {entry.photo ? (
                     <MediaFrame
-                      src={entry.photo.src}
+                      src={resolvePublicMedia(entry.photo.src)}
                       alt={entry.photo.alt[lang]}
                       label="Team"
+                      slot={mediaDropHint(entry.photo.src)}
                       aspectClassName="aspect-[3/2]"
+                      sizes="(max-width: 768px) 100vw, 28rem"
                       className="mt-5 max-w-md rounded-xl"
                     />
                   ) : null}
