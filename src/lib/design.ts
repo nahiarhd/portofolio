@@ -33,6 +33,6 @@ export const BUTTON = {
 
 export const CONTAINER = "relative z-10 mx-auto w-full max-w-6xl px-5 sm:px-8";
 
-/** Shared section vertical rhythm. */
+/** Shared section vertical rhythm — cinematic breathing room between stages. */
 export const SECTION =
-  "scroll-mt-28 border-t border-border/60 py-20 sm:py-28";
+  "scroll-mt-28 border-t border-border/40 py-24 sm:py-32 lg:py-36";

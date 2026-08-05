@@ -60,3 +60,13 @@ Ink & Signal tokens stay (black mass + purple signal). Do not import books pink.
 
 - Keep thin live graph for chat activity, or freeze to `GraphStill` permanently?
 - Replace SVG media with real covers before treating craft as “done”?
+
+## Cinematic staging (2026-08-05)
+
+Inspired by full-viewport “first stage then 3D” products — **not** a Nexus pink/Inter clone.
+
+1. **#cinematic** — full `100dvh` hero, complete on open (no empty graph pill).
+2. **#shelf** — full `100dvh` Three.js library; preload while hero is up; designed loading silhouettes.
+3. Rest of site — list, chat, about with long section spacing.
+
+Do not import: Inter-as-default, neural pink, 820vh pin theater, UnrealBloom particles.

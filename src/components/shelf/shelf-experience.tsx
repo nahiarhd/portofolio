@@ -763,7 +763,7 @@ export function ShelfExperience({
     scene.fog = new THREE.FogExp2(0x08080a, 0.026);
 
     const camera = new THREE.PerspectiveCamera(32, startW / startH, 0.1, 80);
-    const homeCam = { x: 0, y: 0.72, z: 7.2 };
+    const homeCam = { x: 0, y: 0.55, z: 6.2 };
     const inspectCam = { x: 0.35, y: 0.38, z: 4.35 };
     const homeLook = { x: 0, y: 0.12 };
     const inspectLook = { x: -0.55, y: 0.08 };
@@ -1301,27 +1301,15 @@ export function ShelfExperience({
         aria-hidden
       />
 
-      {/* Books-style hero word — smaller on mobile so chrome stays usable. */}
-      <div
-        className={cn(
-          "pointer-events-none absolute inset-x-0 top-[9vh] z-[2] flex justify-center transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:top-[14vh]",
-          detailOpen ? "-translate-y-6 opacity-0" : "opacity-100",
-        )}
-        aria-hidden
-      >
-        <p className="font-display text-[clamp(2.75rem,12vw,9rem)] font-bold leading-none tracking-tight text-primary/90">
-          Shelf
-        </p>
-      </div>
-
+      {/* Quiet HUD only — no giant empty “Shelf” type over a black void. */}
       <header
         className={cn(
-          "pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-6 px-4 pt-[max(4.5rem,env(safe-area-inset-top))] transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-8 sm:pt-24",
-          detailOpen && "opacity-0 -translate-y-3 sm:opacity-50 sm:translate-y-0",
+          "pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-6 px-4 pt-[max(5rem,calc(env(safe-area-inset-top)+3.5rem))] transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:px-8 sm:pt-24",
+          detailOpen && "opacity-0 -translate-y-3 sm:opacity-40 sm:translate-y-0",
         )}
       >
         <div>
-          <p className="font-mono text-[0.58rem] uppercase tracking-[0.16em] text-muted-foreground">
+          <p className="font-mono text-[0.58rem] uppercase tracking-[0.22em] text-muted-foreground">
             Editorial library
           </p>
           <h2 className="mt-1 font-display text-base font-medium tracking-tight text-foreground sm:text-xl">
@@ -1332,7 +1320,7 @@ export function ShelfExperience({
           </h2>
         </div>
         <div className="hidden text-right sm:block">
-          <p className="font-mono text-[0.58rem] uppercase tracking-[0.14em] text-primary/70">
+          <p className="font-mono text-[0.58rem] uppercase tracking-[0.22em] text-primary/70">
             From the work
           </p>
         </div>
