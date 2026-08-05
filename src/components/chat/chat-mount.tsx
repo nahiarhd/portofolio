@@ -1,16 +1,16 @@
 "use client";
 
 /**
- * Defers the chat panel (and `@ai-sdk/react`) until the visitor opens it or the
- * browser is idle. Keeps first paint free of the chat client chunk — the site
- * must work completely with the chat closed, so loading it eagerly is wasted
- * LCP budget.
+ * Inline Ask section. Defers the chat panel (and `@ai-sdk/react`) until the
+ * section is near the viewport or `#ask` is targeted. Site still works with
+ * chat never loaded.
  */
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { CONTAINER, SECTION, TEXT } from "@/lib/design";
 import type { Locale } from "@/lib/locale";
 import { cn } from "@/lib/utils";
 
@@ -18,47 +18,77 @@ type Props = {
   lang: Locale;
   copy: Dictionary["chat"];
   work: Dictionary["work"];
+  heading: string;
 };
 
 const ChatPanel = dynamic(
   () => import("./chat-panel").then((mod) => mod.ChatPanel),
-  { ssr: false },
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="min-h-[min(70vh,32rem)] animate-pulse rounded-2xl border border-border bg-surface-1"
+        aria-busy="true"
+        aria-label="Loading chat"
+      />
+    ),
+  },
 );
 
-export function ChatMount({ lang, copy, work }: Props) {
-  const [load, setLoad] = useState(false);
+function subscribeHash(onChange: () => void): () => void {
+  window.addEventListener("hashchange", onChange);
+  return () => window.removeEventListener("hashchange", onChange);
+}
+
+function getAskHash(): boolean {
+  return window.location.hash === "#ask";
+}
+
+export function ChatMount({ lang, copy, work, heading }: Props) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const hashActive = useSyncExternalStore(subscribeHash, getAskHash, () => false);
+  const [inView, setInView] = useState(false);
+  const active = hashActive || inView;
 
   useEffect(() => {
-    if (load) return;
-    // Idle load: first open is still instant enough after a short visit, and
-    // first paint never waits on the chat bundle.
-    const ric = window.requestIdleCallback;
-    if (typeof ric === "function") {
-      const id = ric(() => setLoad(true), { timeout: 4_000 });
-      return () => window.cancelIdleCallback(id);
-    }
-    const timer = window.setTimeout(() => setLoad(true), 2_500);
-    return () => window.clearTimeout(timer);
-  }, [load]);
+    if (active) return;
+    const node = sectionRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setInView(true);
+        observer.disconnect();
+      },
+      { rootMargin: "80% 0px", threshold: 0 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [active]);
 
-  if (load) {
-    return <ChatPanel lang={lang} copy={copy} work={work} />;
-  }
-
-  // Lightweight launcher until the real panel chunk arrives. Same position and
-  // copy so the swap does not jump.
   return (
-    <button
-      type="button"
-      onClick={() => setLoad(true)}
-      className={cn(
-        "fixed bottom-5 right-5 z-50 max-w-[min(100%-2.5rem,16rem)]",
-        "glass-strong rounded-full px-5 py-3 text-left text-sm font-medium",
-        "transition-colors hover:border-primary/50 hover:text-primary",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-      )}
-    >
-      {copy.open}
-    </button>
+    <section ref={sectionRef} id="ask" className={`${CONTAINER} ${SECTION}`}>
+      <div className="max-w-2xl">
+        <h2 className="font-display text-title font-semibold tracking-tight">{heading}</h2>
+        <p className={cn("mt-3 max-w-[52ch] text-sm leading-relaxed sm:text-base", TEXT.subtle)}>
+          {copy.emptyHint}
+        </p>
+      </div>
+
+      <div className="mt-10">
+        {active ? (
+          <ChatPanel lang={lang} copy={copy} work={work} />
+        ) : (
+          <div
+            className={cn(
+              "flex min-h-[min(70vh,32rem)] items-center justify-center rounded-2xl border border-border bg-surface-1 p-6",
+              "font-mono text-sm text-muted-foreground",
+            )}
+          >
+            {copy.open}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }

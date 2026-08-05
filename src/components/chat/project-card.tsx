@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
-import { EYEBROW, SURFACE, TEXT } from "@/lib/design";
+import { TEXT } from "@/lib/design";
 import type { Locale } from "@/lib/locale";
 import { cn } from "@/lib/utils";
 
@@ -25,22 +25,36 @@ export function ProjectCard({
     <Link
       href={`/${lang}/work/${project.slug}`}
       className={cn(
-        SURFACE.panel,
-        "mt-1 block px-3 py-3 transition-colors hover:border-primary",
+        "mt-1 block rounded-xl border border-border bg-background/60 px-4 py-3 transition-colors",
+        "hover:border-primary/40 hover:bg-surface-2",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
       )}
     >
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <p className={EYEBROW}>{work.pillars[project.pillar]}</p>
-        {project.confidential && (
-          <p className={cn(EYEBROW, "text-muted-foreground")}>{work.confidential}</p>
-        )}
+        <p
+          className={cn(
+            "font-mono text-[10px] font-semibold uppercase tracking-wider",
+            project.pillar === "ai" ? "text-primary" : TEXT.faint,
+          )}
+        >
+          {work.pillars[project.pillar]}
+        </p>
+        {project.confidential ? (
+          <p className={cn("font-mono text-[10px] uppercase tracking-wider", TEXT.faint)}>
+            {work.confidential}
+          </p>
+        ) : null}
       </div>
-      <p className="mt-1 text-sm font-semibold tracking-tight text-foreground">
+      <p className="mt-1.5 text-sm font-semibold tracking-tight text-foreground">
         {project.title}
       </p>
-      <p className={cn("mt-1 text-sm", TEXT.subtle)}>{project.summary}</p>
-      <p className={cn("mt-2 text-sm font-medium text-primary")}>{work.read} →</p>
+      <p className={cn("mt-1 text-sm leading-relaxed", TEXT.subtle)}>{project.summary}</p>
+      <p className="mt-3 font-mono text-xs font-semibold uppercase tracking-wider text-primary">
+        {work.read}
+        <span aria-hidden className="ml-1">
+          →
+        </span>
+      </p>
     </Link>
   );
 }

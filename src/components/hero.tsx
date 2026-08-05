@@ -1,42 +1,85 @@
 import { profile } from "@/content/profile";
-import { CONTAINER, EYEBROW, SURFACE, TEXT } from "@/lib/design";
+import { BUTTON, CONTAINER, TEXT } from "@/lib/design";
 import type { Locale } from "@/lib/locale";
 import { cn } from "@/lib/utils";
 
 import { HeroGraph } from "./graph/hero-graph";
+import { MediaFrame } from "./media-frame";
 
 export function Hero({ lang }: { lang: Locale }) {
   return (
-    <section className={`${CONTAINER} pb-20 pt-28 sm:pb-28 sm:pt-36`}>
-      <p className={cn(EYEBROW, "hero-cinematic")}>{profile.location[lang]}</p>
+    <section className={`${CONTAINER} relative pb-16 pt-24 sm:pb-24 sm:pt-32`}>
+      {/* Identity strip — data only, one accent family (no emerald “live” dot). */}
+      <div className="hero-cinematic flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+        <p className="font-mono text-eyebrow uppercase tracking-[0.16em] text-primary">
+          {profile.name}
+        </p>
+        <p className={cn("font-mono text-eyebrow uppercase tracking-[0.16em]", TEXT.faint)}>
+          {profile.location[lang]}
+        </p>
+      </div>
 
-      <div className="mt-8 grid items-end gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)] lg:gap-12">
+      {/* Thesis + identity — graph is the signature visual below, not a third card here. */}
+      <div className="mt-8 grid items-end gap-10 lg:grid-cols-[minmax(0,1fr)_13.5rem] lg:gap-14">
         <div className="hero-cinematic min-w-0">
-          <h1 className="max-w-[12ch] font-display text-display font-semibold tracking-tight text-glow">
-            {profile.name.split(" ").slice(0, 1).join(" ")}
-            <span className="mt-1 block text-muted-foreground/90">
-              {profile.name.split(" ").slice(1).join(" ")}
-            </span>
+          <h1 className="max-w-[16ch] font-display text-[clamp(2.5rem,6.5vw,4.75rem)] font-bold leading-[0.96] tracking-tight text-foreground">
+            {profile.tagline[lang]}
           </h1>
-          <p className={cn("mt-4 text-lead", TEXT.subtle)}>{profile.tagline[lang]}</p>
+
+          <p className={cn("mt-6 max-w-[48ch] text-base leading-relaxed sm:text-lead", TEXT.subtle)}>
+            {profile.bio[lang]}
+          </p>
+
+          <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+            <a href="#work" className={BUTTON.primary}>
+              {lang === "en" ? "Explore work" : "Lihat karya"}
+            </a>
+            <a href="#contact" className={BUTTON.ghost}>
+              {lang === "en" ? "Contact" : "Kontak"}
+            </a>
+          </div>
         </div>
 
         <div
-          className={cn(SURFACE.panelStrong, "hero-cinematic p-6 sm:p-7")}
-          style={{ animationDelay: "0.35s" }}
+          className="hero-cinematic relative mx-auto w-40 shrink-0 overflow-hidden rounded-2xl border border-border bg-surface-1 sm:w-44 lg:mx-0 lg:w-full"
+          style={{ animationDelay: "0.2s" }}
         >
-          <p className={cn("text-lead", TEXT.subtle)}>{profile.bio[lang]}</p>
+          {/*
+            Portrait assets often ship with warm/orange backdrops that fight
+            Ink & Signal. Neutral frame + monochrome treatment keeps mass black
+            and signal purple; swap to a re-exported B&W crop when available.
+          */}
+          <MediaFrame
+            src={profile.portrait.src}
+            alt={profile.portrait.alt[lang]}
+            label="Portrait"
+            aspectClassName="aspect-[4/5]"
+            className="rounded-none border-0 object-cover grayscale contrast-[1.05] saturate-0"
+          />
+          <div
+            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/50 via-transparent to-primary/5"
+            aria-hidden
+          />
         </div>
       </div>
 
-      <div className="hero-cinematic relative mt-14 aspect-[800/480] w-full overflow-hidden rounded-2xl border border-border glass">
-        <div className="absolute inset-0 text-foreground">
+      {/* Signature: agent signal mesh — full-width stage, minimal chrome. */}
+      <div
+        className="hero-cinematic relative mt-12 overflow-hidden rounded-2xl border border-border bg-surface-1 sm:mt-16"
+        style={{ animationDelay: "0.35s" }}
+      >
+        <div className="aspect-[16/10] w-full md:aspect-[21/9]">
           <HeroGraph className="h-full w-full" />
         </div>
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background/80 to-transparent"
           aria-hidden
         />
+        <p className="pointer-events-none absolute bottom-4 left-5 font-mono text-[0.58rem] uppercase tracking-[0.14em] text-muted-foreground-faint sm:left-6">
+          {lang === "en" ? "Signal mesh" : "Mesh sinyal"}
+          <span className="text-primary/70"> · </span>
+          {lang === "en" ? "reacts while the assistant works" : "bereaksi saat asisten bekerja"}
+        </p>
       </div>
     </section>
   );

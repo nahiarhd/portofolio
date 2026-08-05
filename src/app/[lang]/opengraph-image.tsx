@@ -24,7 +24,7 @@ export default async function OpenGraphImage({
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#0a0a0a",
+          background: "#08080a",
           color: "#fafafa",
           padding: "72px 80px",
           fontFamily: "ui-sans-serif, system-ui, sans-serif",
@@ -47,7 +47,7 @@ export default async function OpenGraphImage({
               width: 8,
               height: 8,
               borderRadius: 999,
-              background: "#10b981",
+              background: "#c084fc",
             }}
           />
           {profile.location[lang]}
@@ -85,7 +85,7 @@ export default async function OpenGraphImage({
             width: 56,
             height: 4,
             borderRadius: 999,
-            background: "#10b981",
+            background: "#c084fc",
           }}
         />
       </div>

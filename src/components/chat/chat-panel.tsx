@@ -1,31 +1,26 @@
 "use client";
 
 /**
- * Portfolio chat panel. Closed by default — the site must work without it.
- *
- * Reads AI SDK v7 APIs from installed docs: `useChat` + `DefaultChatTransport`,
- * messages via `parts`, status for loading, `error` for failures. Locale rides
- * in the transport body so the route can answer in EN or ID.
+ * Inline portfolio chat. Embedded in the page `#ask` section — not a FAB.
+ * Site must work completely with this never opened / never loaded.
  */
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import {
-  useCallback,
   useEffect,
   useId,
   useMemo,
   useRef,
   useState,
   type FormEvent,
-  type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { Button } from "@/components/ui/button";
 import { useGraphActivity } from "@/components/graph/activity";
-import { SURFACE, TEXT } from "@/lib/design";
+import { TEXT } from "@/lib/design";
 import type { ShowProjectOutput } from "@/lib/chat-tools";
 import type { Locale } from "@/lib/locale";
 import { cn } from "@/lib/utils";
@@ -49,7 +44,6 @@ function isShowProjectOutput(value: unknown): value is ShowProjectOutput {
   );
 }
 
-/** Project slugs the model has already shown cards for — drives graph highlights. */
 function highlightSlugsFromMessages(messages: UIMessage[]): string[] {
   const slugs: string[] = [];
   const seen = new Set<string>();
@@ -81,7 +75,6 @@ function renderParts(
       ];
     }
 
-    // Server-executed tool — typed part name is `tool-showProject` in AI SDK UI.
     if (part.type === "tool-showProject") {
       if (part.state === "output-available" && isShowProjectOutput(part.output)) {
         if (!part.output.ok) return [];
@@ -98,7 +91,7 @@ function renderParts(
         return [
           <p
             key={part.toolCallId}
-            className={cn("font-mono text-eyebrow uppercase", TEXT.faint)}
+            className={cn("font-mono text-eyebrow uppercase tracking-[0.14em]", TEXT.faint)}
           >
             …
           </p>,
@@ -110,7 +103,6 @@ function renderParts(
   });
 }
 
-/** Map transport errors to localized copy. 429 body includes "Too many requests". */
 function errorCopy(error: Error | undefined, copy: ChatCopy): string | null {
   if (!error) return null;
   const raw = error.message;
@@ -121,63 +113,9 @@ function errorCopy(error: Error | undefined, copy: ChatCopy): string | null {
       return copy.rateLimited;
     }
   } catch {
-    // not JSON — fall through
+    // not JSON
   }
   return copy.unavailable;
-}
-
-function useFocusTrap(
-  active: boolean,
-  rootRef: React.RefObject<HTMLElement | null>,
-  onEscape: () => void,
-) {
-  useEffect(() => {
-    if (!active) return;
-    const root = rootRef.current;
-    if (!root) return;
-
-    const focusable = () =>
-      Array.from(
-        root.querySelectorAll<HTMLElement>(
-          'button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        ),
-      ).filter((el) => !el.hasAttribute("disabled") && el.getClientRects().length > 0);
-
-    const previouslyFocused = document.activeElement as HTMLElement | null;
-    // Prefer the close control so Esc/Tab start at a known place.
-    const closeBtn = root.querySelector<HTMLElement>("[data-chat-close]");
-    (closeBtn ?? focusable()[0])?.focus();
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        onEscape();
-        return;
-      }
-      if (event.key !== "Tab") return;
-      const list = focusable();
-      if (list.length === 0) return;
-      const first = list[0];
-      const last = list[list.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = previousOverflow;
-      previouslyFocused?.focus?.();
-    };
-  }, [active, onEscape, rootRef]);
 }
 
 export function ChatPanel({
@@ -189,14 +127,9 @@ export function ChatPanel({
   copy: ChatCopy;
   work: WorkCopy;
 }) {
-  const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-  const panelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const titleId = useId();
-
-  const close = useCallback(() => setOpen(false), []);
-  useFocusTrap(open, panelRef, close);
 
   const { setStreaming, setHighlightSlugs } = useGraphActivity();
 
@@ -216,8 +149,6 @@ export function ChatPanel({
   const busy = status === "submitted" || status === "streaming";
   const errText = errorCopy(error, copy);
 
-  // Graph activity: pulse while the bot works; light project nodes for cards.
-  // No-ops when the graph is absent (case study pages) or WebGL is off.
   useEffect(() => {
     setStreaming(busy);
     return () => setStreaming(false);
@@ -228,11 +159,10 @@ export function ChatPanel({
   }, [messages, setHighlightSlugs]);
 
   useEffect(() => {
-    if (!open) return;
     const el = listRef.current;
     if (!el) return;
     el.scrollTop = el.scrollHeight;
-  }, [messages, status, open, errText]);
+  }, [messages, status, errText]);
 
   const submitText = (text: string) => {
     const trimmed = text.trim();
@@ -246,183 +176,121 @@ export function ChatPanel({
     submitText(input);
   };
 
-  const onLauncherKey = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      setOpen(true);
-    }
-  };
-
   return (
-    <>
-      {/*
-        Launcher stays in the tab order when the panel is closed so the site
-        never depends on the chat, and opening is always keyboard-reachable.
-      */}
-      {!open && (
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          onKeyDown={onLauncherKey}
-          aria-expanded={false}
-          aria-haspopup="dialog"
-          className={cn(
-            "fixed bottom-5 right-5 z-50 max-w-[min(100%-2.5rem,16rem)]",
-            "glass-strong rounded-full px-5 py-3 text-left text-sm font-medium",
-            "transition-colors hover:border-primary/50 hover:text-primary",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-          )}
+    <div
+      className="flex min-h-[min(70vh,32rem)] flex-col overflow-hidden rounded-2xl border border-border bg-surface-1"
+      aria-labelledby={titleId}
+    >
+      <header className="flex items-center justify-between gap-4 border-b border-border px-5 py-4 sm:px-6">
+        <h3
+          id={titleId}
+          className="font-mono text-eyebrow uppercase tracking-[0.14em] text-muted-foreground"
         >
-          {copy.open}
-        </button>
-      )}
+          {copy.title}
+        </h3>
+        {busy ? (
+          <span className="font-mono text-[0.58rem] uppercase tracking-[0.14em] text-primary" aria-live="polite">
+            {copy.thinking}
+          </span>
+        ) : null}
+      </header>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center sm:items-end sm:justify-end sm:p-5"
-          // Backdrop click closes — same as Esc. The dialog itself stops propagation.
-        >
-          <button
-            type="button"
-            aria-label={copy.close}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={close}
-          />
-
-          <div
-            ref={panelRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={titleId}
-            className={cn(
-              SURFACE.panelStrong,
-              "relative flex h-[min(85vh,36rem)] w-full flex-col overflow-hidden sm:w-[min(100%,24rem)]",
-            )}
-            onClick={(event) => event.stopPropagation()}
-          >
-            <header className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
-              <h2 id={titleId} className="text-sm font-semibold tracking-tight">
-                {copy.title}
-              </h2>
-              <button
-                type="button"
-                data-chat-close
-                onClick={close}
-                className={cn(
-                  "text-sm",
-                  TEXT.subtle,
-                  "hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                )}
-              >
-                {copy.close}
-              </button>
-            </header>
-
-            <div
-              ref={listRef}
-              className="flex flex-1 flex-col gap-3 overflow-y-auto px-4 py-3"
-              aria-live="polite"
-            >
-              {messages.length === 0 && (
-                <div className="space-y-2">
-                  <p className={cn("text-sm", TEXT.subtle)}>{copy.emptyHint}</p>
-                  <ul className="flex flex-col gap-2">
-                    {SUGGESTION_KEYS.map((key) => (
-                      <li key={key}>
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() => submitText(copy.suggestions[key])}
-                          className={cn(
-                            "w-full rounded-xl border border-border bg-white/5 px-3 py-2.5 text-left text-sm",
-                            "transition-colors hover:border-primary/40 hover:bg-white/[0.07]",
-                            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                            "disabled:opacity-50",
-                          )}
-                        >
-                          {copy.suggestions[key]}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {messages.map((message) => {
-                const parts = renderParts(message, lang, work);
-                if (parts.length === 0) return null;
-                return (
-                  <div
-                    key={message.id}
-                    className={cn(
-                      "space-y-2 text-sm leading-relaxed",
-                      message.role === "user" ? "text-foreground" : TEXT.subtle,
-                    )}
-                  >
-                    <p className={cn("font-mono text-eyebrow uppercase", TEXT.faint)}>
-                      {message.role === "user" ? copy.you : copy.assistant}
-                    </p>
-                    {parts}
-                  </div>
-                );
-              })}
-
-              {busy && (
-                <p className={cn("font-mono text-eyebrow uppercase", TEXT.faint)} aria-live="polite">
-                  {copy.thinking}
-                </p>
-              )}
-
-              {errText && (
-                <div className="space-y-2 border border-border bg-muted/30 px-3 py-2 text-sm">
-                  <p>{errText}</p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => void regenerate()}
-                    disabled={busy}
-                  >
-                    {copy.retry}
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            <form onSubmit={onSubmit} className="border-t border-border p-3">
-              <label className="sr-only" htmlFor={`${titleId}-input`}>
-                {copy.placeholder}
-              </label>
-              <div className="flex gap-2">
-                <input
-                  id={`${titleId}-input`}
-                  value={input}
-                  onChange={(event) => setInput(event.target.value)}
-                  placeholder={copy.placeholder}
+      <div
+        ref={listRef}
+        className="flex max-h-[min(50vh,24rem)] flex-1 flex-col gap-5 overflow-y-auto px-5 py-5 sm:px-6"
+        aria-live="polite"
+      >
+        {messages.length === 0 && (
+          <ul className="flex flex-col gap-2">
+            {SUGGESTION_KEYS.map((key) => (
+              <li key={key}>
+                <button
+                  type="button"
                   disabled={busy}
-                  maxLength={2000}
-                  autoComplete="off"
+                  onClick={() => submitText(copy.suggestions[key])}
                   className={cn(
-                    "min-w-0 flex-1 rounded-full border border-border bg-black/40 px-4 py-2 text-sm",
-                    "placeholder:text-muted-foreground-faint",
+                    "w-full rounded-xl border border-border bg-background/40 px-4 py-3 text-left text-sm leading-snug",
+                    "transition-colors hover:border-primary/40 hover:bg-surface-2",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                     "disabled:opacity-50",
                   )}
-                />
-                {busy ? (
-                  <Button type="button" variant="outline" size="sm" onClick={() => stop()}>
-                    {copy.stop}
-                  </Button>
-                ) : (
-                  <Button type="submit" size="sm" disabled={!input.trim()}>
-                    {copy.send}
-                  </Button>
-                )}
-              </div>
-            </form>
+                >
+                  {copy.suggestions[key]}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {messages.map((message) => {
+          const parts = renderParts(message, lang, work);
+          if (parts.length === 0) return null;
+          const isUser = message.role === "user";
+          return (
+            <div
+              key={message.id}
+              className={cn(
+                "space-y-2 text-sm leading-relaxed",
+                isUser
+                  ? "ml-auto max-w-[min(100%,28rem)] rounded-2xl border border-primary/25 bg-primary/10 px-4 py-3 text-foreground"
+                  : "max-w-[min(100%,36rem)]",
+              )}
+            >
+              <p className={cn("font-mono text-[0.58rem] uppercase tracking-[0.14em]", TEXT.faint)}>
+                {isUser ? copy.you : copy.assistant}
+              </p>
+              <div className={cn("space-y-3", !isUser && TEXT.subtle)}>{parts}</div>
+            </div>
+          );
+        })}
+
+        {errText && (
+          <div className="space-y-3 rounded-xl border border-border bg-background/50 px-4 py-3 text-sm">
+            <p className={TEXT.subtle}>{errText}</p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => void regenerate()}
+              disabled={busy}
+            >
+              {copy.retry}
+            </Button>
           </div>
+        )}
+      </div>
+
+      <form onSubmit={onSubmit} className="border-t border-border p-4 sm:p-5">
+        <label className="sr-only" htmlFor={`${titleId}-input`}>
+          {copy.placeholder}
+        </label>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <input
+            id={`${titleId}-input`}
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            placeholder={copy.placeholder}
+            disabled={busy}
+            maxLength={2000}
+            autoComplete="off"
+            className={cn(
+              "min-h-11 min-w-0 flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm",
+              "placeholder:text-muted-foreground-faint",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "disabled:opacity-50",
+            )}
+          />
+          {busy ? (
+            <Button type="button" variant="outline" size="sm" onClick={() => stop()}>
+              {copy.stop}
+            </Button>
+          ) : (
+            <Button type="submit" size="sm" disabled={!input.trim()}>
+              {copy.send}
+            </Button>
+          )}
         </div>
-      )}
-    </>
+      </form>
+    </div>
   );
 }

@@ -41,7 +41,7 @@ function IdleScene() {
   const mesh = useRef<THREE.InstancedMesh>(null);
   const edgeMaterial = useRef<THREE.LineBasicMaterial>(null);
   const foreground = useCssColor("--foreground", "#fafafa");
-  const primary = useCssColor("--primary", "#10b981");
+  const primary = useCssColor("--primary", "#c084fc");
   const { positions, edgePositions, nodeCount, signalIndex } = IDLE_GRAPH;
   const { streaming, highlightSlugs } = useGraphActivity();
 
@@ -100,16 +100,24 @@ function IdleScene() {
     const hasHighlights = highlights.size > 0;
     const t = state.clock.elapsedTime;
 
-    // Drift speeds up a little while the bot works — still a drawing, not a hologram.
+    // Drift speeds up a little while the bot works — smooth pointer parallax adds depth.
     const spin = active ? 0.14 : 0.06;
+    const targetX = -state.pointer.y * 0.2;
+    const targetY = state.pointer.x * 0.25;
+
     g.rotation.y += delta * spin;
-    g.rotation.x = Math.sin(g.rotation.y * 0.5) * (active ? 0.12 : 0.08);
+    g.rotation.x = THREE.MathUtils.lerp(
+      g.rotation.x,
+      Math.sin(g.rotation.y * 0.5) * (active ? 0.12 : 0.08) + targetX,
+      0.05,
+    );
+    g.rotation.z = THREE.MathUtils.lerp(g.rotation.z, targetY * 0.2, 0.05);
 
     if (edgeMaterial.current) {
       // Pulse travels as a breathing opacity on the hairline edges.
       edgeMaterial.current.opacity = active
         ? 0.16 + 0.22 * (0.5 + 0.5 * Math.sin(t * 5))
-        : 0.22;
+        : 0.22 + 0.08 * (0.5 + 0.5 * Math.sin(t * 2));
     }
 
     // Only rewrite instance colours/scales when something is happening — idle

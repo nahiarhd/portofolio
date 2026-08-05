@@ -1,43 +1,56 @@
 @import "tailwindcss";
 
 /*
- * Velos-inspired dark system, adapted for this portfolio.
+ * Ink & Signal — see docs/ideas/ink-and-signal.md.
  *
- * Direction: cinematic dark ground + one emerald “active” accent (the deviation).
- * Not a clone of the Aura VELOS logistics template — same craft language applied
- * to Raihan’s content, graph, and chat.
+ * Ink: a neutral black elevation scale. Depth comes from luminance, never tint.
+ * Signal: one purple, spent only where something is live — the chat, the active
+ * graph node, the AI chip, focus rings. Roughly 5% of pixels.
+ *
+ * Purple previously coloured the ground, the text AND the borders, which left no
+ * neutral to contrast against. Do not give it a sixth job again.
  */
 
 :root {
-  --background: #0a0a0a;
+  /* Ink — four blacks. Page, section, card, raised. */
+  --background: #08080a;
+  --surface-1: #0e0e11;
+  --surface-2: #141418;
+  --surface-3: #1c1c21;
+
   --foreground: #fafafa;
 
-  --card: rgba(23, 23, 23, 0.72);
+  --card: rgba(20, 20, 24, 0.78);
   --card-foreground: #fafafa;
 
-  --muted: #171717;
-  --muted-foreground: rgba(255, 255, 255, 0.6);
-  /* Measured ~4.6:1 on #0a0a0a for small mono labels. */
-  --muted-foreground-faint: rgba(255, 255, 255, 0.45);
+  --muted: var(--surface-2);
+  /* Contrast on #08080a: 7.81:1. */
+  --muted-foreground: #a1a1aa;
+  /* 5.85:1 — the floor for 11px mono labels. #71717a fails AA at 4.14:1. */
+  --muted-foreground-faint: #8a8a93;
 
-  --primary: #10b981;
-  --primary-foreground: #0a0a0a;
+  --border: rgba(255, 255, 255, 0.09);
+  --input: rgba(255, 255, 255, 0.14);
 
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.1);
-  --ring: #10b981;
+  /* Signal — the only purple. 7.57:1 on the ground. */
+  --primary: #c084fc;
+  --primary-foreground: #08080a;
+  --ring: #c084fc;
 
   --destructive: #f87171;
-  --destructive-foreground: #0a0a0a;
+  --destructive-foreground: #08080a;
 
   --radius: 0.75rem;
   --radius-pill: 999px;
-  --glass: rgba(10, 10, 10, 0.6);
-  --glass-strong: rgba(23, 23, 23, 0.72);
+  --glass: rgba(14, 14, 17, 0.62);
+  --glass-strong: rgba(20, 20, 24, 0.8);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -52,11 +65,12 @@
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-bricolage), var(--font-inter), ui-sans-serif, sans-serif;
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-outfit), ui-sans-serif, sans-serif;
   --font-mono: var(--font-space-mono), ui-monospace, monospace;
 
-  --text-display: clamp(2.75rem, 12vw, 6.5rem);
+  /* Sized to share the hero row with the portrait. */
+  --text-display: clamp(2.5rem, 8vw, 5rem);
   --text-display--line-height: 0.88;
   --text-display--letter-spacing: -0.04em;
 
@@ -87,10 +101,6 @@ body {
   overflow-x: hidden;
 }
 
-::selection {
-  background: rgba(255, 255, 255, 0.2);
-}
-
 h1,
 h2,
 h3 {
@@ -114,39 +124,45 @@ h3 {
   inset: 0;
   z-index: 0;
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    linear-gradient(to right, rgba(192, 132, 252, 0.045) 1px, transparent 1px);
   background-size: calc(100% / 6) 100%;
-  opacity: 0.5;
+  opacity: 0.55;
 }
 
+/*
+ * Atmosphere is where purple belongs: it tints the air without ever touching
+ * text, borders or the ground itself. Black stays the primary; this is what
+ * makes it read as *our* black rather than a default dark theme.
+ */
 .ambient-glow {
   pointer-events: none;
   position: fixed;
   z-index: 0;
-  width: 40vw;
-  height: 40vw;
+  width: 45vw;
+  height: 45vw;
   border-radius: 999px;
-  filter: blur(120px);
+  filter: blur(140px);
+}
+
+.ambient-glow--primary {
+  top: -10%;
+  right: -5%;
+  background: #a855f7;
   opacity: 0.18;
 }
 
-.ambient-glow--emerald {
-  top: -10%;
-  right: -5%;
-  background: #10b981;
-}
-
-.ambient-glow--blue {
-  bottom: 10%;
+.ambient-glow--secondary {
+  bottom: 8%;
   left: -10%;
-  background: #3b82f6;
-  opacity: 0.12;
+  background: #7c3aed;
+  opacity: 0.13;
 }
 
 /* Glass surfaces */
 .glass {
   background: var(--glass);
   border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
@@ -154,20 +170,22 @@ h3 {
 .glass-strong {
   background: var(--glass-strong);
   border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
 }
 
 .nav-pill {
-  background: rgba(23, 23, 23, 0.65);
+  background: rgba(14, 14, 17, 0.72);
   border: 1px solid var(--border);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-radius: var(--radius-pill);
 }
 
-.text-glow {
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.35);
+/* Selection is a live interaction, so it earns the signal colour. */
+::selection {
+  background: rgba(192, 132, 252, 0.3);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -264,4 +282,26 @@ h3 {
 .work-row:hover::before,
 .work-row:focus-within::before {
   opacity: 1;
+}
+
+/* Shelf detail panel: staggered children (craft from example/books, CSS only). */
+.shelf-detail-stagger {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: shelfDetailIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes shelfDetailIn {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shelf-detail-stagger {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
 }

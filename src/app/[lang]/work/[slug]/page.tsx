@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { MediaFrame } from "@/components/media-frame";
 import { projects } from "@/content/projects";
 import { CONTAINER, EYEBROW, SURFACE, TEXT } from "@/lib/design";
 import { formatMonth } from "@/lib/format";
@@ -39,6 +40,7 @@ export default async function CaseStudyPage({ params }: Params) {
 
   const dictionary = await getDictionary(lang);
   const copy = dictionary.work;
+  const frames = project.screenshots ?? [];
 
   const sections = [
     { label: copy.problem, body: project.problem[lang] },
@@ -47,49 +49,99 @@ export default async function CaseStudyPage({ params }: Params) {
   ];
 
   return (
-    <main id="content" className={`${CONTAINER} flex-1 py-28 sm:py-32`}>
-      <Link
-        href={`/${lang}#work`}
-        className={cn(EYEBROW, "transition-colors hover:text-primary")}
-      >
-        ← {copy.back}
-      </Link>
+    <main id="content" className="flex-1 pb-24 pt-28 sm:pb-32 sm:pt-32">
+      <div className={CONTAINER}>
+        <Link
+          href={`/${lang}#work`}
+          className={cn(
+            "inline-flex min-h-10 items-center font-mono text-eyebrow uppercase tracking-[0.14em]",
+            TEXT.subtle,
+            "transition-colors hover:text-primary",
+          )}
+        >
+          ← {copy.back}
+        </Link>
 
-      <header className="mt-10 max-w-[42rem]">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <span className={EYEBROW}>
-            {copy.pillars[project.pillar]} · {formatMonth(project.started, lang)}
-          </span>
-          {project.confidential ? (
+        <header className="mt-8 max-w-[40rem]">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <span
               className={cn(
-                EYEBROW,
-                "rounded-full border border-border px-2 py-0.5 text-primary/90",
+                "font-mono text-eyebrow uppercase tracking-[0.14em]",
+                project.pillar === "ai" ? "text-primary" : TEXT.faint,
               )}
             >
-              {copy.confidential}
+              {copy.pillars[project.pillar]}
             </span>
-          ) : null}
-        </div>
+            <span className={cn("font-mono text-eyebrow uppercase tracking-[0.14em]", TEXT.faint)}>
+              {formatMonth(project.started, lang)}
+            </span>
+            {project.confidential ? (
+              <span className={cn("font-mono text-eyebrow uppercase tracking-[0.14em]", TEXT.faint)}>
+                {copy.confidential}
+              </span>
+            ) : null}
+          </div>
 
-        <h1 className="mt-5 font-display text-title font-semibold tracking-tight text-glow">
-          {project.title[lang]}
-        </h1>
-        <p className={cn("mt-6 text-lead", TEXT.subtle)}>{project.summary[lang]}</p>
-      </header>
+          <h1 className="mt-5 font-display text-title font-semibold tracking-tight">
+            {project.title[lang]}
+          </h1>
+          <p className={cn("mt-5 max-w-[52ch] text-base leading-relaxed sm:text-lead", TEXT.subtle)}>
+            {project.summary[lang]}
+          </p>
+        </header>
+      </div>
 
-      <div className="mt-16 grid gap-8 lg:grid-cols-[minmax(0,1fr)_16rem] lg:gap-10">
-        <div className="space-y-4">
+      {/* Cover is the primary media beat — full container width, not a small inset. */}
+      <div className={`${CONTAINER} mt-12`}>
+        <MediaFrame
+          src={project.coverImage}
+          alt={project.title[lang]}
+          label={copy.cover}
+          aspectClassName="aspect-[16/9] sm:aspect-[21/9]"
+          className="w-full max-w-none rounded-2xl border-border"
+        />
+        {process.env.NODE_ENV !== "production" ? (
+          <p className={cn("mt-2 font-mono text-[0.65rem]", TEXT.faint)}>{copy.mediaHint}</p>
+        ) : null}
+      </div>
+
+      {/* Frames: secondary strip under cover — smaller, equal cells, not a second gallery title dump. */}
+      {frames.length > 0 ? (
+        <section className={`${CONTAINER} mt-4`} aria-label={copy.frames}>
+          <div
+            className={cn(
+              "grid gap-3",
+              frames.length === 1 ? "max-w-xl grid-cols-1" : "sm:grid-cols-2",
+            )}
+          >
+            {frames.map((src, index) => (
+              <MediaFrame
+                key={src}
+                src={src}
+                alt={`${project.title[lang]} ${copy.frame} ${index + 1}`}
+                label={`${copy.frame} ${String(index + 1).padStart(2, "0")}`}
+                aspectClassName="aspect-[16/10]"
+                className="rounded-xl"
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <div className={`${CONTAINER} mt-16 grid gap-12 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-14`}>
+        <div className="divide-y divide-border/70 border-y border-border/70">
           {sections.map((section) => (
-            <section key={section.label} className={cn(SURFACE.panel, "p-6 sm:p-8")}>
+            <section key={section.label} className="py-8 sm:py-10">
               <p className={EYEBROW}>{section.label}</p>
-              <p className="mt-4 max-w-[62ch] text-lead leading-relaxed">{section.body}</p>
+              <p className="mt-4 max-w-[62ch] text-base leading-relaxed sm:text-lead">
+                {section.body}
+              </p>
             </section>
           ))}
         </div>
 
         <aside className="lg:sticky lg:top-28 lg:self-start">
-          <div className={cn(SURFACE.panelStrong, "p-5")}>
+          <div className={cn(SURFACE.flat, "p-5")}>
             <h2 className={cn(EYEBROW, "mb-4")}>{copy.stack}</h2>
             <ul className="flex flex-col gap-2.5">
               {project.stack.map((item) => (

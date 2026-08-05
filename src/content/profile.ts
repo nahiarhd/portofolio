@@ -8,6 +8,15 @@ import type { Localized } from "@/lib/locale";
  * fine; inventing a detail he has not published is not.
  */
 
+/**
+ * A photo under `/public`. `MediaFrame` probes the path at runtime, so a missing
+ * file degrades to a skeleton rather than a broken image.
+ */
+type Photo = {
+  src: string;
+  alt: Localized;
+};
+
 export type Experience = {
   organization: string;
   role: Localized;
@@ -17,6 +26,8 @@ export type Experience = {
   end?: string;
   location: string;
   highlights: Localized[];
+  /** Optional team or on-site photo, shown beside the entry. */
+  photo?: Photo;
 };
 
 export type Education = {
@@ -24,6 +35,22 @@ export type Education = {
   degree: Localized;
   start: string;
   end: string;
+};
+
+export type Certification = {
+  name: string;
+  issuer: string;
+  /** ISO month, e.g. "2024-06". Omit until the real date is to hand. */
+  issued?: string;
+  /** The issuer's public verification page — the part a client can check. */
+  verifyUrl?: string;
+  /** Credential ID exactly as printed on the certificate. */
+  credentialId?: string;
+  /**
+   * Scan under `/public/certifications/`. Export as JPG or PNG: `MediaFrame`
+   * probes with an `<img>`, so a PDF will never load.
+   */
+  image?: string;
 };
 
 export const profile = {
@@ -42,6 +69,13 @@ export const profile = {
   },
   email: "raihanhd.dev@gmail.com",
   linkedin: "https://www.linkedin.com/in/raihanhd/",
+  portrait: {
+    src: "/portrait.svg",
+    alt: {
+      en: "Raihan Hidayatullah Djunaedi",
+      id: "Raihan Hidayatullah Djunaedi",
+    },
+  },
 } as const;
 
 export const experience: readonly Experience[] = [
@@ -86,6 +120,13 @@ export const experience: readonly Experience[] = [
         id: "Mengintegrasikan tampilan frontend dengan layanan backend",
       },
     ],
+    photo: {
+      src: "/about/ads-team.svg",
+      alt: {
+        en: "The ADS Digital Partner team in Surabaya, 2023",
+        id: "Tim ADS Digital Partner di Surabaya, 2023",
+      },
+    },
   },
 ];
 
@@ -101,10 +142,35 @@ export const education: readonly Education[] = [
   },
 ];
 
-export const certifications: readonly string[] = [
-  "Dataiku Generative AI Practitioner",
-  "Dataiku ML Practitioner",
-  "Dataiku Advanced Designer",
-  "Dataiku Developer",
-  "Sertifikat MSIB",
+/**
+ * `issued`, `credentialId` and `verifyUrl` are deliberately absent: they are
+ * facts Raihan has not published here yet, and inventing them would be worse
+ * than omitting them. Every field is optional — fill them in as they arrive.
+ */
+export const certifications: readonly Certification[] = [
+  {
+    name: "Dataiku Generative AI Practitioner",
+    issuer: "Dataiku",
+    image: "/certifications/dataiku-generative-ai-practitioner.svg",
+  },
+  {
+    name: "Dataiku ML Practitioner",
+    issuer: "Dataiku",
+    image: "/certifications/dataiku-ml-practitioner.svg",
+  },
+  {
+    name: "Dataiku Advanced Designer",
+    issuer: "Dataiku",
+    image: "/certifications/dataiku-advanced-designer.svg",
+  },
+  {
+    name: "Dataiku Developer",
+    issuer: "Dataiku",
+    image: "/certifications/dataiku-developer.svg",
+  },
+  {
+    name: "Sertifikat MSIB",
+    issuer: "Kampus Merdeka",
+    image: "/certifications/msib.svg",
+  },
 ];

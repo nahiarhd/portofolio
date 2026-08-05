@@ -1,8 +1,9 @@
 import Link from "next/link";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { MediaFrame } from "@/components/media-frame";
 import { projects } from "@/content/projects";
-import { CONTAINER, EYEBROW, TEXT } from "@/lib/design";
+import { CONTAINER, EYEBROW, SECTION, TEXT } from "@/lib/design";
 import { formatMonth } from "@/lib/format";
 import type { Locale } from "@/lib/locale";
 import { cn } from "@/lib/utils";
@@ -25,67 +26,136 @@ export function WorkIndex({
     return byPillar !== 0 ? byPillar : b.started.localeCompare(a.started);
   });
 
+  const [featured, ...rest] = ordered;
   const counts = PILLAR_ORDER.map(
     (pillar) =>
       `${projects.filter((p) => p.pillar === pillar).length} ${dictionary.pillars[pillar]}`,
   ).join(" · ");
 
   return (
-    <section id="work" className={`${CONTAINER} scroll-mt-28 border-t border-border/60 py-24 sm:py-32`}>
+    <section id="work" className={`${CONTAINER} ${SECTION}`}>
       <Reveal>
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <h2 className="font-display text-title font-semibold tracking-tight">
+        <div className="max-w-2xl">
+          <h2 className="font-display text-title font-semibold tracking-tight text-foreground">
             {heading}
           </h2>
-          <p className={EYEBROW}>{counts}</p>
+          <p className={cn("mt-3 max-w-[52ch] text-sm leading-relaxed sm:text-base", TEXT.subtle)}>
+            {lang === "en"
+              ? "Architectural case studies across AI orchestration, blockchain, and data systems."
+              : "Studi kasus arsitektur di bidang orkestrasi AI, blockchain, dan sistem data."}
+          </p>
+          <p className={cn(EYEBROW, "mt-5")}>{counts}</p>
         </div>
       </Reveal>
 
-      <ul className="mt-12 space-y-3">
-        {ordered.map((project) => (
+      {/* Featured: one large editorial row — not a glass card twin. */}
+      {featured ? (
+        <Reveal>
+          <Link
+            href={`/${lang}/work/${featured.slug}`}
+            className={cn(
+              "work-row group mt-12 block rounded-2xl border border-border bg-surface-1 p-4 transition-colors duration-300",
+              "hover:border-primary/35 sm:p-5",
+              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+            )}
+          >
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-center lg:gap-10">
+              <MediaFrame
+                src={featured.coverImage}
+                alt={featured.title[lang]}
+                label={dictionary.cover}
+                aspectClassName="aspect-[16/10]"
+                className="w-full rounded-xl border-0 object-cover transition-transform duration-500 group-hover:scale-[1.015]"
+              />
+              <div className="min-w-0 px-1 sm:px-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className={cn(
+                      "font-mono text-[10px] font-semibold uppercase tracking-wider",
+                      featured.pillar === "ai" ? "text-primary" : TEXT.subtle,
+                    )}
+                  >
+                    {dictionary.pillars[featured.pillar]}
+                  </span>
+                  <span className={cn("font-mono text-[10px] uppercase tracking-wider", TEXT.faint)}>
+                    {formatMonth(featured.started, lang)}
+                  </span>
+                  {featured.confidential ? (
+                    <span className={cn("font-mono text-[10px] uppercase tracking-wider", TEXT.faint)}>
+                      {dictionary.confidential}
+                    </span>
+                  ) : null}
+                </div>
+                <h3 className="mt-3 font-display text-2xl font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-3xl">
+                  {featured.title[lang]}
+                </h3>
+                <p className={cn("mt-3 max-w-[48ch] text-sm leading-relaxed", TEXT.subtle)}>
+                  {featured.summary[lang]}
+                </p>
+                <p className="mt-6 font-mono text-xs font-semibold uppercase tracking-wider text-primary">
+                  {dictionary.read}
+                  <span aria-hidden className="ml-1 inline-block transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
+                </p>
+              </div>
+            </div>
+          </Link>
+        </Reveal>
+      ) : null}
+
+      {/* Rest: dense index rows — hierarchy by type, not six identical cards. */}
+      <ul className="mt-4 divide-y divide-border/70 border-y border-border/70">
+        {rest.map((project) => (
           <li key={project.slug}>
             <Reveal>
               <Link
                 href={`/${lang}/work/${project.slug}`}
                 className={cn(
-                  "work-row group glass block rounded-2xl px-5 py-6 pl-6 transition-all",
-                  "hover:border-primary/40 hover:bg-white/[0.04]",
-                  "focus-visible:border-primary/40",
+                  "work-row group grid gap-4 py-6 transition-colors sm:grid-cols-[7.5rem_minmax(0,1fr)_auto] sm:items-center sm:gap-8 sm:py-7",
+                  "hover:bg-surface-1/60",
+                  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                 )}
               >
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                  <span className={EYEBROW}>
-                    {dictionary.pillars[project.pillar]} ·{" "}
-                    {formatMonth(project.started, lang)}
-                  </span>
-                  {project.confidential ? (
+                <MediaFrame
+                  src={project.coverImage}
+                  alt={project.title[lang]}
+                  label={dictionary.cover}
+                  aspectClassName="aspect-[16/10] sm:aspect-square"
+                  className="w-full max-w-[12rem] rounded-lg border-0 object-cover sm:max-w-none"
+                />
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                     <span
                       className={cn(
-                        EYEBROW,
-                        "rounded-full border border-border px-2 py-0.5 text-primary/90",
+                        "font-mono text-[10px] font-semibold uppercase tracking-wider",
+                        project.pillar === "ai" ? "text-primary" : TEXT.faint,
                       )}
                     >
-                      {dictionary.confidential}
+                      {dictionary.pillars[project.pillar]}
                     </span>
-                  ) : null}
+                    <span className={cn("font-mono text-[10px] uppercase tracking-wider", TEXT.faint)}>
+                      {formatMonth(project.started, lang)}
+                    </span>
+                    {project.confidential ? (
+                      <span className={cn("font-mono text-[10px] uppercase tracking-wider", TEXT.faint)}>
+                        {dictionary.confidential}
+                      </span>
+                    ) : null}
+                  </div>
+                  <h3 className="mt-1.5 font-display text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-xl">
+                    {project.title[lang]}
+                  </h3>
+                  <p className={cn("mt-1.5 line-clamp-2 max-w-[52ch] text-sm leading-relaxed", TEXT.subtle)}>
+                    {project.summary[lang]}
+                  </p>
                 </div>
-
-                <h3 className="mt-3 max-w-[36ch] font-display text-xl font-medium tracking-tight transition-colors group-hover:text-primary sm:text-2xl">
-                  {project.title[lang]}
-                </h3>
-
-                <p className={cn("mt-2 max-w-[62ch] text-sm leading-relaxed", TEXT.subtle)}>
-                  {project.summary[lang]}
-                </p>
-
-                <p
-                  className={cn(
-                    "mt-4 font-mono text-eyebrow uppercase tracking-wider text-primary",
-                    "opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100",
-                  )}
-                >
-                  {dictionary.read} →
-                </p>
+                <span className="hidden font-mono text-xs font-semibold uppercase tracking-wider text-primary sm:inline-flex sm:items-center">
+                  {dictionary.read}
+                  <span aria-hidden className="ml-1 transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
+                </span>
               </Link>
             </Reveal>
           </li>

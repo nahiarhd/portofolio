@@ -29,9 +29,12 @@ export function LocaleSwitch({
             aria-current={isCurrent ? "true" : undefined}
             aria-label={`${locale} — ${names[locale]}`}
             className={cn(
-              "rounded-full px-2.5 py-1 font-mono text-eyebrow uppercase transition-colors",
+              // min-h-8/min-w-10: 11px type alone gives a 19px target, under the
+              // 24x24 WCAG 2.5.8 floor. Matches the 32px nav links beside it.
+              "inline-flex min-h-8 min-w-10 items-center justify-center rounded-full px-2.5",
+              "font-mono text-eyebrow uppercase transition-colors",
               isCurrent
-                ? "bg-white text-neutral-950"
+                ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:bg-white/5 hover:text-foreground",
             )}
           >

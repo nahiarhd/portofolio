@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000" fill="none">
+  <rect width="800" height="1000" fill="#141418"/>
+  <circle cx="400" cy="380" r="140" fill="#1c1c21" stroke="#c084fc" stroke-opacity="0.35" stroke-width="2"/>
+  <ellipse cx="400" cy="780" rx="220" ry="180" fill="#1c1c21"/>
+  <text x="400" y="940" text-anchor="middle" fill="#8a8a93" font-family="ui-monospace, monospace" font-size="18" letter-spacing="3">PORTRAIT PLACEHOLDER</text>
+</svg>

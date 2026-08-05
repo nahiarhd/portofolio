@@ -3,6 +3,8 @@
     "work": "Karya",
     "about": "Tentang",
     "contact": "Kontak",
+    "shelf": "Rak",
+    "ask": "Tanya",
     "skipToContent": "Lewati ke konten"
   },
   "localeSwitch": {
@@ -31,6 +33,10 @@
     "stack": "Teknologi",
     "read": "Baca studi kasus",
     "back": "Semua karya",
+    "cover": "Sampul",
+    "frames": "Bingkai",
+    "frame": "Bingkai",
+    "mediaHint": "Tambah gambar cover/frame di public/work/<slug>/",
     "pillars": {
       "ai": "AI",
       "blockchain": "Blockchain",
@@ -40,8 +46,15 @@
   "about": {
     "experience": "Pengalaman",
     "education": "Pendidikan",
-    "certifications": "Sertifikasi",
     "present": "Sekarang"
+  },
+  "certifications": {
+    "heading": "Sertifikasi",
+    "eyebrow": "Kredensial terverifikasi",
+    "verify": "Verifikasi",
+    "credentialId": "ID Kredensial",
+    "certificate": "Sertifikat",
+    "mediaHint": "Tambahkan JPG atau PNG di public/certifications/"
   },
   "contact": {
     "body": "Terbuka untuk berdiskusi soal AI engineering, data, dan blockchain."

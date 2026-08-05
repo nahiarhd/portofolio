@@ -3,6 +3,8 @@
     "work": "Work",
     "about": "About",
     "contact": "Contact",
+    "shelf": "Shelf",
+    "ask": "Ask",
     "skipToContent": "Skip to content"
   },
   "localeSwitch": {
@@ -31,6 +33,10 @@
     "stack": "Stack",
     "read": "Read case study",
     "back": "All work",
+    "cover": "Cover",
+    "frames": "Frames",
+    "frame": "Frame",
+    "mediaHint": "Add cover/frame images under public/work/<slug>/",
     "pillars": {
       "ai": "AI",
       "blockchain": "Blockchain",
@@ -40,8 +46,15 @@
   "about": {
     "experience": "Experience",
     "education": "Education",
-    "certifications": "Certifications",
     "present": "Present"
+  },
+  "certifications": {
+    "heading": "Certifications",
+    "eyebrow": "Verified credentials",
+    "verify": "Verify",
+    "credentialId": "Credential ID",
+    "certificate": "Certificate",
+    "mediaHint": "Add JPG or PNG under public/certifications/"
   },
   "contact": {
     "body": "Open to conversations about AI engineering, data, and blockchain work."
