@@ -6,7 +6,8 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { Locale } from "@/lib/locale";
 import type { ShelfBook } from "@/lib/shelf-books";
 
-const SHELF_MIN_HEIGHT = "min-h-[min(100svh,56rem)]";
+/** Full viewport setpiece — One Object Portfolio. */
+const SHELF_MIN_HEIGHT = "min-h-[100dvh]";
 
 function ShelfPlaceholder({ label = "Loading shelf…" }: { label?: string }) {
   return (
@@ -60,7 +61,8 @@ export function ShelfIsland({
         setInView(true);
         observer.disconnect();
       },
-      { rootMargin: "100% 0px", threshold: 0 },
+      // Prefetch earlier: setpiece should be ready when the user scrolls in.
+      { rootMargin: "120% 0px", threshold: 0 },
     );
     observer.observe(node);
     return () => observer.disconnect();
@@ -70,7 +72,8 @@ export function ShelfIsland({
     <section
       ref={sectionRef}
       id="shelf"
-      className="scroll-mt-28 border-t border-border/60"
+      className="scroll-mt-20 border-t border-border/60"
+      aria-label="The Complete Shelf"
     >
       {active ? (
         <ShelfExperience lang={lang} books={books} readLabel={readLabel} />

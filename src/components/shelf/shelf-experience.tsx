@@ -1189,7 +1189,7 @@ export function ShelfExperience({
 
   return (
     <div
-      className="relative min-h-[min(100svh,56rem)] w-full overflow-hidden text-foreground"
+      className="relative min-h-[100dvh] w-full overflow-hidden text-foreground"
       style={{ background: PALETTE.void }}
       role="region"
       aria-label="The Complete Shelf"

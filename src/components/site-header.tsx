@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils";
 
 import { LocaleSwitch } from "./locale-switch";
 
-/** Primary destinations only — shelf stays on-page but not in chrome noise. */
-const SECTIONS = ["work", "about", "contact"] as const;
-const SECONDARY = ["shelf", "ask"] as const;
+/** Shelf first: One Object setpiece. Work list is the non-WebGL path. */
+const SECTIONS = ["shelf", "work", "about", "contact"] as const;
+const SECONDARY = ["ask"] as const;
 
 export function SiteHeader({
   lang,

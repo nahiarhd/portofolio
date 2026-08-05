@@ -36,15 +36,29 @@ export function WorkIndex({
     <section id="work" className={`${CONTAINER} ${SECTION}`}>
       <Reveal>
         <div className="max-w-2xl">
-          <h2 className="font-display text-title font-semibold tracking-tight text-foreground">
+          <p className={EYEBROW}>
+            {lang === "en" ? "Also as a list" : "Juga sebagai daftar"}
+          </p>
+          <h2 className="mt-3 font-display text-title font-semibold tracking-tight text-foreground">
             {heading}
           </h2>
           <p className={cn("mt-3 max-w-[52ch] text-sm leading-relaxed sm:text-base", TEXT.subtle)}>
             {lang === "en"
-              ? "Architectural case studies across AI orchestration, blockchain, and data systems."
-              : "Studi kasus arsitektur di bidang orkestrasi AI, blockchain, dan sistem data."}
+              ? "Same case studies without WebGL — for search, sharing, and when the shelf is off."
+              : "Studi kasus yang sama tanpa WebGL — untuk pencarian, berbagi, dan saat rak nonaktif."}
           </p>
           <p className={cn(EYEBROW, "mt-5")}>{counts}</p>
+          <p className="mt-4">
+            <a
+              href="#shelf"
+              className="font-mono text-xs font-semibold uppercase tracking-wider text-primary transition-opacity hover:opacity-80"
+            >
+              {lang === "en" ? "Back to the shelf" : "Kembali ke rak"}
+              <span aria-hidden className="ml-1">
+                ↑
+              </span>
+            </a>
+          </p>
         </div>
       </Reveal>
 

@@ -28,13 +28,12 @@ export default async function HomePage({
     stack: dictionary.work.stack,
   });
 
-  // `flex-1`, not `min-h-screen`: the body is already a column with a header and
-  // footer, so a full-viewport main pushes the footer off the screen.
+  // One Object: shelf is the immersive setpiece; work list is the non-WebGL path.
   return (
     <main id="content" className="flex-1">
       <Hero lang={lang} />
-      <WorkIndex lang={lang} heading={dictionary.nav.work} dictionary={dictionary.work} />
       <ShelfIsland lang={lang} books={books} readLabel={dictionary.work.read} />
+      <WorkIndex lang={lang} heading={dictionary.nav.work} dictionary={dictionary.work} />
       <ChatMount
         lang={lang}
         copy={dictionary.chat}
