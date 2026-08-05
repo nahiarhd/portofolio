@@ -49,3 +49,11 @@ next-env.d.ts
 # graphify (generated knowledge graph + caches)
 /graphify-out/
 .graphify_*
+
+# Local reference demos (not shipped)
+/example/
+
+# Agent tooling (local; not runtime)
+/.agents/
+/.claude/skills/
+/skills-lock.json
