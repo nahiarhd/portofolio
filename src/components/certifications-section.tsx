@@ -45,7 +45,7 @@ export function CertificationsSection({
                   slot={mediaDropHint(certification.image)}
                   aspectClassName="aspect-[8/5]"
                   sizes="10rem"
-                  className="w-40 shrink-0 transition-transform duration-500 [transition-timing-function:var(--ease-cinematic)] group-hover:-translate-y-1"
+                  className="w-40 shrink-0 transition-transform duration-200 [transition-timing-function:var(--ease-out-quart)] group-hover:-translate-y-0.5"
                 />
 
                 <div className="min-w-0 flex-1">

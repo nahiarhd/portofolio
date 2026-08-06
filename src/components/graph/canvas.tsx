@@ -7,6 +7,10 @@
  *
  * T14: while chat streams, edges pulse and a brightness wave travels the
  * cloud; `showProject` slugs light their mapped nodes in the accent colour.
+ *
+ * The rAF loop pauses (`frameloop="never"`) when the hero is off-screen, and
+ * DPR is capped on coarse pointers so a scrolled-away canvas does not burn
+ * the reference-device budget behind the rest of the page.
  */
 
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -202,16 +206,58 @@ function IdleScene() {
 }
 
 export function GraphCanvas({ className }: { className?: string }) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  // true until measured so first paint still animates
+  const [visible, setVisible] = useState(true);
+  const [dpr, setDpr] = useState<number | [number, number]>([1, 1.5]);
+
+  useEffect(() => {
+    const node = rootRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) return;
+        setVisible(entry.isIntersecting);
+      },
+      { root: null, rootMargin: "12% 0px", threshold: 0 },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const coarse = window.matchMedia("(pointer: coarse)");
+    const apply = () => {
+      // Phones/tablets: fixed 1×. Desktop: allow up to 1.5× (was 2×).
+      setDpr(coarse.matches ? 1 : [1, 1.5]);
+    };
+    apply();
+    coarse.addEventListener("change", apply);
+    return () => coarse.removeEventListener("change", apply);
+  }, []);
+
   return (
-    <Canvas
+    <div
+      ref={rootRef}
       className={className}
-      aria-hidden
-      dpr={[1, 2]}
-      gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
-      camera={{ position: [0, 0.35, 7.2], fov: 42, near: 0.1, far: 50 }}
-      style={{ display: "block", width: "100%", height: "100%", pointerEvents: "none" }}
+      style={{ width: "100%", height: "100%" }}
     >
-      <IdleScene />
-    </Canvas>
+      <Canvas
+        aria-hidden
+        frameloop={visible ? "always" : "never"}
+        dpr={dpr}
+        gl={{ antialias: true, powerPreference: "high-performance", alpha: true }}
+        camera={{ position: [0, 0.35, 7.2], fov: 42, near: 0.1, far: 50 }}
+        style={{
+          display: "block",
+          width: "100%",
+          height: "100%",
+          pointerEvents: "none",
+        }}
+      >
+        <IdleScene />
+      </Canvas>
+    </div>
   );
 }
