@@ -57,3 +57,8 @@ next-env.d.ts
 /.agents/
 /.claude/skills/
 /skills-lock.json
+
+# Browser-automation artifacts. These capture rendered page content, so they
+# can hold copy that was later redacted — never commit them.
+/.playwright-mcp/
+/.tmp-*.png

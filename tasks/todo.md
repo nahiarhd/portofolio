@@ -40,9 +40,18 @@ exemption added to get there.
     on them starts with `DRAFT —` and must be replaced with what he actually
     built. Truthful already: `carbon-credit-tokenization`, `social-media-analytics`,
     and all of `profile.ts` (sourced from his public LinkedIn).
-  - Open decision: `profile.ts` names **ADS Digital Partner** as a 2023 role.
-    That is on his public LinkedIn already, so it is not in the denylist —
-    confirm that is intended.
+  - ~~Open decision: `profile.ts` names the 2023 employer.~~ **Resolved
+    2026-08-05: anonymised to "Digital agency".** The reasoning that it was safe
+    because it is on his public LinkedIn was wrong twice over. First, the
+    employer's own domain form was *already* on the denylist, so the intent to
+    protect it predated the entry. Second, the site describes NDA client work
+    elsewhere; naming the employer anywhere lets a reader join the two, which is
+    exactly the "identify them by search" risk in `docs/spec.md`.
+    The denylist missed it because `containsForbidden` matches single tokens
+    only, so the hashed domain form never matched the spaced legal name. Both
+    spellings are hashed now. The media path under `public/about/` also carried
+    the name and reached the rendered `src` attribute; it is renamed. The name
+    is deliberately not repeated in this note.
 
 - [x] **Launch gate:** no `DRAFT` string survives anywhere in `src/content/` — cleared 2026-08-04
   - AI case studies rewritten NDA-safe (architecture narrative; numbers still optional

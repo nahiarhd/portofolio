@@ -52,9 +52,12 @@ Open Question 3.
 
 The chat runs on **`gpt-oss-120b`** served over an OpenAI-compatible API.
 
-Initial endpoint is the employer's self-hosted vLLM instance
-(`agent.admasolusi.space`, model `ads-llm`). **Raihan has confirmed he has
-authorization to use it for this site** (2026-08-03).
+Initial endpoint is the employer's self-hosted vLLM instance. **Raihan has
+confirmed he has authorization to use it for this site** (2026-08-03).
+
+The hostname and model id are **deliberately not written here.** Both name the
+employer, and this file is part of a repository that will be public. They live
+in `LLM_BASE_URL` and `LLM_MODEL` only. See Confidentiality above.
 
 Configuration is server-side only, never `NEXT_PUBLIC_*`:
 

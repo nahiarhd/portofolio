@@ -70,6 +70,7 @@ export const profile = {
   email: "raihanhd.dev@gmail.com",
   linkedin: "https://www.linkedin.com/in/raihanhd/",
   portrait: {
+    /** Formal plate photo for Subject chapter (prefer rectangular, not cutout). */
     src: "/portrait",
     alt: {
       en: "Raihan Hidayatullah Djunaedi",
@@ -105,7 +106,10 @@ export const experience: readonly Experience[] = [
     ],
   },
   {
-    organization: "ADS Digital Partner (PT. Adma Digital Solusi)",
+    // Anonymised by category, the same way the AI case studies are. This is the
+    // employer the NDA covers, so naming it here would identify the client work
+    // described elsewhere on the site. The role, dates and location are real.
+    organization: "Digital agency",
     role: { en: "Web Developer", id: "Web Developer" },
     start: "2023-08",
     end: "2023-12",
@@ -121,10 +125,12 @@ export const experience: readonly Experience[] = [
       },
     ],
     photo: {
-      src: "/about/ads-team",
+      // The media path is rendered into the `src` attribute, so it leaks into
+      // the page source as surely as visible copy does.
+      src: "/about/agency-team",
       alt: {
-        en: "The ADS Digital Partner team in Surabaya, 2023",
-        id: "Tim ADS Digital Partner di Surabaya, 2023",
+        en: "The team in Surabaya, 2023",
+        id: "Tim di Surabaya, 2023",
       },
     },
   },

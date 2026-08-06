@@ -16,6 +16,18 @@ import { projects } from "./projects";
  * in public CI without publishing what is being checked for.
  *
  * To add a term:  node -e 'console.log(require("node:crypto").createHash("sha256").update("term").digest("hex"))'
+ *
+ * IMPORTANT — how terms are matched. `containsForbidden` splits text on every
+ * non-alphanumeric character and hashes each token separately, so **only single
+ * tokens can ever match**. A hash of a domain or a run-together name will not
+ * catch the same name written with spaces. When adding an organisation, add
+ * every distinctive token it can be spelled with, not just its canonical form.
+ * That gap is what let a protected employer name sit in `profile.ts` while its
+ * domain form was already on this list.
+ *
+ * One of the tokens below is a short acronym. If a legitimate future case study
+ * about advertising metrics ever fails this test on a `profile`/`projects` path
+ * with no obvious cause, that is why — the term is genuine, not a bug.
  */
 const FORBIDDEN_HASHES = new Set([
   "ebca001a1b5df7f3e79469fa2771aa7220ab7764773d7d42032a7f9b89d42d8b",
@@ -23,6 +35,8 @@ const FORBIDDEN_HASHES = new Set([
   "563f77ba16279d08ca5e70eb14f470de6c72b0eeb697447dc53f84bc3bb9e934",
   "1ddcf9d6eb81598bcfa50718e13a7bea01ba9cfdd8d47635c164c8edcc0a6b61",
   "1aef5ea8211ecde355d626694c368130b5bc3c4422c0a877b6012a91c499ff5c",
+  "2eb8b8eca57b9361b698897b165f8ea3bc19288b8f54bbcd5bf40ad5b2f339f2",
+  "788eb2efc52660fe41472319f0d2c623be6540c956921b3632fcc934bf1be10d",
 ]);
 
 const sha256 = (text: string) => createHash("sha256").update(text).digest("hex");

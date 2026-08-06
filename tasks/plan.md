@@ -72,7 +72,8 @@ is expensive.
 
 ### Spike S1: Does the endpoint support tool calling? — ✅ **PASSED** (2026-08-03)
 
-**Result:** Fully supported. `vllm-0.24.0`, model `ads-llm`.
+**Result:** Fully supported. `vllm-0.24.0`. (Model id omitted — it names the
+employer. See `docs/spec.md` § Confidentiality.)
 
 - Non-streaming: `finish_reason: "tool_calls"`, valid JSON arguments
 - Streaming: incremental `delta.tool_calls[].function.arguments` deltas in
