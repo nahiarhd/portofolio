@@ -1,7 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" fill="none" role="img">
-  <rect width="1200" height="750" fill="#1a1813"/>
-  <path d="M72 72H1128" stroke="#5f78e8" stroke-width="3"/>
-  <text x="72" y="111.68" fill="#5f78e8" font-family="ui-monospace, 'Space Mono', monospace" font-size="22" letter-spacing="6">AI</text>
-  <text fill="#f5f4f0" font-family="'Outfit', system-ui, -apple-system, sans-serif" font-size="64" font-weight="500" letter-spacing="-1.92"><tspan x="72" y="672.88">Frame 02</tspan></text>
+<!--
+  Operator audit trail for tool-backed actions.
+
+  Companion to 01 (the loop). Authored from problem/role/outcome: context used
+  to die when findings were hand-copied into tickets and exports; the product
+  is one trail of prompts, calls, and errors an operator can audit. Tools are
+  only those registered as approved inside the same on-premises boundary.
+
+  Violet marks explicit failure. A refuse or timeout is named in the trail —
+  never a silent hop that loses context.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" fill="none" role="img">
+  <title>Auditable trail of prompts, tool calls, and named failures</title>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f7f6f2" fill-opacity="0.55"/>
+    </marker>
+    <marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b883ec"/>
+    </marker>
+    <style>
+      .l { font-family: ui-monospace, "Space Mono", "SFMono-Regular", Menlo, monospace; }
+      .stage { font-size: 34px; letter-spacing: 2px; fill: #f7f6f2; }
+      .eyebrow { font-size: 32px; letter-spacing: 7px; fill: #928c83; }
+      .note { font-size: 32px; letter-spacing: 3px; fill: #b883ec; }
+      .caption { font-size: 32px; letter-spacing: 4px; fill: #928c83; }
+      .stack { font-size: 30px; letter-spacing: 1px; fill: #928c83; }
+      .box { stroke: #f7f6f2; stroke-opacity: 0.28; stroke-width: 1.5; }
+      .wire { stroke: #f7f6f2; stroke-opacity: 0.55; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <text class="l eyebrow" x="70" y="72">AUDIT TRAIL</text>
+  <line x1="70" y1="98" x2="1130" y2="98" stroke="#f7f6f2" stroke-opacity="0.14"/>
+
+  <rect class="box" x="70"  y="200" width="200" height="120"/>
+  <rect class="box" x="340" y="200" width="200" height="120"/>
+  <rect class="box" x="610" y="200" width="200" height="120"/>
+  <rect class="box" x="880" y="200" width="240" height="120"/>
+
+  <text class="l stage" x="170"  y="263" text-anchor="middle" dominant-baseline="middle">PROMPT</text>
+  <text class="l stage" x="440"  y="263" text-anchor="middle" dominant-baseline="middle">CALL</text>
+  <text class="l stage" x="710"  y="263" text-anchor="middle" dominant-baseline="middle">RESULT</text>
+  <text class="l stage" x="1000" y="263" text-anchor="middle" dominant-baseline="middle">TRAIL</text>
+
+  <line class="wire" x1="270" y1="260" x2="333" y2="260" marker-end="url(#a)"/>
+  <line class="wire" x1="540" y1="260" x2="603" y2="260" marker-end="url(#a)"/>
+  <line class="wire" x1="810" y1="260" x2="873" y2="260" marker-end="url(#a)"/>
+
+  <!-- Registry of approved tools only — not any tool the model invents. -->
+  <rect class="box" x="340" y="420" width="470" height="110"/>
+  <text class="l stage" x="575" y="478" text-anchor="middle" dominant-baseline="middle">APPROVED TOOLS ONLY</text>
+  <line class="wire" x1="440" y1="320" x2="440" y2="413" marker-end="url(#a)"/>
+
+  <!-- Refuse / timeout becomes a named entry, not a lost hop. -->
+  <path d="M710 320 V380 H1000 V320" stroke="#b883ec" stroke-width="1.5" stroke-dasharray="8 8" marker-end="url(#av)"/>
+  <text class="l note" x="855" y="370" text-anchor="middle">NAMED FAILURE</text>
+  <text class="l caption" x="600" y="600" text-anchor="middle">ONE TRAIL · NO HAND-COPY HOPS</text>
+
+  <line x1="70" y1="676" x2="1130" y2="676" stroke="#f7f6f2" stroke-opacity="0.14"/>
+  <text class="l stack" x="70" y="716">PYTHON · LLM TOOL CALLING · ON-PREMISES DEPLOYMENT</text>
 </svg>

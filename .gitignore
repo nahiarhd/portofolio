@@ -62,3 +62,8 @@ next-env.d.ts
 # can hold copy that was later redacted — never commit them.
 /.playwright-mcp/
 /.tmp-*.png
+
+# Local portrait working files (not served; originals stay private)
+assets/portrait-source/*.png
+assets/portrait-source/*.jpg
+assets/portrait-source/*.jpeg

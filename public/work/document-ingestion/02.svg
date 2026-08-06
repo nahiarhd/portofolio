@@ -1,7 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" fill="none" role="img">
-  <rect width="1200" height="750" fill="#1a1813"/>
-  <path d="M72 72H1128" stroke="#5f78e8" stroke-width="3"/>
-  <text x="72" y="111.68" fill="#5f78e8" font-family="ui-monospace, 'Space Mono', monospace" font-size="22" letter-spacing="6">AI</text>
-  <text fill="#f5f4f0" font-family="'Outfit', system-ui, -apple-system, sans-serif" font-size="64" font-weight="500" letter-spacing="-1.92"><tspan x="72" y="672.88">Frame 02</tspan></text>
+<!--
+  Layout recovery — what plain OCR never yields.
+
+  Companion to 01 (the confidence-gated pipeline). Authored from problem/role:
+  critical material lived in tables, stamps, and multi-column pages where plain
+  OCR produced noisy characters without fields. This frame is the recovery of
+  structure before anything is indexed or asked.
+
+  Violet marks FIELDS. Characters without fields are not yet a product.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" fill="none" role="img">
+  <title>Layout recovery from tables, stamps, and multi-column scans into fields</title>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f7f6f2" fill-opacity="0.55"/>
+    </marker>
+    <marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b883ec"/>
+    </marker>
+    <style>
+      .l { font-family: ui-monospace, "Space Mono", "SFMono-Regular", Menlo, monospace; }
+      .stage { font-size: 34px; letter-spacing: 2px; fill: #f7f6f2; }
+      .eyebrow { font-size: 32px; letter-spacing: 7px; fill: #928c83; }
+      .note { font-size: 32px; letter-spacing: 3px; fill: #b883ec; }
+      .caption { font-size: 32px; letter-spacing: 4px; fill: #928c83; }
+      .stack { font-size: 30px; letter-spacing: 1px; fill: #928c83; }
+      .box { stroke: #f7f6f2; stroke-opacity: 0.28; stroke-width: 1.5; }
+      .wire { stroke: #f7f6f2; stroke-opacity: 0.55; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <text class="l eyebrow" x="70" y="72">LAYOUT RECOVERY</text>
+  <line x1="70" y1="98" x2="1130" y2="98" stroke="#f7f6f2" stroke-opacity="0.14"/>
+
+  <!-- Three document regions that plain OCR mishandles. -->
+  <rect class="box" x="70"  y="180" width="220" height="110"/>
+  <rect class="box" x="70"  y="320" width="220" height="110"/>
+  <rect class="box" x="70"  y="460" width="220" height="110"/>
+
+  <text class="l stage" x="180" y="238" text-anchor="middle" dominant-baseline="middle">TABLES</text>
+  <text class="l stage" x="180" y="378" text-anchor="middle" dominant-baseline="middle">STAMPS</text>
+  <text class="l stage" x="180" y="518" text-anchor="middle" dominant-baseline="middle">COLUMNS</text>
+
+  <line class="wire" x1="290" y1="235" x2="400" y2="360"/>
+  <line class="wire" x1="290" y1="375" x2="400" y2="375"/>
+  <line class="wire" x1="290" y1="515" x2="400" y2="390"/>
+
+  <rect class="box" x="410" y="310" width="240" height="130"/>
+  <text class="l stage" x="530" y="378" text-anchor="middle" dominant-baseline="middle">LAYOUT</text>
+
+  <line x1="650" y1="375" x2="740" y2="375" stroke="#b883ec" stroke-width="1.5" marker-end="url(#av)"/>
+  <text class="l note" x="695" y="340" text-anchor="middle">FIELDS</text>
+
+  <rect class="box" x="760" y="310" width="180" height="130"/>
+  <text class="l stage" x="850" y="378" text-anchor="middle" dominant-baseline="middle">CHUNKS</text>
+
+  <line class="wire" x1="940" y1="375" x2="990" y2="375" marker-end="url(#a)"/>
+  <rect class="box" x="1000" y="310" width="120" height="130"/>
+  <text class="l stage" x="1060" y="378" text-anchor="middle" dominant-baseline="middle">ASK</text>
+
+  <text class="l caption" x="600" y="600" text-anchor="middle">CHARACTERS WITHOUT FIELDS ARE NOT A PRODUCT</text>
+
+  <line x1="70" y1="676" x2="1130" y2="676" stroke="#f7f6f2" stroke-opacity="0.14"/>
+  <text class="l stack" x="70" y="716">PYTHON · PADDLEOCR · DOCUMENT PARSING</text>
 </svg>

@@ -1,7 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" fill="none" role="img">
-  <rect width="1200" height="750" fill="#1a1813"/>
-  <path d="M72 72H1128" stroke="#5f78e8" stroke-width="3"/>
-  <text x="72" y="111.68" fill="#5f78e8" font-family="ui-monospace, 'Space Mono', monospace" font-size="22" letter-spacing="6">BLOCKCHAIN</text>
-  <text fill="#f5f4f0" font-family="'Outfit', system-ui, -apple-system, sans-serif" font-size="64" font-weight="500" letter-spacing="-1.92"><tspan x="72" y="672.88">Frame 02</tspan></text>
+<!--
+  Credit lifecycle on a permissioned ledger.
+
+  Companion to 01 (network topology). Authored from problem/role: credits are
+  traded on trust in a registry; making each credit a token gives every
+  transfer an auditable history without a public chain. This frame is the
+  token path — mint, transfer, history — not the classroom mentorship, which
+  is outcome copy rather than architecture.
+
+  Violet marks HISTORY. That is why the credit is on a chain at all.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" fill="none" role="img">
+  <title>Carbon credit mint, transfer, and auditable history on ERC-20</title>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f7f6f2" fill-opacity="0.55"/>
+    </marker>
+    <marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b883ec"/>
+    </marker>
+    <style>
+      .l { font-family: ui-monospace, "Space Mono", "SFMono-Regular", Menlo, monospace; }
+      .stage { font-size: 34px; letter-spacing: 2px; fill: #f7f6f2; }
+      .eyebrow { font-size: 32px; letter-spacing: 7px; fill: #928c83; }
+      .note { font-size: 32px; letter-spacing: 3px; fill: #b883ec; }
+      .caption { font-size: 32px; letter-spacing: 4px; fill: #928c83; }
+      .stack { font-size: 30px; letter-spacing: 1px; fill: #928c83; }
+      .box { stroke: #f7f6f2; stroke-opacity: 0.28; stroke-width: 1.5; }
+      .wire { stroke: #f7f6f2; stroke-opacity: 0.55; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <text class="l eyebrow" x="70" y="72">TOKEN LIFECYCLE</text>
+  <line x1="70" y1="98" x2="1130" y2="98" stroke="#f7f6f2" stroke-opacity="0.14"/>
+
+  <rect class="box" x="70"  y="240" width="220" height="130"/>
+  <rect class="box" x="370" y="240" width="200" height="130"/>
+  <rect class="box" x="650" y="240" width="220" height="130"/>
+  <rect class="box" x="950" y="240" width="170" height="130"/>
+
+  <text class="l stage" x="180"  y="308" text-anchor="middle" dominant-baseline="middle">CREDIT</text>
+  <text class="l stage" x="470"  y="308" text-anchor="middle" dominant-baseline="middle">MINT</text>
+  <text class="l stage" x="760"  y="308" text-anchor="middle" dominant-baseline="middle">TRANSFER</text>
+  <text class="l stage" x="1035" y="308" text-anchor="middle" dominant-baseline="middle">LEDGER</text>
+
+  <line class="wire" x1="290" y1="305" x2="363" y2="305" marker-end="url(#a)"/>
+  <line class="wire" x1="570" y1="305" x2="643" y2="305" marker-end="url(#a)"/>
+  <line x1="870" y1="305" x2="943" y2="305" stroke="#b883ec" stroke-width="1.5" marker-end="url(#av)"/>
+  <text class="l note" x="1035" y="205" text-anchor="middle">HISTORY</text>
+
+  <text class="l caption" x="600" y="480" text-anchor="middle">REGISTRY TRUST → ON-CHAIN TRAIL</text>
+  <text class="l caption" x="600" y="530" text-anchor="middle">PRIVATE BESU · NOT A PUBLIC CHAIN</text>
+
+  <line x1="70" y1="676" x2="1130" y2="676" stroke="#f7f6f2" stroke-opacity="0.14"/>
+  <text class="l stack" x="70" y="716">SOLIDITY · HYPERLEDGER BESU · ERC-20</text>
 </svg>

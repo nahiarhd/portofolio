@@ -13,7 +13,7 @@ name and it **wins automatically** — no content edit required.
 | Slot | State |
 | --- | --- |
 | `work/<slug>/cover.jpg` | **Real photography**, greyscale, from Pexels. Replace freely. |
-| `work/<slug>/01`, `02` | Stub. Frames for the case-study pages. |
+| `work/<slug>/01`, `02` | **Authored architecture SVGs** (not stubs). One pipeline + one companion decision per case study. |
 | `portrait` | Real. |
 | `about/agency-team` | Stub — **do not fill with stock.** It is a record of a real team. |
 | `certifications/*` | Stub — **do not fill with stock.** These are credentials. |

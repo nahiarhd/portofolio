@@ -1,7 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" fill="none" role="img">
-  <rect width="1200" height="750" fill="#1a1813"/>
-  <path d="M72 72H1128" stroke="#5f78e8" stroke-width="3"/>
-  <text x="72" y="111.68" fill="#5f78e8" font-family="ui-monospace, 'Space Mono', monospace" font-size="22" letter-spacing="6">AI</text>
-  <text fill="#f5f4f0" font-family="'Outfit', system-ui, -apple-system, sans-serif" font-size="64" font-weight="500" letter-spacing="-1.92"><tspan x="72" y="672.88">Frame 02</tspan></text>
+<!--
+  Operator-readable results under load.
+
+  Companion to 01 (stream-or-state lanes). Authored from problem/role: a naive
+  page blocked, timed out, or dumped opaque JSON. Operators needed layouts that
+  stay scannable when payloads grow, and error/empty states that name the
+  failure — not a spinner that lies.
+
+  Violet marks NAMED STATE. Partial results and honest failure text are the
+  product; the transport choice lives in 01.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" fill="none" role="img">
+  <title>Scannable result layouts with named error and empty states</title>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f7f6f2" fill-opacity="0.55"/>
+    </marker>
+    <marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b883ec"/>
+    </marker>
+    <style>
+      .l { font-family: ui-monospace, "Space Mono", "SFMono-Regular", Menlo, monospace; }
+      .stage { font-size: 34px; letter-spacing: 2px; fill: #f7f6f2; }
+      .eyebrow { font-size: 32px; letter-spacing: 7px; fill: #928c83; }
+      .note { font-size: 32px; letter-spacing: 3px; fill: #b883ec; }
+      .caption { font-size: 32px; letter-spacing: 4px; fill: #928c83; }
+      .stack { font-size: 30px; letter-spacing: 1px; fill: #928c83; }
+      .box { stroke: #f7f6f2; stroke-opacity: 0.28; stroke-width: 1.5; }
+      .wire { stroke: #f7f6f2; stroke-opacity: 0.55; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <text class="l eyebrow" x="70" y="72">RESULT SURFACE</text>
+  <line x1="70" y1="98" x2="1130" y2="98" stroke="#f7f6f2" stroke-opacity="0.14"/>
+
+  <rect class="box" x="70"  y="220" width="240" height="130"/>
+  <rect class="box" x="390" y="220" width="240" height="130"/>
+  <rect class="box" x="710" y="220" width="400" height="130"/>
+
+  <text class="l stage" x="190" y="288" text-anchor="middle" dominant-baseline="middle">PAYLOAD</text>
+  <text class="l stage" x="510" y="288" text-anchor="middle" dominant-baseline="middle">LAYOUT</text>
+  <text class="l stage" x="910" y="288" text-anchor="middle" dominant-baseline="middle">SCANNABLE VIEW</text>
+
+  <line class="wire" x1="310" y1="285" x2="383" y2="285" marker-end="url(#a)"/>
+  <line class="wire" x1="630" y1="285" x2="703" y2="285" marker-end="url(#a)"/>
+
+  <!-- Failure path names the error instead of a lying spinner. -->
+  <path d="M190 350 V460" stroke="#b883ec" stroke-width="1.5" stroke-dasharray="8 8" marker-end="url(#av)"/>
+  <rect x="70" y="470" width="360" height="110" stroke="#b883ec" stroke-opacity="0.5" stroke-width="1.5" stroke-dasharray="8 8"/>
+  <text class="l stage" x="250" y="528" text-anchor="middle" dominant-baseline="middle">NAMED ERROR</text>
+  <text class="l note" x="550" y="528" text-anchor="middle">NOT A LYING SPINNER</text>
+  <text class="l caption" x="600" y="640" text-anchor="middle">EMPTY AND ERROR STATES NAME THE FAILURE</text>
+
+  <line x1="70" y1="676" x2="1130" y2="676" stroke="#f7f6f2" stroke-opacity="0.14"/>
+  <text class="l stack" x="70" y="716">NEXT.JS · REACT · TYPESCRIPT · STREAMING</text>
 </svg>
