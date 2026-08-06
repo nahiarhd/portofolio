@@ -3,7 +3,7 @@
     "work": "Work",
     "about": "About",
     "contact": "Contact",
-    "shelf": "Shelf",
+    "shelf": "Menu",
     "ask": "Ask",
     "skipToContent": "Skip to content"
   },
@@ -25,8 +25,17 @@
   "footer": {
     "rights": "Raihan Hidayatullah Djunaedi. All rights reserved."
   },
+  "hero": {
+    "titleLine1": "I build AI systems",
+    "titleLine2": "and their interfaces.",
+    "body": "Agent pipelines, document and media processing, and the operator-facing surfaces that make them usable.",
+    "ctaPrimary": "See the work",
+    "ctaSecondary": "Contact",
+    "status": "Open to work"
+  },
   "work": {
-    "confidential": "Under NDA",
+    "confidential": "Nda",
+    "redacted": "Redacted · Nda",
     "problem": "Problem",
     "role": "Role",
     "outcome": "Outcome",
@@ -36,7 +45,12 @@
     "cover": "Cover",
     "frames": "Frames",
     "frame": "Frame",
+    "previous": "Previous project",
+    "next": "Next project",
     "mediaHint": "Add cover/frame images under public/work/<slug>/",
+    "stageHeading": "Selected work",
+    "indexHeading": "All work",
+    "listLead": "Six case studies across AI, blockchain, and data. Client work under an NDA is described without naming anyone.",
     "pillars": {
       "ai": "AI",
       "blockchain": "Blockchain",
@@ -46,11 +60,13 @@
   "about": {
     "experience": "Experience",
     "education": "Education",
-    "present": "Present"
+    "present": "Present",
+    "photo": "Photo",
+    "lead": "Information technology graduate working on applied AI, with earlier work teaching blockchain development and building analytics products."
   },
   "certifications": {
     "heading": "Certifications",
-    "eyebrow": "Verified credentials",
+    "lead": "Credentials with a public verification link where the issuer provides one.",
     "verify": "Verify",
     "credentialId": "Credential ID",
     "certificate": "Certificate",
@@ -63,6 +79,7 @@
     "open": "Ask about the work",
     "close": "Close chat",
     "title": "Ask about the work",
+    "lead": "An assistant that answers from the case studies on this page, and nothing else.",
     "placeholder": "Ask a question…",
     "send": "Send",
     "stop": "Stop",

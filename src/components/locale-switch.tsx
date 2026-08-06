@@ -34,7 +34,7 @@ export function LocaleSwitch({
               "inline-flex min-h-8 min-w-10 items-center justify-center rounded-full px-2.5",
               "font-mono text-eyebrow uppercase transition-colors",
               isCurrent
-                ? "bg-primary text-primary-foreground"
+                ? "bg-cta text-cta-foreground"
                 : "text-muted-foreground hover:bg-white/5 hover:text-foreground",
             )}
           >

@@ -3,7 +3,7 @@
     "work": "Karya",
     "about": "Tentang",
     "contact": "Kontak",
-    "shelf": "Rak",
+    "shelf": "Menu",
     "ask": "Tanya",
     "skipToContent": "Lewati ke konten"
   },
@@ -25,8 +25,17 @@
   "footer": {
     "rights": "Raihan Hidayatullah Djunaedi. Seluruh hak cipta dilindungi."
   },
+  "hero": {
+    "titleLine1": "Saya membangun AI",
+    "titleLine2": "dan antarmukanya.",
+    "body": "Pipeline agent, pemrosesan dokumen dan media, serta antarmuka operator yang membuatnya bisa dipakai.",
+    "ctaPrimary": "Lihat karya",
+    "ctaSecondary": "Kontak",
+    "status": "Terbuka untuk kerja"
+  },
   "work": {
-    "confidential": "Terikat NDA",
+    "confidential": "Nda",
+    "redacted": "Disensor · Nda",
     "problem": "Masalah",
     "role": "Peran",
     "outcome": "Hasil",
@@ -36,7 +45,12 @@
     "cover": "Sampul",
     "frames": "Bingkai",
     "frame": "Bingkai",
+    "previous": "Proyek sebelumnya",
+    "next": "Proyek berikutnya",
     "mediaHint": "Tambah gambar cover/frame di public/work/<slug>/",
+    "stageHeading": "Karya pilihan",
+    "indexHeading": "Semua karya",
+    "listLead": "Enam studi kasus di bidang AI, blockchain, dan data. Pekerjaan klien di bawah NDA dijelaskan tanpa menyebut nama siapa pun.",
     "pillars": {
       "ai": "AI",
       "blockchain": "Blockchain",
@@ -46,11 +60,13 @@
   "about": {
     "experience": "Pengalaman",
     "education": "Pendidikan",
-    "present": "Sekarang"
+    "present": "Sekarang",
+    "photo": "Foto",
+    "lead": "Lulusan teknologi informasi yang menggarap AI terapan, dengan pengalaman sebelumnya mengajar pengembangan blockchain dan membangun produk analitik."
   },
   "certifications": {
     "heading": "Sertifikasi",
-    "eyebrow": "Kredensial terverifikasi",
+    "lead": "Kredensial dengan tautan verifikasi publik bila penerbitnya menyediakan.",
     "verify": "Verifikasi",
     "credentialId": "ID Kredensial",
     "certificate": "Sertifikat",
@@ -63,6 +79,7 @@
     "open": "Tanya seputar karya",
     "close": "Tutup chat",
     "title": "Tanya seputar karya",
+    "lead": "Asisten yang menjawab dari studi kasus di halaman ini, dan tidak dari yang lain.",
     "placeholder": "Ajukan pertanyaan…",
     "send": "Kirim",
     "stop": "Berhenti",

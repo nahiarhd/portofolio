@@ -178,7 +178,7 @@ export function ChatPanel({
 
   return (
     <div
-      className="flex min-h-[min(70vh,32rem)] flex-col overflow-hidden rounded-2xl border border-border bg-surface-1"
+      className="flex min-h-[26rem] flex-col overflow-hidden border border-border-strong bg-surface-2"
       aria-labelledby={titleId}
     >
       <header className="flex items-center justify-between gap-4 border-b border-border px-5 py-4 sm:px-6">
@@ -201,25 +201,30 @@ export function ChatPanel({
         aria-live="polite"
       >
         {messages.length === 0 && (
-          <ul className="flex flex-col gap-2">
-            {SUGGESTION_KEYS.map((key) => (
-              <li key={key}>
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => submitText(copy.suggestions[key])}
-                  className={cn(
-                    "w-full rounded-xl border border-border bg-background/40 px-4 py-3 text-left text-sm leading-snug",
-                    "transition-colors hover:border-primary/40 hover:bg-surface-2",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    "disabled:opacity-50",
-                  )}
-                >
-                  {copy.suggestions[key]}
-                </button>
-              </li>
-            ))}
-          </ul>
+          <div className="my-auto">
+            <p className={cn("text-sm", TEXT.subtle)}>{copy.emptyHint}</p>
+            {/* Chips, not full-width rows: three short questions in a stack of
+             * 1100px-wide buttons reads as a broken list. */}
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {SUGGESTION_KEYS.map((key) => (
+                <li key={key}>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => submitText(copy.suggestions[key])}
+                    className={cn(
+                      "rounded-full border border-border-strong px-4 py-2 text-left text-sm leading-snug",
+                      "transition-colors hover:border-primary hover:text-primary",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      "disabled:opacity-50",
+                    )}
+                  >
+                    {copy.suggestions[key]}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
 
         {messages.map((message) => {
@@ -245,7 +250,7 @@ export function ChatPanel({
         })}
 
         {errText && (
-          <div className="space-y-3 rounded-xl border border-border bg-background/50 px-4 py-3 text-sm">
+          <div className="space-y-3 border border-border bg-surface-1 px-4 py-3 text-sm">
             <p className={TEXT.subtle}>{errText}</p>
             <Button
               type="button"
@@ -274,7 +279,7 @@ export function ChatPanel({
             maxLength={2000}
             autoComplete="off"
             className={cn(
-              "min-h-11 min-w-0 flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm",
+              "min-h-11 min-w-0 flex-1 rounded-full border border-border-strong bg-background px-4 py-2.5 text-sm",
               "placeholder:text-muted-foreground-faint",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               "disabled:opacity-50",

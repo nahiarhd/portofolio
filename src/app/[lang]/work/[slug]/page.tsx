@@ -3,12 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { MediaFrame } from "@/components/media-frame";
+import { withRedactions } from "@/components/redaction";
 import { projects } from "@/content/projects";
 import { CONTAINER, EYEBROW, SURFACE, TEXT } from "@/lib/design";
 import { formatMonth } from "@/lib/format";
 import { LOCALES, isLocale } from "@/lib/locale";
 import { buildPageMetadata } from "@/lib/metadata";
 import { mediaDropHint, resolveMediaList, resolvePublicMedia } from "@/lib/public-media";
+import { stripRedactionMarkers } from "@/lib/redaction";
 import { cn } from "@/lib/utils";
 
 import { getDictionary } from "../../dictionaries";
@@ -28,7 +30,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     lang,
     pathAfterLocale: `/work/${project.slug}`,
     title: project.title[lang],
-    description: project.summary[lang],
+    description: stripRedactionMarkers(project.summary[lang]),
   });
 }
 
@@ -78,17 +80,19 @@ export default async function CaseStudyPage({ params }: Params) {
               {formatMonth(project.started, lang)}
             </span>
             {project.confidential ? (
-              <span className={cn("font-mono text-eyebrow uppercase tracking-[0.14em]", TEXT.faint)}>
+              <span className="chapter-stamp chapter-stamp--classified !text-[0.55rem]">
                 {copy.confidential}
               </span>
             ) : null}
           </div>
 
-          <h1 className="mt-5 font-display text-title font-semibold tracking-tight">
+          <h1 className="mt-5 font-display text-title font-normal tracking-tight">
             {project.title[lang]}
           </h1>
           <p className={cn("mt-5 max-w-[52ch] text-base leading-relaxed sm:text-lead", TEXT.subtle)}>
-            {project.summary[lang]}
+            {project.confidential
+              ? withRedactions(project.summary[lang], copy.redacted)
+              : project.summary[lang]}
           </p>
         </header>
       </div>

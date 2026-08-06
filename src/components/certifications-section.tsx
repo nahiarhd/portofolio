@@ -7,8 +7,12 @@ import { mediaDropHint, resolvePublicMedia } from "@/lib/public-media";
 import { cn } from "@/lib/utils";
 
 import { MediaFrame } from "./media-frame";
-import { Reveal } from "./reveal";
+import { RedactLine } from "./redact-line";
 
+/**
+ * Ruled rows, not a card grid. Five credentials in a three-column grid always
+ * ends on an empty cell, and a certificate is one line of information.
+ */
 export function CertificationsSection({
   lang,
   dictionary,
@@ -18,37 +22,47 @@ export function CertificationsSection({
 }) {
   return (
     <section id="certifications" className={`${CONTAINER} ${SECTION}`}>
-      <Reveal>
-        <h2 className="font-display text-title font-semibold tracking-tight">
-          {dictionary.heading}
+      <div data-anim="reveal-head">
+        <h2 className="font-display text-title font-medium tracking-tight">
+          <RedactLine>{dictionary.heading}</RedactLine>
         </h2>
-      </Reveal>
+        <p className={cn("mt-3 max-w-[52ch] text-base leading-relaxed", TEXT.subtle)}>
+          {dictionary.lead}
+        </p>
+      </div>
 
-      <ul className="mt-10 divide-y divide-border/70 border-y border-border/70">
+      <ul data-anim="stagger" className="mt-14">
         {certifications.map((certification) => (
-          <li key={certification.name}>
-            <Reveal>
-              <article className="grid gap-5 py-7 sm:grid-cols-[8.5rem_minmax(0,1fr)_auto] sm:items-center sm:gap-8">
+          <li
+            key={certification.name}
+            className="group border-t border-border transition-colors duration-300 last:border-b hover:border-primary"
+          >
+              <article className="flex flex-col gap-5 py-6 sm:flex-row sm:items-center sm:gap-8">
                 <MediaFrame
                   src={resolvePublicMedia(certification.image)}
                   alt=""
                   label={dictionary.certificate}
                   slot={mediaDropHint(certification.image)}
-                  aspectClassName="aspect-[4/3]"
-                  sizes="140px"
-                  className="w-full max-w-[12rem] rounded-lg border-0 sm:max-w-none"
+                  aspectClassName="aspect-[8/5]"
+                  sizes="10rem"
+                  className="w-40 shrink-0 transition-transform duration-500 [transition-timing-function:var(--ease-cinematic)] group-hover:-translate-y-1"
                 />
 
-                <div className="min-w-0">
-                  <p className={cn("font-mono text-eyebrow uppercase tracking-[0.14em]", TEXT.faint)}>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-display text-lg font-medium leading-snug tracking-tight sm:text-xl">
+                    {certification.name}
+                  </h3>
+                  <p
+                    className={cn(
+                      "mt-1.5 font-mono text-[0.65rem] uppercase tracking-[0.16em]",
+                      TEXT.faint,
+                    )}
+                  >
                     {certification.issuer}
                     {certification.issued
                       ? ` · ${formatMonth(certification.issued, lang)}`
                       : null}
                   </p>
-                  <h3 className="mt-2 font-display text-lg font-medium leading-snug tracking-tight">
-                    {certification.name}
-                  </h3>
                   {certification.credentialId ? (
                     <p className={cn("mt-2 break-all font-mono text-[0.65rem]", TEXT.faint)}>
                       {dictionary.credentialId}: {certification.credentialId}
@@ -62,16 +76,15 @@ export function CertificationsSection({
                     rel="noreferrer"
                     target="_blank"
                     className={cn(
-                      "inline-flex min-h-10 items-center font-mono text-xs font-semibold uppercase tracking-wider text-primary",
-                      "transition-opacity hover:opacity-80",
+                      "shrink-0 font-mono text-xs font-bold uppercase tracking-[0.16em] text-primary",
+                      "transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                     )}
                   >
-                    {dictionary.verify} ↗
+                    {dictionary.verify} &#8599;
                     <span className="sr-only"> ({certification.name}, opens in a new tab)</span>
                   </a>
                 ) : null}
               </article>
-            </Reveal>
           </li>
         ))}
       </ul>

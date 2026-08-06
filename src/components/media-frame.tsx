@@ -29,6 +29,8 @@ type Props = {
   sizes?: string;
   /** object-cover default; contain for diagrams that must not crop. */
   objectFit?: "cover" | "contain";
+  /** Marks the frame for the scroll parallax in `scroll-choreography`. */
+  parallax?: boolean;
 };
 
 export function MediaFrame({
@@ -41,13 +43,17 @@ export function MediaFrame({
   priority = false,
   sizes = "(max-width: 768px) 100vw, 48vw",
   objectFit = "cover",
+  parallax = false,
 }: Props) {
   const isSvg = Boolean(src?.endsWith(".svg"));
 
   return (
     <figure
+      data-anim={parallax ? "parallax" : undefined}
       className={cn(
-        "relative overflow-hidden rounded-xl border border-border bg-surface-1",
+        // `overflow-clip` rather than `hidden`: `hidden` would make the frame a
+        // scroll container and freeze the parallax timeline on the image.
+        "relative overflow-clip border border-border bg-surface-1",
         aspectClassName,
         className,
       )}
@@ -66,13 +72,10 @@ export function MediaFrame({
         />
       ) : (
         <div
-          className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[radial-gradient(ellipse_at_30%_20%,rgba(255,255,255,0.05),transparent_55%)] px-4 text-center"
+          className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-4 text-center"
           aria-label={`${label} placeholder`}
         >
-          <div
-            className="h-10 w-14 rounded-md border border-dashed border-white/15"
-            aria-hidden
-          />
+          <div className="h-10 w-14 border border-dashed border-border-strong" aria-hidden />
           <p className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted-foreground-faint">
             {label}
           </p>

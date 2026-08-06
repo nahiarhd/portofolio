@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Outfit, Space_Mono } from "next/font/google";
+import { Outfit, Space_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { GraphActivityProvider } from "@/components/graph/activity";
+import { ScrollChoreography } from "@/components/scroll-choreography";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { profile } from "@/content/profile";
@@ -16,18 +17,9 @@ import "../globals.css";
 
 type LangParams = { params: Promise<{ lang: string }> };
 
-/** Body: Outfit (not Inter) — cleaner tech sans with presence. */
+/** Outfit is the display and body face; Space Mono carries meta and labels. */
 const outfit = Outfit({
   variable: "--font-outfit",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-  preload: true,
-  adjustFontFallback: true,
-});
-
-const bricolage = Bricolage_Grotesque({
-  variable: "--font-bricolage",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
@@ -76,14 +68,14 @@ export default async function RootLayout({
   return (
     <html
       lang={lang}
-      className={`${outfit.variable} ${bricolage.variable} ${spaceMono.variable} dark h-full antialiased`}
+      className={`${outfit.variable} ${spaceMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="relative flex min-h-full flex-col bg-background font-sans text-foreground">
         <div className="bg-grid-lines" aria-hidden />
-        <div className="ambient-glow ambient-glow--primary" aria-hidden />
-        <div className="ambient-glow ambient-glow--secondary" aria-hidden />
         <div className="bg-grain" aria-hidden />
+        <div className="scroll-line" aria-hidden />
+        <ScrollChoreography />
 
         <GraphActivityProvider>
           <a
@@ -101,7 +93,7 @@ export default async function RootLayout({
 
           {children}
 
-          <SiteFooter rights={dictionary.footer.rights} />
+          <SiteFooter rights={dictionary.footer.rights} lang={lang} />
         </GraphActivityProvider>
       </body>
     </html>

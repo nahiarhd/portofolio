@@ -2,6 +2,7 @@ import { certifications, education, experience, profile } from "@/content/profil
 import { projects } from "@/content/projects";
 
 import type { Locale } from "./locale";
+import { stripRedactionMarkers } from "./redaction";
 
 /**
  * The chat's system prompt, built from the same content the pages render.
@@ -26,7 +27,7 @@ function describeProjects(locale: Locale): string {
         `  started: ${project.started}`,
         `  confidential: ${project.confidential}`,
         `  title: ${project.title[locale]}`,
-        `  summary: ${project.summary[locale]}`,
+        `  summary: ${stripRedactionMarkers(project.summary[locale])}`,
         `  problem: ${project.problem[locale]}`,
         `  role: ${project.role[locale]}`,
         `  outcome: ${project.outcome[locale]}`,

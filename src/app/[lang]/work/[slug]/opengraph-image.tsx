@@ -3,6 +3,7 @@ import { ImageResponse } from "next/og";
 import { projects } from "@/content/projects";
 import { profile } from "@/content/profile";
 import { DEFAULT_LOCALE, isLocale } from "@/lib/locale";
+import { stripRedactionMarkers } from "@/lib/redaction";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -17,7 +18,9 @@ export default async function OpenGraphImage({
   const project = projects.find((entry) => entry.slug === slug);
 
   const title = project?.title[lang] ?? profile.name;
-  const summary = project?.summary[lang] ?? profile.tagline[lang];
+  const summary = stripRedactionMarkers(
+    project?.summary[lang] ?? profile.tagline[lang],
+  );
   const pillar = project?.pillar?.toUpperCase() ?? "WORK";
 
   return new ImageResponse(

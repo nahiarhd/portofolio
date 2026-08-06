@@ -1,6 +1,10 @@
 /**
- * Design tokens — class combinations that repeat.
- * Colour values live in `globals.css` (Ink & Signal).
+ * Design tokens — editorial bone/ink language.
+ * Colour values live in `globals.css`.
+ *
+ * Shape rule, applied everywhere: plates and cards are square, interactive
+ * controls are pills. Mixing the two is what makes a page look assembled
+ * rather than designed.
  */
 
 export const TEXT = {
@@ -9,30 +13,33 @@ export const TEXT = {
   faint: "text-muted-foreground-faint",
 } as const;
 
-/** Mono label for real data only — dates, counts, pillars, stack. */
 export const EYEBROW =
-  "font-mono text-eyebrow uppercase tracking-[0.16em] text-muted-foreground";
+  "font-mono text-eyebrow uppercase tracking-[0.16em] text-muted-foreground-faint";
 
 export const SURFACE = {
-  panel: "glass rounded-2xl",
-  panelStrong: "glass-strong rounded-2xl",
-  /** Flat surface: elevation from luminance, not glass (prefer for long lists). */
-  flat: "rounded-2xl border border-border bg-surface-1",
-  inset: "rounded-xl border border-border/80 bg-white/5",
+  /** Raised paper plate. */
+  panel: "panel",
+  /** Paper plate that needs to lift off the page (overlays, controls). */
+  panelStrong: "panel-strong",
+  /** Flat block, hairline only. */
+  flat: "border border-border bg-surface-1",
+  /** Recessed well. */
+  inset: "border border-border bg-surface-3/60",
   pill: "nav-pill",
 } as const;
 
+const FOCUS =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+
 export const BUTTON = {
-  primary:
-    "inline-flex min-h-11 items-center justify-center rounded-full bg-primary px-6 py-2.5 font-mono text-xs font-semibold uppercase tracking-wider text-primary-foreground transition-[transform,filter] duration-200 hover:brightness-110 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-  secondary:
-    "inline-flex min-h-11 items-center justify-center rounded-full border border-border bg-surface-1 px-6 py-2.5 font-mono text-xs font-semibold uppercase tracking-wider text-foreground transition-colors duration-200 hover:border-primary/45 hover:bg-surface-2 active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-  ghost:
-    "inline-flex min-h-11 items-center justify-center rounded-full px-2 py-2.5 font-mono text-xs font-semibold uppercase tracking-wider text-muted-foreground transition-colors duration-200 hover:text-primary active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+  /** Ink pill — the one primary action per view. */
+  primary: `inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full bg-cta px-6 py-2.5 text-sm font-medium tracking-tight text-cta-foreground transition-[transform,opacity] duration-200 hover:opacity-90 active:scale-[0.98] ${FOCUS}`,
+  /** Outlined pill. */
+  secondary: `inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full border border-border-strong px-6 py-2.5 text-sm font-medium tracking-tight text-foreground transition-colors duration-200 hover:border-primary hover:text-primary active:scale-[0.98] ${FOCUS}`,
+  /** Text action. */
+  ghost: `inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full px-2 py-2.5 text-sm font-medium text-primary transition-opacity duration-200 hover:opacity-70 active:scale-[0.98] ${FOCUS}`,
 } as const;
 
-export const CONTAINER = "relative z-10 mx-auto w-full max-w-6xl px-5 sm:px-8";
+export const CONTAINER = "relative z-10 mx-auto w-full max-w-[77.5rem] px-5 sm:px-8";
 
-/** Shared section vertical rhythm — cinematic breathing room between stages. */
-export const SECTION =
-  "scroll-mt-28 border-t border-border/40 py-24 sm:py-32 lg:py-36";
+export const SECTION = "scroll-mt-24 border-t border-border py-20 sm:py-24 lg:py-28";

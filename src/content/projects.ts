@@ -56,8 +56,8 @@ export const projects: readonly Project[] = [
       id: "Agen closed-loop di balik firewall",
     },
     summary: {
-      en: "Tool-calling agents that act on analysis findings without data leaving the premises.",
-      id: "Agen tool-calling yang menindaklanjuti temuan analisis tanpa data keluar dari premis.",
+      en: "Tool-calling agents that act on analysis findings for {{redacted}} without data leaving the premises.",
+      id: "Agen tool-calling yang menindaklanjuti temuan analisis untuk {{redacted}} tanpa data keluar dari premis.",
     },
     problem: {
       en: "Findings showed up in the platform, but the next step still meant hand-copying into tickets, exports, and other tools. Context died at each hop. The missing piece was agents that call only approved tools inside the same on-premises boundary, with retries and explicit failure when a tool refuses or times out.",
@@ -88,8 +88,8 @@ export const projects: readonly Project[] = [
       id: "Dari rekaman ke brief terstruktur",
     },
     summary: {
-      en: "A media queue that turns long audio and video into transcripts and skimmable briefs.",
-      id: "Antrean media yang mengubah audio dan video panjang menjadi transkrip dan brief yang bisa dipindai.",
+      en: "A media queue for {{redacted}} that turns long audio and video into transcripts and skimmable briefs.",
+      id: "Antrean media untuk {{redacted}} yang mengubah audio dan video panjang menjadi transkrip dan brief yang bisa dipindai.",
     },
     problem: {
       en: "Media arrived faster than anyone could listen. Speech-to-text alone dumped walls of text - no chapters, weak speaker structure, nothing a decision-maker could skim. The bottleneck was the path from file to a brief under time pressure.",
@@ -120,8 +120,8 @@ export const projects: readonly Project[] = [
       id: "Retrieval dokumen dari pindaian ke struktur",
     },
     summary: {
-      en: "OCR plus layout recovery so scans become searchable and answerable in natural language.",
-      id: "OCR plus pemulihan tata letak agar pindaian bisa dicari dan dijawab dalam bahasa alami.",
+      en: "OCR plus layout recovery so scans from {{redacted}} become searchable and answerable in natural language.",
+      id: "OCR plus pemulihan tata letak agar pindaian dari {{redacted}} bisa dicari dan dijawab dalam bahasa alami.",
     },
     problem: {
       en: "Critical material lived in scans - tables, stamps, multi-column pages - where plain OCR produced noisy characters without fields. Keyword search missed what people needed, and natural-language questions over a corpus were impossible until layout and fields were recovered.",
@@ -152,8 +152,8 @@ export const projects: readonly Project[] = [
       id: "UI streaming untuk pekerjaan AI panjang",
     },
     summary: {
-      en: "Operator-facing Next.js surfaces: live tokens, job progress, and results that stay readable under load.",
-      id: "Permukaan Next.js untuk operator: token langsung, progress pekerjaan, dan hasil yang tetap terbaca di beban tinggi.",
+      en: "Operator-facing Next.js surfaces for {{redacted}}: live tokens, job progress, and results that stay readable under load.",
+      id: "Permukaan Next.js untuk operator di {{redacted}}: token langsung, progress pekerjaan, dan hasil yang tetap terbaca di beban tinggi.",
     },
     problem: {
       en: "Backend AI work runs for seconds to minutes. A naive page blocked, timed out, or dumped opaque JSON. Operators needed streaming where it fit, honest progress for long jobs, and layouts that stay scannable when payloads grow - including after a mid-run disconnect.",

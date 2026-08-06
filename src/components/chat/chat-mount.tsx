@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { RedactLine } from "@/components/redact-line";
 import { CONTAINER, SECTION, TEXT } from "@/lib/design";
 import type { Locale } from "@/lib/locale";
 import { cn } from "@/lib/utils";
@@ -27,7 +28,7 @@ const ChatPanel = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className="min-h-[min(70vh,32rem)] animate-pulse rounded-2xl border border-border bg-surface-1"
+        className="min-h-[26rem] animate-pulse border border-border-strong bg-surface-1"
         aria-busy="true"
         aria-label="Loading chat"
       />
@@ -68,10 +69,12 @@ export function ChatMount({ lang, copy, work, heading }: Props) {
 
   return (
     <section ref={sectionRef} id="ask" className={`${CONTAINER} ${SECTION}`}>
-      <div className="max-w-2xl">
-        <h2 className="font-display text-title font-semibold tracking-tight">{heading}</h2>
-        <p className={cn("mt-3 max-w-[52ch] text-sm leading-relaxed sm:text-base", TEXT.subtle)}>
-          {copy.emptyHint}
+      <div data-anim="reveal-head" className="max-w-2xl">
+        <h2 className="font-display text-title font-medium tracking-tight">
+          <RedactLine>{heading}</RedactLine>
+        </h2>
+        <p className={cn("mt-3 max-w-[52ch] text-base leading-relaxed", TEXT.subtle)}>
+          {copy.lead}
         </p>
       </div>
 
@@ -81,7 +84,7 @@ export function ChatMount({ lang, copy, work, heading }: Props) {
         ) : (
           <div
             className={cn(
-              "flex min-h-[min(70vh,32rem)] items-center justify-center rounded-2xl border border-border bg-surface-1 p-6",
+              "flex min-h-[26rem] items-center justify-center border border-border-strong bg-surface-1 p-6",
               "font-mono text-sm text-muted-foreground",
             )}
           >

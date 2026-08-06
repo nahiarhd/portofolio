@@ -1,49 +1,56 @@
 @import "tailwindcss";
 
 /*
- * Ink & Signal — see docs/ideas/ink-and-signal.md.
+ * Editorial language — newsprint bone ground, warm ink type, cobalt signal.
  *
- * Ink: a neutral black elevation scale. Depth comes from luminance, never tint.
- * Signal: one purple, spent only where something is live — the chat, the active
- * graph node, the AI chip, focus rings. Roughly 5% of pixels.
+ * Two colours, two jobs, and they never swap:
+ *   --primary (cobalt)  interactive + emphasis
+ *   --stamp   (oxide)   confidentiality only, never decorative
  *
- * Purple previously coloured the ground, the text AND the borders, which left no
- * neutral to contrast against. Do not give it a sixth job again.
+ * Shape rule: plates and cards are square, interactive controls are pills.
+ * Theme is locked to light on purpose; `color-scheme` keeps native controls
+ * in step so a dark-preference browser does not invert form widgets.
  */
 
 :root {
-  /* Ink — four blacks. Page, section, card, raised. */
-  --background: #08080a;
-  --surface-1: #0e0e11;
-  --surface-2: #141418;
-  --surface-3: #1c1c21;
+  color-scheme: light;
 
-  --foreground: #fafafa;
+  --background: #e4e1d8;
+  --surface-1: #eeece6;
+  --surface-2: #f5f4f0;
+  --surface-3: #d9d5ca;
 
-  --card: rgba(20, 20, 24, 0.78);
-  --card-foreground: #fafafa;
+  --foreground: #1a1813;
+  --card: #f5f4f0;
+  --card-foreground: #1a1813;
 
-  --muted: var(--surface-2);
-  /* Contrast on #08080a: 7.81:1. */
-  --muted-foreground: #a1a1aa;
-  /* 5.85:1 — the floor for 11px mono labels. #71717a fails AA at 4.14:1. */
-  --muted-foreground-faint: #8a8a93;
+  --muted: var(--surface-1);
+  /* Both tiers clear WCAG AA against --background: 6.1:1 and 5.1:1. The faint
+   * tier carries 10-11px mono labels, so it has no contrast to spare. */
+  --muted-foreground: #55514a;
+  --muted-foreground-faint: #625d54;
 
-  --border: rgba(255, 255, 255, 0.09);
-  --input: rgba(255, 255, 255, 0.14);
+  --border: rgba(26, 24, 19, 0.14);
+  --border-strong: rgba(26, 24, 19, 0.26);
+  --input: rgba(26, 24, 19, 0.22);
 
-  /* Signal — the only purple. 7.57:1 on the ground. */
-  --primary: #c084fc;
-  --primary-foreground: #08080a;
-  --ring: #c084fc;
+  /* Cobalt signal */
+  --primary: #1c39bb;
+  --primary-foreground: #f5f4f0;
+  --ring: #1c39bb;
 
-  --destructive: #f87171;
-  --destructive-foreground: #08080a;
+  /* Oxide — confidentiality semantics only */
+  --stamp: #a8321f;
+  --stamp-foreground: #f7f2ef;
 
-  --radius: 0.75rem;
+  --cta: #1a1813;
+  --cta-foreground: #f5f4f0;
+
+  --destructive: #a8321f;
+  --destructive-foreground: #f7f2ef;
+
+  --radius: 0rem;
   --radius-pill: 999px;
-  --glass: rgba(14, 14, 17, 0.62);
-  --glass-strong: rgba(20, 20, 24, 0.8);
 }
 
 @theme inline {
@@ -59,24 +66,33 @@
   --color-muted-foreground-faint: var(--muted-foreground-faint);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-stamp: var(--stamp);
+  --color-stamp-foreground: var(--stamp-foreground);
+  --color-cta: var(--cta);
+  --color-cta-foreground: var(--cta-foreground);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-bricolage), var(--font-outfit), ui-sans-serif, sans-serif;
+  --font-display: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-space-mono), ui-monospace, monospace;
 
-  /* Sized to share the hero row with the portrait. */
-  --text-display: clamp(2.5rem, 8vw, 5rem);
-  --text-display--line-height: 0.88;
-  --text-display--letter-spacing: -0.04em;
+  /* 1.0 rather than a tighter figure: the outlined display line carries a
+   * 1.25px stroke, and descenders clip below that. */
+  /* Sized against the full container width, not a 7-column well. Verified to
+   * hold two lines in both en and id from 360px up; Indonesian runs longer, so
+   * it sets the ceiling. */
+  --text-display: clamp(2.25rem, 9vw, 8rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.05em;
 
-  --text-title: clamp(1.75rem, 5vw, 3rem);
+  --text-title: clamp(1.75rem, 4.5vw, 3rem);
   --text-title--line-height: 1.05;
-  --text-title--letter-spacing: -0.03em;
+  --text-title--letter-spacing: -0.04em;
 
   --text-lead: clamp(1.0625rem, 2vw, 1.25rem);
   --text-lead--line-height: 1.55;
@@ -85,10 +101,10 @@
   --text-eyebrow--line-height: 1;
   --text-eyebrow--letter-spacing: 0.16em;
 
-  --radius-sm: 0.25rem;
+  --radius-sm: 0rem;
   --radius-lg: var(--radius);
-  --radius-xl: 1.5rem;
-  --radius-2xl: 2rem;
+  --radius-xl: 0rem;
+  --radius-2xl: 0rem;
 
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
@@ -98,7 +114,11 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   text-wrap: pretty;
-  overflow-x: hidden;
+  /* `clip`, not `hidden`. `overflow: hidden` makes the body a scroll container,
+   * which then becomes the nearest scrollport for every `view()` timeline on
+   * the page and freezes them. `clip` prevents the same overflow without it. */
+  overflow-x: clip;
+  letter-spacing: -0.01em;
 }
 
 h1,
@@ -106,111 +126,159 @@ h2,
 h3 {
   text-wrap: balance;
   font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.04em;
 }
 
-/* Fixed HUD layers */
+/* Paper texture. Fixed + pointer-events:none so it never repaints on scroll. */
 .bg-grain {
   pointer-events: none;
   position: fixed;
   inset: 0;
   z-index: 40;
-  opacity: 0.035;
+  opacity: 0.055;
+  mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
+/* Column rules — the page's underlying measure, not decoration. */
 .bg-grid-lines {
   pointer-events: none;
   position: fixed;
   inset: 0;
   z-index: 0;
-  background-image:
-    linear-gradient(to right, rgba(192, 132, 252, 0.045) 1px, transparent 1px);
-  background-size: calc(100% / 6) 100%;
-  opacity: 0.55;
-}
-
-/*
- * Atmosphere is where purple belongs: it tints the air without ever touching
- * text, borders or the ground itself. Black stays the primary; this is what
- * makes it read as *our* black rather than a default dark theme.
- */
-.ambient-glow {
-  pointer-events: none;
-  position: fixed;
-  z-index: 0;
-  width: 45vw;
-  height: 45vw;
-  border-radius: 999px;
-  filter: blur(140px);
-}
-
-.ambient-glow--primary {
-  top: -12%;
-  right: -8%;
-  background: #a855f7;
-  opacity: 0.14;
-}
-
-.ambient-glow--secondary {
-  bottom: 5%;
-  left: -12%;
-  background: #7c3aed;
-  opacity: 0.1;
-}
-
-/* Cinematic first stage: soft vignette so full-viewport hero feels graded. */
-#cinematic::after {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: radial-gradient(
-    ellipse 90% 80% at 50% 45%,
-    transparent 40%,
-    rgba(8, 8, 10, 0.45) 100%
+  background-image: linear-gradient(
+    to right,
+    rgba(26, 24, 19, 0.045) 1px,
+    transparent 1px
   );
+  background-size: calc(100% / 6) 100%;
 }
 
-/* Glass surfaces */
-.glass {
-  background: var(--glass);
-  border: 1px solid var(--border);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+/* Outlined display line. The stroke is derived from --foreground rather than a
+ * literal, so it inverts inside .chapter-ink instead of vanishing. Width scales
+ * with the type so it does not thin out at the top of the display clamp. */
+.text-outline {
+  color: transparent;
+  --outline-ink: color-mix(in srgb, var(--foreground) 92%, transparent);
+  -webkit-text-stroke: clamp(1.25px, 0.028em, 2.5px) var(--outline-ink);
+  text-stroke: clamp(1.25px, 0.028em, 2.5px) var(--outline-ink);
 }
 
-.glass-strong {
-  background: var(--glass-strong);
+/* Paper plate: raised stock over the newsprint ground. */
+.panel {
+  background: var(--surface-2);
   border: 1px solid var(--border);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 20px 40px -15px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 1px 0 0 rgba(26, 24, 19, 0.04);
+}
+
+.panel-strong {
+  background: var(--surface-2);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 18px 40px -28px rgba(26, 24, 19, 0.45);
+}
+
+.nav-bar {
+  background: rgba(228, 225, 216, 0.82);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition:
+    background-color 0.4s var(--ease-cinematic),
+    border-color 0.4s var(--ease-cinematic);
+}
+
+/* Over the ink chapter the bar carries that chapter's tokens (block above) and
+ * drops its own surface, so the hero reads full-bleed. */
+.nav-bar[data-ink="true"] {
+  background: transparent;
+  border-bottom-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .nav-bar {
+    background: var(--background);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 .nav-pill {
-  background: rgba(14, 14, 17, 0.72);
+  background: var(--surface-2);
   border: 1px solid var(--border);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
   border-radius: var(--radius-pill);
 }
 
-/* Selection is a live interaction, so it earns the signal colour. */
 ::selection {
-  background: rgba(192, 132, 252, 0.3);
+  background: rgba(28, 57, 187, 0.22);
+  color: var(--foreground);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+/* Rubber stamp for confidentiality marks. */
+.chapter-stamp {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid currentColor;
+  padding: 0.2rem 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.chapter-stamp--classified {
+  color: var(--stamp);
+}
+
+.chapter-stamp--declassified {
+  color: var(--muted-foreground);
+}
+
+/* Redaction.
+ * The bar must not use `currentColor` for its background: the same rule sets
+ * `color: transparent` to hide the block glyphs, so `currentColor` resolves to
+ * transparent and the bar disappears. Paint it with an explicit ink instead. */
+.redaction {
+  display: inline;
+  cursor: help;
+  vertical-align: baseline;
+}
+
+.redaction__bar {
+  display: inline-block;
+  min-width: 4.5ch;
+  height: 0.85em;
+  margin: 0 0.15em;
+  vertical-align: -0.05em;
+  background: var(--foreground);
+  color: transparent;
+  user-select: none;
+}
+
+.redaction__label {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stamp);
+}
+
+.redaction:hover .redaction__bar,
+.redaction:focus-visible .redaction__bar,
+.redaction:focus-within .redaction__bar {
+  display: none;
+}
+
+.redaction:hover .redaction__label,
+.redaction:focus-visible .redaction__label,
+.redaction:focus-within .redaction__label {
+  display: inline;
 }
 
 :focus-visible {
@@ -218,127 +286,178 @@ h3 {
   outline-offset: 2px;
 }
 
-/* Scroll reveal (armed by <Reveal>) */
+/* ---------------------------------------------------------------------------
+ * Ink chapter — one deliberate theme switch, used only for the hero.
+ *
+ * Both the raw names and the `--color-*` names are redeclared. Custom property
+ * substitution happens where a property is declared, so `--color-background:
+ * var(--background)` at :root has already resolved against the root value;
+ * overriding `--background` alone would not reach any Tailwind utility.
+ * ------------------------------------------------------------------------ */
+.chapter-ink,
+.nav-bar[data-ink="true"] {
+  --background: #121110;
+  --surface-1: #1a1815;
+  --surface-2: #201d1a;
+  --surface-3: #2a2622;
+  --foreground: #f2f0ea;
+  --muted-foreground: #a8a29a;
+  --muted-foreground-faint: #8c867d;
+  --border: rgba(242, 240, 234, 0.14);
+  --border-strong: rgba(242, 240, 234, 0.3);
+  /* Cobalt lifted into the light half of the ramp to clear AA on ink. */
+  --primary: #7d92ff;
+  --primary-foreground: #121110;
+  --ring: #7d92ff;
+  --cta: #f2f0ea;
+  --cta-foreground: #141310;
+
+  --color-background: var(--background);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted-foreground-faint: var(--muted-foreground-faint);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-cta: var(--cta);
+  --color-cta-foreground: var(--cta-foreground);
+}
+
+/* Tokens above are shared with the header; only the chapter itself paints a
+ * surface. Keeping these separate stops this block from winning on source
+ * order against the header's transparent background. */
+.chapter-ink {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* ---------------------------------------------------------------------------
+ * Scroll choreography
+ *
+ * Native CSS scroll-driven animations rather than a scroll library. Reasons,
+ * in order: it costs 0 KB against a frame budget measured on a Redmi Note 11,
+ * it runs off the main thread, and a browser without support gets the static
+ * page rather than a half-played one. The @supports guard is the fallback.
+ *
+ * Only `transform` and `opacity` are animated. Nothing here changes layout.
+ * ------------------------------------------------------------------------ */
+
+/* Underline that draws in from the left. Uses background-size rather than a
+ * pseudo-element so it wraps with the text and animates without layout. */
+.link-underline {
+  background-image: linear-gradient(var(--primary), var(--primary));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0% 1px;
+  padding-bottom: 3px;
+  transition: background-size 0.45s var(--ease-cinematic);
+}
+
+.link-underline:hover,
+.link-underline:focus-visible,
+.group:hover .link-underline,
+.group:focus-visible .link-underline {
+  background-size: 100% 1px;
+}
+
+.scroll-line {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 60;
+  height: 2px;
+  background: var(--primary);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .marquee-track {
+    animation: marquee 48s linear infinite;
+  }
+
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+
+  @keyframes marquee {
+    to {
+      /* The track renders its content twice, so half a track is one full loop. */
+      transform: translateX(-50%);
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Redaction wipe — the page signature.
+ *
+ * Four of six case studies are genuinely under NDA, so the black bar is the one
+ * device here that states something true rather than decorating. Headlines
+ * arrive by having the bar pulled off them.
+ *
+ * The bar rests at scaleX(0): with no JS the text is simply visible, and GSAP
+ * sets it to 1 before wiping it away. Never the reverse, or a failed script
+ * would leave real copy permanently covered.
+ * ------------------------------------------------------------------------ */
+.redact-line {
+  position: relative;
+  display: inline-block;
+}
+
+.redact-line__bar {
+  position: absolute;
+  inset: 0.08em -0.12em 0.12em -0.12em;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  pointer-events: none;
+}
+
 .reveal {
   opacity: 1;
   transform: none;
-  filter: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .reveal:not(.reveal-visible) {
     opacity: 0;
-    transform: translateY(1.5rem);
-    filter: blur(6px);
+    transform: translateY(1rem);
   }
 
   .reveal.reveal-visible {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0);
     transition:
-      opacity 0.9s var(--ease-cinematic),
-      transform 0.9s var(--ease-cinematic),
-      filter 0.9s var(--ease-cinematic);
-  }
-
-  .hero-cinematic {
-    animation: cinematicEntrance 3.2s var(--ease-cinematic) both;
-  }
-
-  @keyframes cinematicEntrance {
-    from {
-      opacity: 0;
-      transform: scale(1.12);
-      filter: blur(12px);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-      filter: blur(0);
-    }
-  }
-
-  .hud-pulse {
-    animation: hudPulse 2s ease-in-out infinite;
-  }
-
-  @keyframes hudPulse {
-    0%,
-    100% {
-      opacity: 0.45;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 1;
-      transform: scale(1.15);
-    }
-  }
-}
-
-.work-row {
-  position: relative;
-}
-
-.work-row::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.75rem;
-  bottom: 0.75rem;
-  width: 2px;
-  border-radius: 999px;
-  background: var(--primary);
-  opacity: 0;
-  transition: opacity 0.25s var(--ease-out-quart);
-}
-
-.work-row:hover::before,
-.work-row:focus-within::before {
-  opacity: 1;
-}
-
-/* Shelf detail panel: staggered children (craft from example/books, CSS only). */
-.shelf-detail-stagger {
-  opacity: 0;
-  transform: translateY(18px);
-  animation: shelfDetailIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes shelfDetailIn {
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* Mobile bottom sheet entrance — rises from the home indicator. */
-.shelf-detail-sheet {
-  animation: shelfSheetIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-@keyframes shelfSheetIn {
-  from {
-    opacity: 0.6;
-    transform: translateY(12%);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@media (min-width: 640px) {
-  .shelf-detail-sheet {
-    animation: shelfDetailIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+      opacity 0.6s var(--ease-cinematic),
+      transform 0.6s var(--ease-cinematic);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .shelf-detail-stagger,
-  .shelf-detail-sheet {
-    opacity: 1;
-    transform: none;
-    animation: none;
+  .redaction__bar {
+    display: none;
+  }
+  .redaction__label {
+    display: inline;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

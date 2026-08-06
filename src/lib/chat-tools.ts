@@ -14,6 +14,7 @@ import { z } from "zod";
 import { projects } from "@/content/projects";
 
 import type { Locale } from "./locale";
+import { stripRedactionMarkers } from "./redaction";
 
 const slugList = projects.map((project) => project.slug);
 
@@ -57,7 +58,7 @@ export function resolveShowProject(
     ok: true,
     slug: project.slug,
     title: project.title[locale],
-    summary: project.summary[locale],
+    summary: stripRedactionMarkers(project.summary[locale]),
     pillar: project.pillar,
     confidential: project.confidential,
   };
