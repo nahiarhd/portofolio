@@ -40,8 +40,10 @@ function IdleScene() {
   const group = useRef<THREE.Group>(null);
   const mesh = useRef<THREE.InstancedMesh>(null);
   const edgeMaterial = useRef<THREE.LineBasicMaterial>(null);
-  const foreground = useCssColor("--foreground", "#fafafa");
-  const primary = useCssColor("--primary", "#c084fc");
+  // Fallbacks mirror the paper chapter the graph actually sits in, so a failed
+  // computed-style read degrades to the right ramp rather than the old one.
+  const foreground = useCssColor("--foreground", "#141310");
+  const primary = useCssColor("--primary", "#5a189a");
   const { positions, edgePositions, nodeCount, signalIndex } = IDLE_GRAPH;
   const { streaming, highlightSlugs } = useGraphActivity();
 

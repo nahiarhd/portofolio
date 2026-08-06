@@ -10,8 +10,8 @@ import { HeroGraph } from "./graph/hero-graph";
 import { RedactLine } from "./redact-line";
 
 /**
- * Ink chapter. The page's one theme switch, and the only place the portrait
- * appears, so the drop into bone at the next section reads as a cut.
+ * Paper chapter. The page's one theme switch, and the only place the portrait
+ * appears, so the drop into ink at the next section reads as a cut.
  *
  * Headline spans the full container rather than a column, which is what buys
  * the display size. The portrait is inset on the right and the type overlaps
@@ -43,7 +43,7 @@ export function Hero({
     <section
       id="cover"
       data-anim="hero"
-      className="chapter-ink relative flex min-h-[100dvh] flex-col justify-end overflow-clip"
+      className="chapter-paper relative flex min-h-[100dvh] flex-col justify-end overflow-clip"
       aria-label={profile.name}
     >
       {/* Idle node graph — the hero's ground, and the site's one 3D object.
@@ -73,9 +73,11 @@ export function Hero({
               fill
               priority
               sizes="46vw"
-              /* Dropped well below mid-grey: the headline crosses the shirt and
-               * jacket, and outline type is unreadable over a light value. */
-              className="object-cover object-top grayscale brightness-[0.55] contrast-[1.15]"
+              /* Raised well above mid-grey — the inverse of what the ink hero
+               * needed. The headline crosses the shirt and jacket as dark type
+               * now, so the portrait has to stay in the light half of the
+               * range for the outline stroke to read over it. */
+              className="object-cover object-top grayscale brightness-[1.35] contrast-[0.85]"
             />
           ) : null}
           <div
@@ -141,9 +143,9 @@ export function Hero({
         </p>
       </div>
 
-      {/* Marks where the ink chapter ends, for the header's token flip. */}
+      {/* Marks where the paper chapter ends, for the header's token flip. */}
       <span
-        data-ink-chapter-end
+        data-hero-chapter-end
         className="pointer-events-none absolute inset-x-0 bottom-0 h-px"
         aria-hidden
       />

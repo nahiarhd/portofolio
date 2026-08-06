@@ -1,53 +1,62 @@
 @import "tailwindcss";
 
 /*
- * Editorial language — newsprint bone ground, warm ink type, cobalt signal.
+ * Editorial language — ink ground, paper hero, violet signal.
  *
  * Two colours, two jobs, and they never swap:
- *   --primary (cobalt)  interactive + emphasis
+ *   --primary (violet)  interactive + emphasis
  *   --stamp   (oxide)   confidentiality only, never decorative
  *
+ * The violet exists as two values, not one. #5a189a measures 10.3:1 on the
+ * white hero and 1.8:1 on the dark ground — the same hue has to be lifted to
+ * #b883ec (7.0:1) for the body. One token, two ramps, chosen by chapter.
+ *
  * Shape rule: plates and cards are square, interactive controls are pills.
- * Theme is locked to light on purpose; `color-scheme` keeps native controls
- * in step so a dark-preference browser does not invert form widgets.
+ * Theme is locked to dark on purpose; `color-scheme` keeps native controls in
+ * step so a light-preference browser does not invert form widgets.
  */
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
-  --background: #e4e1d8;
-  --surface-1: #eeece6;
-  --surface-2: #f5f4f0;
-  --surface-3: #d9d5ca;
+  --background: #0d0c0b;
+  --surface-1: #161513;
+  --surface-2: #1e1c19;
+  --surface-3: #2a2723;
 
-  --foreground: #1a1813;
-  --card: #f5f4f0;
-  --card-foreground: #1a1813;
+  --foreground: #f7f6f2;
+  --card: #1e1c19;
+  --card-foreground: #f7f6f2;
 
   --muted: var(--surface-1);
-  /* Both tiers clear WCAG AA against --background: 6.1:1 and 5.1:1. The faint
+  /* Both tiers clear WCAG AA against --background: 8.5:1 and 5.9:1. The faint
    * tier carries 10-11px mono labels, so it has no contrast to spare. */
-  --muted-foreground: #55514a;
-  --muted-foreground-faint: #625d54;
+  --muted-foreground: #b0aaa1;
+  --muted-foreground-faint: #928c83;
 
-  --border: rgba(26, 24, 19, 0.14);
-  --border-strong: rgba(26, 24, 19, 0.26);
-  --input: rgba(26, 24, 19, 0.22);
+  --border: rgba(247, 246, 242, 0.14);
+  --border-strong: rgba(247, 246, 242, 0.28);
+  --input: rgba(247, 246, 242, 0.24);
 
-  /* Cobalt signal */
-  --primary: #1c39bb;
-  --primary-foreground: #f5f4f0;
-  --ring: #1c39bb;
+  /* Violet signal, lifted half of the ramp. */
+  --primary: #b883ec;
+  --primary-foreground: #0d0c0b;
+  --ring: #b883ec;
 
-  /* Oxide — confidentiality semantics only */
-  --stamp: #a8321f;
-  --stamp-foreground: #f7f2ef;
+  /* Oxide — confidentiality semantics only. Lifted too: the paper chapter's
+   * #a8321f measures 2.9:1 here, and the stamp is 10px bold mono. */
+  --stamp: #e8674f;
+  --stamp-foreground: #17100e;
 
-  --cta: #1a1813;
-  --cta-foreground: #f5f4f0;
+  --cta: #f7f6f2;
+  --cta-foreground: #0d0c0b;
 
-  --destructive: #a8321f;
-  --destructive-foreground: #f7f2ef;
+  --destructive: #e8674f;
+  --destructive-foreground: #17100e;
+
+  /* Hairline column rules. Declared here rather than literal in .bg-grid-lines
+   * because that layer is fixed to the viewport and cannot inherit a chapter. */
+  --rule: rgba(247, 246, 242, 0.055);
 
   --radius: 0rem;
   --radius-pill: 999px;
@@ -130,14 +139,19 @@ h3 {
   letter-spacing: -0.04em;
 }
 
-/* Paper texture. Fixed + pointer-events:none so it never repaints on scroll. */
+/* Paper texture. Fixed + pointer-events:none so it never repaints on scroll.
+ *
+ * `soft-light`, not `multiply`. This layer is fixed to the viewport and so
+ * crosses both chapters; multiply is invisible on the dark ground and screen
+ * is invisible on the white hero. Soft-light holds its midpoint and reads on
+ * both. Opacity is higher to compensate — soft-light is a gentle operator. */
 .bg-grain {
   pointer-events: none;
   position: fixed;
   inset: 0;
   z-index: 40;
-  opacity: 0.055;
-  mix-blend-mode: multiply;
+  opacity: 0.22;
+  mix-blend-mode: soft-light;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -147,16 +161,12 @@ h3 {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background-image: linear-gradient(
-    to right,
-    rgba(26, 24, 19, 0.045) 1px,
-    transparent 1px
-  );
+  background-image: linear-gradient(to right, var(--rule) 1px, transparent 1px);
   background-size: calc(100% / 6) 100%;
 }
 
 /* Outlined display line. The stroke is derived from --foreground rather than a
- * literal, so it inverts inside .chapter-ink instead of vanishing. Width scales
+ * literal, so it inverts inside .chapter-paper instead of vanishing. Width scales
  * with the type so it does not thin out at the top of the display clamp. */
 .text-outline {
   color: transparent;
@@ -179,7 +189,7 @@ h3 {
 }
 
 .nav-bar {
-  background: rgba(228, 225, 216, 0.82);
+  background: rgba(13, 12, 11, 0.82);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -188,9 +198,9 @@ h3 {
     border-color 0.4s var(--ease-cinematic);
 }
 
-/* Over the ink chapter the bar carries that chapter's tokens (block above) and
- * drops its own surface, so the hero reads full-bleed. */
-.nav-bar[data-ink="true"] {
+/* Over the paper chapter the bar carries that chapter's tokens (block above)
+ * and drops its own surface, so the hero reads full-bleed. */
+.nav-bar[data-hero="true"] {
   background: transparent;
   border-bottom-color: transparent;
   backdrop-filter: none;
@@ -212,7 +222,7 @@ h3 {
 }
 
 ::selection {
-  background: rgba(28, 57, 187, 0.22);
+  background: rgba(184, 131, 236, 0.3);
   color: var(--foreground);
 }
 
@@ -287,30 +297,36 @@ h3 {
 }
 
 /* ---------------------------------------------------------------------------
- * Ink chapter — one deliberate theme switch, used only for the hero.
+ * Paper chapter — one deliberate theme switch, used only for the hero.
  *
  * Both the raw names and the `--color-*` names are redeclared. Custom property
  * substitution happens where a property is declared, so `--color-background:
  * var(--background)` at :root has already resolved against the root value;
  * overriding `--background` alone would not reach any Tailwind utility.
+ *
+ * The ground here is pure white, so a raised plate cannot be lighter than it.
+ * `.panel` falls back to its hairline and shadow inside this chapter. That is
+ * fine because the hero carries no plates — but it is why --surface-2 is not
+ * pushed above #ffffff to fake a lift that white cannot have.
  * ------------------------------------------------------------------------ */
-.chapter-ink,
-.nav-bar[data-ink="true"] {
-  --background: #121110;
-  --surface-1: #1a1815;
-  --surface-2: #201d1a;
-  --surface-3: #2a2622;
-  --foreground: #f2f0ea;
-  --muted-foreground: #a8a29a;
-  --muted-foreground-faint: #8c867d;
-  --border: rgba(242, 240, 234, 0.14);
-  --border-strong: rgba(242, 240, 234, 0.3);
-  /* Cobalt lifted into the light half of the ramp to clear AA on ink. */
-  --primary: #7d92ff;
-  --primary-foreground: #121110;
-  --ring: #7d92ff;
-  --cta: #f2f0ea;
-  --cta-foreground: #141310;
+.chapter-paper,
+.nav-bar[data-hero="true"] {
+  --background: #ffffff;
+  --surface-1: #f5f4f2;
+  --surface-2: #ffffff;
+  --surface-3: #eceae6;
+  --foreground: #141310;
+  --muted-foreground: #55514a;
+  --muted-foreground-faint: #625d54;
+  --border: rgba(20, 19, 16, 0.14);
+  --border-strong: rgba(20, 19, 16, 0.26);
+  /* Violet dropped into the dark half of the ramp to clear AA on paper. */
+  --primary: #5a189a;
+  --primary-foreground: #ffffff;
+  --ring: #5a189a;
+  --cta: #141310;
+  --cta-foreground: #ffffff;
+  --stamp: #a8321f;
 
   --color-background: var(--background);
   --color-surface-1: var(--surface-1);
@@ -323,6 +339,7 @@ h3 {
   --color-border-strong: var(--border-strong);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-stamp: var(--stamp);
   --color-cta: var(--cta);
   --color-cta-foreground: var(--cta-foreground);
 }
@@ -330,7 +347,7 @@ h3 {
 /* Tokens above are shared with the header; only the chapter itself paints a
  * surface. Keeping these separate stops this block from winning on source
  * order against the header's transparent background. */
-.chapter-ink {
+.chapter-paper {
   background-color: var(--background);
   color: var(--foreground);
 }

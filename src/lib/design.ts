@@ -1,5 +1,5 @@
 /**
- * Design tokens — editorial bone/ink language.
+ * Design tokens — editorial ink/paper language.
  * Colour values live in `globals.css`.
  *
  * Shape rule, applied everywhere: plates and cards are square, interactive

@@ -48,7 +48,7 @@ export function SiteHeader({
    * header carries that chapter's tokens until the hero ends.
    *
    * The initial value comes from the route, not from measurement, so the first
-   * paint is already correct and the bar never flashes bone over the hero.
+   * paint is already correct and the bar never flashes ink over the hero.
    *
    * Updates are written straight to the DOM node instead of through state:
    * `react-hooks/set-state-in-effect` is an error here, and a re-render per
@@ -60,19 +60,19 @@ export function SiteHeader({
    * The `top` test covers a hero taller than the viewport, where the sentinel
    * starts below the fold. */
   const pathname = usePathname();
-  const startsInk = /^\/[a-z]{2}\/?$/.test(pathname);
+  const startsHero = /^\/[a-z]{2}\/?$/.test(pathname);
   const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const node = headerRef.current;
-    const sentinel = document.querySelector("[data-ink-chapter-end]");
+    const sentinel = document.querySelector("[data-hero-chapter-end]");
     if (!node || !sentinel) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry) return;
-        const overInk = entry.isIntersecting || entry.boundingClientRect.top > 0;
-        node.dataset.ink = String(overInk);
+        const overHero = entry.isIntersecting || entry.boundingClientRect.top > 0;
+        node.dataset.hero = String(overHero);
       },
       { rootMargin: "-72px 0px 0px 0px" },
     );
@@ -89,11 +89,11 @@ export function SiteHeader({
   return (
     <header
       ref={headerRef}
-      data-ink={startsInk ? "true" : "false"}
+      data-hero={startsHero ? "true" : "false"}
       className={cn(
         "nav-bar fixed inset-x-0 top-0 z-50",
-        // The open menu needs a surface; tokens still come from data-ink, so
-        // it reads ink over the hero and bone below it.
+        // The open menu needs a surface; tokens still come from data-hero, so
+        // it reads paper over the hero and ink below it.
         open && "!bg-background",
       )}
     >
