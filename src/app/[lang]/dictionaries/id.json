@@ -45,10 +45,7 @@
     "cover": "Sampul",
     "frames": "Bingkai",
     "frame": "Bingkai",
-    "previous": "Proyek sebelumnya",
-    "next": "Proyek berikutnya",
     "mediaHint": "Tambah gambar cover/frame di public/work/<slug>/",
-    "stageHeading": "Karya pilihan",
     "indexHeading": "Semua karya",
     "listLead": "Enam studi kasus di bidang AI, blockchain, dan data. Pekerjaan klien di bawah NDA dijelaskan tanpa menyebut nama siapa pun.",
     "pillars": {

@@ -45,10 +45,7 @@
     "cover": "Cover",
     "frames": "Frames",
     "frame": "Frame",
-    "previous": "Previous project",
-    "next": "Next project",
     "mediaHint": "Add cover/frame images under public/work/<slug>/",
-    "stageHeading": "Selected work",
     "indexHeading": "All work",
     "listLead": "Six case studies across AI, blockchain, and data. Client work under an NDA is described without naming anyone.",
     "pillars": {

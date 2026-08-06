@@ -8,10 +8,7 @@ import { ContactSection } from "@/components/contact-section";
 import { Hero } from "@/components/hero";
 import { Statement } from "@/components/statement";
 import { WorkIndex } from "@/components/work-index";
-import { WorkStage, type WorkStageItem } from "@/components/work-stage";
-import { projects } from "@/content/projects";
 import { isLocale } from "@/lib/locale";
-import { resolvePublicMedia } from "@/lib/public-media";
 
 import { getDictionary } from "./dictionaries";
 
@@ -25,28 +22,16 @@ export default async function HomePage({
 
   const dictionary = await getDictionary(lang);
 
-  // Resolve covers on the server (node:fs) before the client work stage.
-  // Keep {{redacted}} in confidential summaries for the redaction UI.
-  const stageProjects: WorkStageItem[] = projects.map((project) => ({
-    slug: project.slug,
-    title: project.title[lang],
-    summary: project.summary[lang],
-    pillar: project.pillar,
-    confidential: project.confidential,
-    coverSrc: resolvePublicMedia(project.coverImage),
-  }));
-
-  // hero → selected work (stage) → all work → ask → about → certs → contact.
+  // hero → work → ask → about → certs → contact.
+  //
+  // One work section, not two. The stage and the index listed the same six
+  // projects, so "Selected work" and "All work" were the same set under two
+  // headings. Deleting the stage also drops the second continuous <Canvas>,
+  // which is what buys the frame budget for the persistent hero graph.
   return (
     <main id="content" className="flex-1">
       <Hero lang={lang} copy={dictionary.hero} />
       <CapabilityMarquee />
-      <WorkStage
-        lang={lang}
-        projects={stageProjects}
-        dictionary={dictionary.work}
-        heading={dictionary.work.stageHeading}
-      />
       <WorkIndex
         lang={lang}
         heading={dictionary.work.indexHeading}

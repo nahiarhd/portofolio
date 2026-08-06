@@ -48,7 +48,7 @@ export function SiteFooter({
             LinkedIn
           </a>
           <Link
-            href={`/${lang}#work-stage`}
+            href={`/${lang}#work`}
             className={cn(
               "inline-flex min-h-8 items-center text-sm transition-colors hover:text-primary",
               TEXT.subtle,

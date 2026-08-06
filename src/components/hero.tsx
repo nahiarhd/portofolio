@@ -6,6 +6,7 @@ import type { Locale } from "@/lib/locale";
 import { resolvePublicMedia } from "@/lib/public-media";
 import { cn } from "@/lib/utils";
 
+import { HeroGraph } from "./graph/hero-graph";
 import { RedactLine } from "./redact-line";
 
 /**
@@ -45,6 +46,19 @@ export function Hero({
       className="chapter-ink relative flex min-h-[100dvh] flex-col justify-end overflow-clip"
       aria-label={profile.name}
     >
+      {/* Idle node graph — the hero's ground, and the site's one 3D object.
+       * It is the receiver for `GraphActivityProvider`: when the chat's
+       * `showProject` tool names a project, that project's mapped node lights.
+       * Without it the chat publishes activity to nothing.
+       *
+       * Held below the type: 400 bright nodes at full strength compete with
+       * outlined display glyphs. `HeroGraph` swaps in a static SVG when WebGL
+       * is blocked or motion is reduced, so this layer never becomes a
+       * dependency. */}
+      <div className="pointer-events-none absolute inset-0 z-0 opacity-60" aria-hidden>
+        <HeroGraph className="h-full w-full" />
+      </div>
+
       {/* Portrait sits behind the type on wide viewports and above it below lg,
        * so the headline never lands on the face. */}
       <div
@@ -108,7 +122,7 @@ export function Hero({
           </p>
 
           <div data-anim="hero-copy" className="flex flex-wrap items-center gap-3">
-            <a href="#work-stage" className={BUTTON.primary}>
+            <a href="#work" className={BUTTON.primary}>
               {copy.ctaPrimary}
             </a>
             <a href="#contact" className={BUTTON.secondary}>

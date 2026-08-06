@@ -16,7 +16,7 @@ const SECTIONS = ["work", "about", "ask"] as const;
 
 /** "Work" lands on the stage, which is the first of the two work surfaces. */
 const ANCHORS: Record<(typeof SECTIONS)[number] | "contact", string> = {
-  work: "work-stage",
+  work: "work",
   about: "about",
   ask: "ask",
   contact: "contact",
