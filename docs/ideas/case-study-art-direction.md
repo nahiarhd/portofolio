@@ -192,18 +192,46 @@ before shipping and swap a material if two of a kind land side by side.
 
 ---
 
-## Open question — the twelve placeholder frames
+## The frames — done for `01`, open for `02`
 
-`01.svg` and `02.svg` in all six folders are 596-byte generated placeholders.
-They are the larger credibility gap and they are **not** solved by this
-document.
+All six `01.svg` frames are now authored architecture diagrams rather than
+placeholders. They are **not** covered by the prompts above and should never be
+raster-generated: a generated "architecture diagram" hallucinates its labels.
 
-They should be authored as SVG architecture diagrams, palette-locked to these
-tokens, and probably typed into `src/content/` rather than dropped as static
-assets — so the chatbot can describe an architecture as well as the page can
-draw it. That decision is still open in
-[`operator-console-rebuild.md`](./operator-console-rebuild.md).
+Each one is a deliberately different structure, because six variations on
+boxes-in-a-row would be the template failure this whole document exists to
+avoid:
 
-Recommendation stands from that one-pager: **author exactly one** — for
-`document-ingestion` — and see whether it reads as real engineering or as
-generic boxes-and-arrows before committing to six.
+| Slug | Structure | The decision it points at |
+|---|---|---|
+| `document-ingestion` | pipeline + checkpoint | confidence gate; low results surfaced, not blanked |
+| `agent-orchestration` | closed loop in a boundary | retries that do not double side effects |
+| `ai-service-interfaces` | two lanes + return arc | resume after a mid-run disconnect |
+| `media-processing` | pipeline + quarantine | one bad file cannot stall the queue |
+| `carbon-credit-tokenization` | network topology | closed membership, auditable transfer |
+| `social-media-analytics` | fan-in | replaces manual collation |
+
+Shared constraints, all measured rather than assumed:
+
+- 1200×750 viewBox, rendering at **0.266×** on a 375px phone
+- stage labels 34px (9px on that phone), secondary 32px, stack line 30px
+- system mono only — no web font loads inside an `<img>`
+- one violet accent per frame, marking the single hardest decision
+- oxide never appears: it carries confidentiality semantics, and none of these
+  diagrams is about confidentiality
+- all text inside the 70–1130 safe area, verified geometrically
+
+**`02.svg` is still a placeholder in all six folders.** Whether those want a
+second diagram, a real screenshot, or removing entirely is open — six case
+studies with one strong frame each may be better than six with one strong and
+one weak.
+
+Also still open, from
+[`operator-console-rebuild.md`](./operator-console-rebuild.md): whether
+diagrams should be typed into `src/content/` so the chatbot can describe an
+architecture as well as the page can draw it.
+
+**And a real accessibility gap:** frame `alt` text is generated as
+`"<title> Frame 1"`, which is fine for a photograph and useless for a diagram
+that carries information. Fixing it properly needs per-frame alt strings in
+`projects.ts`, in both locales.

@@ -1,7 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" fill="none" role="img">
-  <rect width="1200" height="750" fill="#1a1813"/>
-  <path d="M72 72H1128" stroke="#5f78e8" stroke-width="3"/>
-  <text x="72" y="111.68" fill="#5f78e8" font-family="ui-monospace, 'Space Mono', monospace" font-size="22" letter-spacing="6">BLOCKCHAIN</text>
-  <text fill="#f5f4f0" font-family="'Outfit', system-ui, -apple-system, sans-serif" font-size="64" font-weight="500" letter-spacing="-1.92"><tspan x="72" y="672.88">Frame 01</tspan></text>
+<!--
+  Permissioned network topology.
+
+  Deliberately not a pipeline. The other frames in this set are flows; this
+  project is not a flow, and drawing it as one would be the template failure
+  these diagrams exist to avoid. What matters here is the shape of the network:
+  a closed set of member nodes, so every transfer carries an auditable history
+  without exposing participants the way a public chain would.
+
+  Edge endpoints are trimmed to the node radius rather than masked by an opaque
+  circle fill, so the frame does not depend on the surface colour behind it.
+
+  Violet marks one transfer across the ring — the auditable history that is the
+  whole reason for putting credits on a chain at all.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" fill="none" role="img">
+  <title>Permissioned network with a closed member set</title>
+
+  <defs>
+    <marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b883ec"/>
+    </marker>
+    <style>
+      .l { font-family: ui-monospace, "Space Mono", "SFMono-Regular", Menlo, monospace; }
+      .stage { font-size: 34px; letter-spacing: 2px; fill: #f7f6f2; }
+      .eyebrow { font-size: 32px; letter-spacing: 7px; fill: #928c83; }
+      .note { font-size: 32px; letter-spacing: 3px; fill: #b883ec; }
+      .stack { font-size: 30px; letter-spacing: 1px; fill: #928c83; }
+      .node { stroke: #f7f6f2; stroke-opacity: 0.45; stroke-width: 1.5; }
+      .edge { stroke: #f7f6f2; stroke-opacity: 0.35; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <text class="l eyebrow" x="70" y="72">PERMISSIONED NETWORK</text>
+  <line x1="70" y1="98" x2="1130" y2="98" stroke="#f7f6f2" stroke-opacity="0.14"/>
+
+  <!-- Membership boundary: the set is closed, which is the whole distinction. -->
+  <circle cx="600" cy="360" r="240" stroke="#f7f6f2" stroke-opacity="0.2" stroke-width="1.5" stroke-dasharray="10 10"/>
+
+  <!-- Ring edges, trimmed clear of the node circles. -->
+  <line class="edge" x1="756.5" y1="336.3" x2="712.8" y2="471.2"/>
+  <line class="edge" x1="670.9" y1="501.6" x2="529.1" y2="501.6"/>
+  <line class="edge" x1="487.2" y1="471.2" x2="443.5" y2="336.3"/>
+  <line class="edge" x1="459.5" y1="287.1" x2="574.1" y2="203.8"/>
+
+  <!-- One transfer, carrying its history with it. -->
+  <line x1="625.9" y1="203.8" x2="740.5" y2="287.1" stroke="#b883ec" stroke-width="2.5" marker-end="url(#av)"/>
+
+  <circle class="node" cx="600"   cy="185"   r="28"/>
+  <circle class="node" cx="766.4" cy="305.9" r="28"/>
+  <circle class="node" cx="702.9" cy="501.6" r="28"/>
+  <circle class="node" cx="497.1" cy="501.6" r="28"/>
+  <circle class="node" cx="433.6" cy="305.9" r="28"/>
+
+  <text class="l stage" x="600" y="368" text-anchor="middle" dominant-baseline="middle">ERC-20</text>
+
+  <text class="l note" x="600" y="645" text-anchor="middle">CLOSED MEMBERSHIP · AUDITABLE TRANSFERS</text>
+
+  <line x1="70" y1="676" x2="1130" y2="676" stroke="#f7f6f2" stroke-opacity="0.14"/>
+  <text class="l stack" x="70" y="716">SOLIDITY · HYPERLEDGER BESU · ERC-20</text>
 </svg>

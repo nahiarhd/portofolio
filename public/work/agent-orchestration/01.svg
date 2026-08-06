@@ -1,7 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" fill="none" role="img">
-  <rect width="1200" height="750" fill="#1a1813"/>
-  <path d="M72 72H1128" stroke="#5f78e8" stroke-width="3"/>
-  <text x="72" y="111.68" fill="#5f78e8" font-family="ui-monospace, 'Space Mono', monospace" font-size="22" letter-spacing="6">AI</text>
-  <text fill="#f5f4f0" font-family="'Outfit', system-ui, -apple-system, sans-serif" font-size="64" font-weight="500" letter-spacing="-1.92"><tspan x="72" y="672.88">Frame 01</tspan></text>
+<!--
+  Agent loop inside the on-premises boundary.
+
+  Authored from the project's own problem/role copy. The shape is a cycle, not
+  a pipeline, because the whole point is that a finding triggers a tool call
+  whose result comes back as auditable run state instead of being hand-copied
+  into another system.
+
+  Violet marks the retry. Registering tools and validating arguments is table
+  stakes for tool calling; retrying a partial failure without repeating a side
+  effect is the part that is actually hard, so that is what the diagram points
+  at. One violet focus per frame across the set.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" fill="none" role="img">
+  <title>Agent tool-calling loop inside an on-premises boundary</title>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f7f6f2" fill-opacity="0.55"/>
+    </marker>
+    <marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b883ec"/>
+    </marker>
+    <style>
+      .l { font-family: ui-monospace, "Space Mono", "SFMono-Regular", Menlo, monospace; }
+      .stage { font-size: 34px; letter-spacing: 2px; fill: #f7f6f2; }
+      .eyebrow { font-size: 32px; letter-spacing: 7px; fill: #928c83; }
+      .note { font-size: 32px; letter-spacing: 3px; fill: #b883ec; }
+      .caption { font-size: 32px; letter-spacing: 4px; fill: #928c83; }
+      .stack { font-size: 30px; letter-spacing: 1px; fill: #928c83; }
+      .box { stroke: #f7f6f2; stroke-opacity: 0.28; stroke-width: 1.5; }
+      .wire { stroke: #f7f6f2; stroke-opacity: 0.55; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <text class="l eyebrow" x="70" y="72">AGENT LOOP</text>
+  <line x1="70" y1="98" x2="1130" y2="98" stroke="#f7f6f2" stroke-opacity="0.14"/>
+
+  <!-- The boundary is the frame: nothing in this loop leaves the network. -->
+  <rect x="70" y="120" width="1060" height="420" stroke="#f7f6f2" stroke-opacity="0.2" stroke-width="1.5" stroke-dasharray="10 10"/>
+  <!-- Top-left, not bottom-right: on the same baseline as the return-path
+       caption the two labels sat 47px apart and read as one run-on phrase. -->
+  <text class="l caption" x="95" y="180">ON-PREMISES</text>
+
+  <text class="l note" x="770" y="180" text-anchor="middle">RETRY · IDEMPOTENT</text>
+  <path d="M710 250 C710 200, 830 200, 830 250" stroke="#b883ec" stroke-width="1.5" marker-end="url(#av)"/>
+
+  <rect class="box" x="130" y="250" width="180" height="120"/>
+  <rect class="box" x="370" y="250" width="250" height="120"/>
+  <rect class="box" x="680" y="250" width="180" height="120"/>
+
+  <text class="l stage" x="220" y="313" text-anchor="middle" dominant-baseline="middle">MODEL</text>
+  <text class="l stage" x="495" y="313" text-anchor="middle" dominant-baseline="middle">VALIDATE</text>
+  <text class="l stage" x="770" y="313" text-anchor="middle" dominant-baseline="middle">TOOL</text>
+
+  <line class="wire" x1="310" y1="310" x2="363" y2="310" marker-end="url(#a)"/>
+  <line class="wire" x1="620" y1="310" x2="673" y2="310" marker-end="url(#a)"/>
+
+  <!-- Closing the loop: what returns is run state an operator can audit. -->
+  <path d="M770 370 V460 H220 V376" stroke="#f7f6f2" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#a)"/>
+  <text class="l caption" x="495" y="505" text-anchor="middle">RESULT · ERRORS · RUN STATE</text>
+
+  <line x1="70" y1="676" x2="1130" y2="676" stroke="#f7f6f2" stroke-opacity="0.14"/>
+  <text class="l stack" x="70" y="716">PYTHON · LLM TOOL CALLING · ON-PREMISES DEPLOYMENT</text>
 </svg>

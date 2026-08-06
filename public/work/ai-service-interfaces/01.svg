@@ -1,7 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" fill="none" role="img">
-  <rect width="1200" height="750" fill="#1a1813"/>
-  <path d="M72 72H1128" stroke="#5f78e8" stroke-width="3"/>
-  <text x="72" y="111.68" fill="#5f78e8" font-family="ui-monospace, 'Space Mono', monospace" font-size="22" letter-spacing="6">AI</text>
-  <text fill="#f5f4f0" font-family="'Outfit', system-ui, -apple-system, sans-serif" font-size="64" font-weight="500" letter-spacing="-1.92"><tspan x="72" y="672.88">Frame 01</tspan></text>
+<!--
+  Transport chosen by job length.
+
+  Authored from the project's own problem/role copy. Two lanes rather than one
+  pipeline, because the design decision here is that short work streams and
+  long work reports explicit state — "stream when you can, explicit state when
+  you must". A single-lane diagram would hide the only choice being made.
+
+  Violet marks resume-after-disconnect. Streaming is common; staying operable
+  across a mid-run disconnect is the part that costs real work.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" fill="none" role="img">
+  <title>Streaming and job-status lanes for long-running AI work</title>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f7f6f2" fill-opacity="0.55"/>
+    </marker>
+    <marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b883ec"/>
+    </marker>
+    <style>
+      .l { font-family: ui-monospace, "Space Mono", "SFMono-Regular", Menlo, monospace; }
+      .stage { font-size: 34px; letter-spacing: 2px; fill: #f7f6f2; }
+      .eyebrow { font-size: 32px; letter-spacing: 7px; fill: #928c83; }
+      .note { font-size: 32px; letter-spacing: 3px; fill: #b883ec; }
+      .stack { font-size: 30px; letter-spacing: 1px; fill: #928c83; }
+      .box { stroke: #f7f6f2; stroke-opacity: 0.28; stroke-width: 1.5; }
+      .wire { stroke: #f7f6f2; stroke-opacity: 0.55; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <text class="l eyebrow" x="70" y="72">STREAM OR STATE</text>
+  <line x1="70" y1="98" x2="1130" y2="98" stroke="#f7f6f2" stroke-opacity="0.14"/>
+
+  <!-- Upper lane: short work, streamed. -->
+  <rect class="box" x="70"  y="180" width="200" height="120"/>
+  <rect class="box" x="340" y="180" width="230" height="120"/>
+  <text class="l stage" x="170" y="243" text-anchor="middle" dominant-baseline="middle">SHORT</text>
+  <text class="l stage" x="455" y="243" text-anchor="middle" dominant-baseline="middle">TOKENS</text>
+  <line class="wire" x1="270" y1="240" x2="333" y2="240" marker-end="url(#a)"/>
+
+  <!-- Lower lane: long work, explicit status rather than a lying spinner. -->
+  <rect class="box" x="70"  y="420" width="200" height="120"/>
+  <rect class="box" x="340" y="420" width="230" height="120"/>
+  <text class="l stage" x="170" y="483" text-anchor="middle" dominant-baseline="middle">LONG</text>
+  <text class="l stage" x="455" y="483" text-anchor="middle" dominant-baseline="middle">STATUS</text>
+  <line class="wire" x1="270" y1="480" x2="333" y2="480" marker-end="url(#a)"/>
+
+  <rect class="box" x="810" y="300" width="200" height="120"/>
+  <text class="l stage" x="910" y="363" text-anchor="middle" dominant-baseline="middle">VIEW</text>
+
+  <path d="M570 240 H700 V360 H803" stroke="#f7f6f2" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#a)"/>
+  <path d="M570 480 H700 V360 H803" stroke="#f7f6f2" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#a)"/>
+
+  <!-- A dropped connection rejoins the long lane rather than restarting it. -->
+  <path d="M910 420 V610 H455 V546" stroke="#b883ec" stroke-width="1.5" stroke-dasharray="8 8" marker-end="url(#av)"/>
+  <text class="l note" x="682" y="652" text-anchor="middle">RESUME AFTER DISCONNECT</text>
+
+  <line x1="70" y1="676" x2="1130" y2="676" stroke="#f7f6f2" stroke-opacity="0.14"/>
+  <text class="l stack" x="70" y="716">NEXT.JS · REACT · TYPESCRIPT · STREAMING</text>
 </svg>

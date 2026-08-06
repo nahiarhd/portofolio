@@ -37,6 +37,7 @@
       .eyebrow { font-size: 32px; letter-spacing: 7px; fill: #928c83; }
       .note { font-size: 32px; letter-spacing: 3px; fill: #b883ec; }
       .caption { font-size: 32px; letter-spacing: 4px; fill: #928c83; }
+      .stack { font-size: 30px; letter-spacing: 1px; fill: #928c83; }
       .box { stroke: #f7f6f2; stroke-opacity: 0.28; stroke-width: 1.5; }
       .wire { stroke: #f7f6f2; stroke-opacity: 0.55; stroke-width: 1.5; }
     </style>
@@ -81,5 +82,5 @@
   <text class="l caption" x="705" y="632" text-anchor="middle">SURFACED, NOT BLANKED</text>
 
   <line x1="70" y1="676" x2="1130" y2="676" stroke="#f7f6f2" stroke-opacity="0.14"/>
-  <text class="l caption" x="70" y="716">PYTHON · PADDLEOCR · DOCUMENT PARSING</text>
+  <text class="l stack" x="70" y="716">PYTHON · PADDLEOCR · DOCUMENT PARSING</text>
 </svg>
