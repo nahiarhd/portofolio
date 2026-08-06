@@ -1,7 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" fill="none" role="img">
-  <rect width="1200" height="750" fill="#1a1813"/>
-  <path d="M72 72H1128" stroke="#5f78e8" stroke-width="3"/>
-  <text x="72" y="111.68" fill="#5f78e8" font-family="ui-monospace, 'Space Mono', monospace" font-size="22" letter-spacing="6">AI</text>
-  <text fill="#f5f4f0" font-family="'Outfit', system-ui, -apple-system, sans-serif" font-size="64" font-weight="500" letter-spacing="-1.92"><tspan x="72" y="672.88">Frame 01</tspan></text>
+<!--
+  Ingestion pipeline — scan to structure.
+
+  Authored, not generated. The stages come from the project's own `problem` and
+  `role` copy in src/content/projects.ts; nothing here is invented.
+
+  Two rules govern the type scale. Frames render single-column below `sm`, so a
+  1200px canvas lands at 0.266x on a 375px phone — measured, not estimated.
+  Stage labels at 34px arrive as 9px there and secondary type at 32px as 8.5px,
+  which is the floor this layout can reach without dropping a stage. Anything
+  below that is not legible on a phone. And no web font can load inside an
+  <img>, so the stack is system mono only.
+
+  Spacing is not even on purpose: the gap carrying the confidence gate is 95px
+  against 45px elsewhere, because a checkpoint plus a wire plus an arrowhead
+  does not fit in a 45px gap without reading as congestion.
+
+  Palette is the ink ramp; this frame sits on the surface-1 token. Violet marks
+  the confidence gate, the one decision in this pipeline worth pointing at.
+  Oxide is deliberately absent: it carries confidentiality semantics only, and
+  low confidence is not confidentiality.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" fill="none" role="img">
+  <title>Scan-to-structure ingestion pipeline</title>
+
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f7f6f2" fill-opacity="0.55"/>
+    </marker>
+    <marker id="av" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#b883ec"/>
+    </marker>
+    <style>
+      .l { font-family: ui-monospace, "Space Mono", "SFMono-Regular", Menlo, monospace; }
+      .stage { font-size: 34px; letter-spacing: 2px; fill: #f7f6f2; }
+      .eyebrow { font-size: 32px; letter-spacing: 7px; fill: #928c83; }
+      .note { font-size: 32px; letter-spacing: 3px; fill: #b883ec; }
+      .caption { font-size: 32px; letter-spacing: 4px; fill: #928c83; }
+      .box { stroke: #f7f6f2; stroke-opacity: 0.28; stroke-width: 1.5; }
+      .wire { stroke: #f7f6f2; stroke-opacity: 0.55; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <text class="l eyebrow" x="70" y="72">INGESTION PIPELINE</text>
+  <line x1="70" y1="98" x2="1130" y2="98" stroke="#f7f6f2" stroke-opacity="0.14"/>
+
+  <!-- Spine. Five stages, 166 wide. Gaps 45, 45, 95, 45. -->
+  <rect class="box" x="70"  y="230" width="166" height="130"/>
+  <rect class="box" x="281" y="230" width="166" height="130"/>
+  <rect class="box" x="492" y="230" width="166" height="130"/>
+  <rect class="box" x="753" y="230" width="166" height="130"/>
+  <rect class="box" x="964" y="230" width="166" height="130"/>
+
+  <text class="l stage" x="153"  y="295" text-anchor="middle" dominant-baseline="middle">SCANS</text>
+  <text class="l stage" x="364"  y="295" text-anchor="middle" dominant-baseline="middle">OCR</text>
+  <text class="l stage" x="575"  y="295" text-anchor="middle" dominant-baseline="middle">LAYOUT</text>
+  <text class="l stage" x="836"  y="295" text-anchor="middle" dominant-baseline="middle">INDEX</text>
+  <text class="l stage" x="1047" y="295" text-anchor="middle" dominant-baseline="middle">ASK</text>
+
+  <line class="wire" x1="236" y1="295" x2="274" y2="295" marker-end="url(#a)"/>
+  <line class="wire" x1="447" y1="295" x2="485" y2="295" marker-end="url(#a)"/>
+  <line class="wire" x1="919" y1="295" x2="957" y2="295" marker-end="url(#a)"/>
+
+  <!--
+    One continuous wire from layout recovery into the index, with the gate
+    drawn on top of it as a checkpoint rather than as another box. Plain OCR
+    yields characters without fields; what makes this corpus answerable is that
+    layout is recovered first, then everything crosses a confidence threshold
+    before it is allowed to be indexed.
+  -->
+  <line class="wire" x1="658" y1="295" x2="746" y2="295" marker-end="url(#a)"/>
+  <line x1="705" y1="245" x2="705" y2="345" stroke="#b883ec" stroke-width="3"/>
+  <circle cx="705" cy="295" r="7" fill="#b883ec"/>
+  <text class="l note" x="705" y="205" text-anchor="middle">CONFIDENCE</text>
+
+  <!-- Low-confidence branch: shown to the operator, never a silent blank. -->
+  <path d="M705 345 L705 470" stroke="#b883ec" stroke-width="1.5" stroke-dasharray="8 8" marker-end="url(#av)"/>
+  <rect x="595" y="480" width="220" height="110" stroke="#b883ec" stroke-opacity="0.5" stroke-width="1.5" stroke-dasharray="8 8"/>
+  <text class="l stage" x="705" y="535" text-anchor="middle" dominant-baseline="middle">FLAGGED</text>
+  <text class="l caption" x="705" y="632" text-anchor="middle">SURFACED, NOT BLANKED</text>
+
+  <line x1="70" y1="676" x2="1130" y2="676" stroke="#f7f6f2" stroke-opacity="0.14"/>
+  <text class="l caption" x="70" y="716">PYTHON · PADDLEOCR · DOCUMENT PARSING</text>
 </svg>

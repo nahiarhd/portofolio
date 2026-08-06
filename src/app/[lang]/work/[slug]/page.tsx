@@ -131,7 +131,8 @@ export default async function CaseStudyPage({ params }: Params) {
                 label={`${copy.frame} ${String(index + 1).padStart(2, "0")}`}
                 aspectClassName="aspect-[16/10]"
                 sizes="(max-width: 768px) 100vw, 50vw"
-                className="rounded-xl"
+                // Frames carry architecture diagrams, and `cover` crops them.
+                objectFit="contain"
               />
             ))}
           </div>
