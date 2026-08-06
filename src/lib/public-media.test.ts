@@ -17,18 +17,28 @@ describe("public-media", () => {
     expect(mediaBase("/work/x/cover")).toBe("/work/x/cover");
   });
 
-  it("resolves existing SVG placeholders under public/", () => {
-    const resolved = resolvePublicMedia("/work/agent-orchestration/cover");
-    expect(resolved).toBe("/work/agent-orchestration/cover.svg");
-    expect(existsSync(join(process.cwd(), "public", "work/agent-orchestration/cover.svg"))).toBe(
-      true,
+  // The point of the resolver is that dropping a real photo next to a stub
+  // replaces it with no content edit. Both halves of that are asserted against
+  // real files on disk, and each guards its own fixture so the assertion cannot
+  // quietly become vacuous if the file is moved.
+  it("prefers a photograph over the SVG stub when both exist", () => {
+    const dir = join(process.cwd(), "public", "work/agent-orchestration");
+    expect(existsSync(join(dir, "cover.jpg")), "photo fixture missing").toBe(true);
+    expect(existsSync(join(dir, "cover.svg")), "stub fixture missing").toBe(true);
+
+    expect(resolvePublicMedia("/work/agent-orchestration/cover")).toBe(
+      "/work/agent-orchestration/cover.jpg",
     );
   });
 
-  it("prefers a photographic file when both stub and photo exist", () => {
-    // If only svg exists today, jpg is undefined — still returns svg.
-    const withBase = resolvePublicMedia("/portrait");
-    expect(withBase === "/portrait.svg" || withBase?.endsWith(".jpg")).toBe(true);
+  it("falls back to the SVG stub when no photograph exists", () => {
+    const dir = join(process.cwd(), "public", "work/agent-orchestration");
+    expect(existsSync(join(dir, "01.svg")), "stub fixture missing").toBe(true);
+    expect(existsSync(join(dir, "01.jpg")), "unexpected photo fixture").toBe(false);
+
+    expect(resolvePublicMedia("/work/agent-orchestration/01")).toBe(
+      "/work/agent-orchestration/01.svg",
+    );
   });
 
   it("returns undefined for a path with no file on disk", () => {

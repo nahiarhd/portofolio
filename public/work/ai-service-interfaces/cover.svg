@@ -1,20 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" fill="none">
-  <rect width="1600" height="1000" fill="#08080a"/>
-  <rect x="0" y="0" width="1600" height="1000" fill="url(#g)"/>
-  <defs>
-    <radialGradient id="g" cx="70%" cy="20%" r="70%">
-      <stop offset="0%" stop-color="#7c3aed" stop-opacity="0.35"/>
-      <stop offset="55%" stop-color="#7c3aed" stop-opacity="0.08"/>
-      <stop offset="100%" stop-color="#08080a" stop-opacity="0"/>
-    </radialGradient>
-    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
-      <path d="M48 0H0V48" stroke="#c084fc" stroke-opacity="0.08" stroke-width="1"/>
-    </pattern>
-  </defs>
-  <rect width="1600" height="1000" fill="url(#grid)"/>
-  <g fill="none" stroke="#c084fc" stroke-opacity="0.45" stroke-width="2"><path d="M1080 320c40-80 80-80 120 0s80 80 120 0 80-80 120 0" /><circle cx="1200" cy="220" r="10" fill="#c084fc"/></g>
-  <text x="96" y="780" fill="#a1a1aa" font-family="ui-monospace, monospace" font-size="22" letter-spacing="4">CASE STUDY</text>
-  <text x="96" y="860" fill="#fafafa" font-family="system-ui, sans-serif" font-size="54" font-weight="600">Streaming UIs</text>
-  <text x="96" y="920" fill="#a1a1aa" font-family="system-ui, sans-serif" font-size="28">Long AI jobs</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" role="img">
+  <rect width="1600" height="1000" fill="#1a1813"/>
+  <path d="M96 96H1504" stroke="#5f78e8" stroke-width="3"/>
+  <text x="96" y="155.51999999999998" fill="#5f78e8" font-family="ui-monospace, 'Space Mono', monospace" font-size="33" letter-spacing="9">AI</text>
+  <text fill="#f5f4f0" font-family="'Outfit', system-ui, -apple-system, sans-serif" font-size="96" font-weight="500" letter-spacing="-2.88"><tspan x="96" y="896.3199999999999">Long-running jobs</tspan></text>
 </svg>
