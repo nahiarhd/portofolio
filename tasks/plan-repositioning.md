@@ -87,15 +87,24 @@ Record all five. They replace the removed entry.
 Add to the `confidentiality` describe block in `src/content/content.test.ts`, after the existing detector test:
 
 ```ts
-  it("guards the client, not the employer", () => {
-    // Tier 2 (client) is forbidden; tier 1 (employer) is allowed. See
-    // docs/spec-repositioning.md § Confidentiality Policy Change.
-    for (const clientToken of [/* client spellings — supplied out of band, never committed */]) {
-      expect(containsForbidden(clientToken, FORBIDDEN_HASHES), clientToken).toBe(true);
-    }
+  it("no longer guards the employer", () => {
+    // Tier 1 is allowed as of docs/spec-repositioning.md § Confidentiality
+    // Policy Change. Safe to write in the clear: it is publishable now.
     expect(containsForbidden("ads", FORBIDDEN_HASHES)).toBe(false);
   });
+
+  it("holds every tier-2 and tier-3 term", () => {
+    // The client spellings are deliberately NOT written here in the clear.
+    // A test file listing them would be exactly the leak this list exists to
+    // prevent — the same reason the terms are stored as hashes at all.
+    //
+    // Six product/module terms (unchanged) + five client spellings = 11.
+    // Change this number only when adding or removing a term on purpose.
+    expect(FORBIDDEN_HASHES.size).toBe(11);
+  });
 ```
+
+**Do not write the client name in plaintext anywhere** — not in this test, not in a comment, not in the commit message. Hashes only. That rule is the entire point of the file.
 
 - [ ] **Step 4: Run it and watch it fail**
 
@@ -103,7 +112,7 @@ Add to the `confidentiality` describe block in `src/content/content.test.ts`, af
 pnpm vitest run src/content/content.test.ts
 ```
 
-Expected: FAIL — the client tokens return `false`, `ads` returns `true`. Both assertions are backwards until Step 5.
+Expected: FAIL — `ads` still returns `true`, and the set holds 7 hashes rather than 11.
 
 - [ ] **Step 5: Apply the hash change**
 
