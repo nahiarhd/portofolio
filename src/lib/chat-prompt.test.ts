@@ -64,15 +64,14 @@ describe("buildSystemPrompt", () => {
     expect(prompt).toContain("Dataiku");
   });
 
-  it("names no client and quotes no money", () => {
+  it("quotes no money", () => {
+    // Client names are NOT checked here. "never interpolates a forbidden term"
+    // above already covers them, by hash — and spelling them out in this file
+    // would be precisely the leak that hashing exists to prevent.
     for (const locale of LOCALES) {
-      const prompt = buildSystemPrompt(locale).toLowerCase();
-      for (const token of [/* client spellings — supplied out of band, never committed */]) {
-        expect(prompt, `${locale} leaks ${token}`).not.toContain(token);
-      }
       // Rates are conversations, not bot answers. A bot that knows the
       // project minimum will negotiate on his behalf.
-      expect(prompt).not.toMatch(/\$\s?\d/);
+      expect(buildSystemPrompt(locale), locale).not.toMatch(/\$\s?\d/);
     }
   });
 
