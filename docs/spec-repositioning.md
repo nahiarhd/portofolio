@@ -352,15 +352,16 @@ Named so they are not silently absorbed:
 ### `Development/Work/` — hard stop, verified
 
 Raihan asked (2026-08-07) for the intelligence service, location resolver,
-[redacted], [redacted] and the AI agent work to be detailed on the site. **This is
-not possible under the policy above, and the existing gate already proves it:**
+[redacted] and the AI agent work to be detailed on the site. **This is not
+possible under the policy above, and the existing gate already proves it:**
 
 - Every repository under `Development/Work/` has its `origin` on the employer's
   private Git server. It is employer work, not personal work.
-- `[redacted]-Office` — the distinctive token in that name is **already a hashed
+- One product name above already has its distinctive token **hashed as a
   protected term** in `content.test.ts`.
-- `[redacted]` — its origin repository name is likewise **already hashed**
-  in `content.test.ts`.
+- One repository's origin name is likewise a tier-3 product name, not
+  currently covered by a hash in `content.test.ts` — flagged for the owner to
+  decide whether it needs one.
 
 These are tier-3 product names. The policy change in this spec relaxed
 **employer naming only**; products and clients stayed forbidden. Writing these

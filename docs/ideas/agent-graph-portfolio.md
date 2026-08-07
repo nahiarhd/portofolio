@@ -12,8 +12,8 @@ open-sourced?
 The constraint that defines the whole project: his public record
 (LinkedIn) stops at December 2024 and shows a blockchain mentor and a web
 developer intern. Everything since — AI agents, AI media pipelines, AI service
-UIs, OCR, `Sentri-Office` — is NDA-bound. **The site's own craft has to carry
-the credibility that a GitHub link normally would.**
+UIs, OCR — is NDA-bound. **The site's own craft has to carry the credibility
+that a GitHub link normally would.**
 
 ## Recommended Direction
 
