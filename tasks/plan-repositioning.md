@@ -563,57 +563,77 @@ The section heading promises "a public verification link where the issuer provid
 - Consumes: the `Certification` type (unchanged).
 - Produces: `certifications` with `issued`, `credentialId`, and `verifyUrl` populated.
 
-- [ ] **Step 1: Read the six PDFs to map credential IDs to certificate names**
+- [ ] **Step 1: Ground truth — already resolved, use verbatim**
 
-The filenames carry the ID and the issue date; only the PDF body carries the name.
+All six PDFs were read directly and the verification URL pattern confirmed against
+a live probe (`200`). **Use this table as-is. Do not re-derive it, and do not take
+dates from the filename timestamps — those are off by a day from the printed
+date, which is the authoritative one.**
 
-```bash
-ls -1 "/Users/nahiarhd/Downloads/Portfolio/Certificates/Dataiku"
+| Credential ID | Name exactly as printed | Issued (printed) | `issued` | Image slug |
+|---|---|---|---|---|
+| `6uqybt6jajtr` | Core Designer Certificate | December 3, 2024 | `2024-12` | `dataiku-core-designer` |
+| `v439v63i2daa` | Advanced Designer Certificate | December 4, 2024 | `2024-12` | `dataiku-advanced-designer` |
+| `bwqycmmtuced` | ML Practitioner Certificate | December 5, 2024 | `2024-12` | `dataiku-ml-practitioner` |
+| `tuj5pxkizvjo` | Generative AI Practitioner Certificate | December 5, 2024 | `2024-12` | `dataiku-generative-ai-practitioner` |
+| `7pj8jh3ruaue` | Developer Certificate | December 23, 2024 | `2024-12` | `dataiku-developer` |
+| `rriyymrx88zz` | MLOps Practitioner Certificate | January 1, 2025 | `2025-01` | `dataiku-mlops-practitioner` |
+
+**Two of these are missing from the current file entirely** — Core Designer and
+MLOps Practitioner. That is the "six, not four" gap this task closes.
+
+The four already listed carry approximated names (`"Dataiku ML Practitioner"`).
+Replace them with the printed names above and let `issuer: "Dataiku"` carry the
+brand, rather than repeating it inside every name.
+
+- [ ] **Step 2: Verification URL — already confirmed**
+
+Each certificate prints its own verification URL, and the pattern probes `200`:
+
+```
+https://verify.skilljar.com/c/<credentialId>
 ```
 
-Known from the filenames (ID → issue date):
+Build all six from that template. No further probing needed.
 
-| Credential ID | Issued |
-|---|---|
-| `6uqybt6jajtr` | 2024-12-04 |
-| `v439v63i2daa` | 2024-12-04 |
-| `bwqycmmtuced` | 2024-12-05 |
-| `tuj5pxkizvjo` | 2024-12-05 |
-| `7pj8jh3ruaue` | 2024-12-24 |
-| `rriyymrx88zz` | 2025-01-02 |
-
-Open each PDF and record which certificate name it carries. **Do not guess the mapping** — a wrong credential ID next to a certificate name is a verifiable lie.
-
-- [ ] **Step 2: Confirm the verification URL pattern**
-
-Dataiku Academy issues through Skilljar. Test one ID before writing six:
-
-```bash
-curl -s -o /dev/null -w "%{http_code}\n" "https://verify.skilljar.com/c/6uqybt6jajtr"
-```
-
-Expected: `200`. **If it is not 200, stop and find the real pattern from the PDF itself** — most certificates print their verification URL. Do not ship a guessed URL.
+**MSIB is the one still unresolved.** Read
+`/Users/nahiarhd/Downloads/Portfolio/Certificates/2024_Sertifikat MSIB 5 - ADS Digital Partner.pdf`
+for its real issue date and whether it carries a verification link. **Do not guess
+the date** — omit `issued` rather than invent it, since `issued` is optional on the
+type. Check that certificate for the client's name before using anything from it.
 
 - [ ] **Step 3: Write the failing test**
 
 Add to the `evidence` describe block from Task 3:
 
 ```ts
-  it("gives every certification an issuer, a date, and a verifiable link", () => {
+  it("keeps every certification's optional fields well-formed", () => {
+    // `issued` stays optional: an unknown date is omitted, never invented.
+    // What this guards is that whatever IS present is internally consistent —
+    // a verify link with no credential id behind it is the real failure mode.
     for (const cert of certifications) {
       expect(cert.issuer.trim(), cert.name).toBeTruthy();
-      expect(cert.issued, cert.name).toMatch(/^\d{4}-(0[1-9]|1[0-2])$/);
+      if (cert.issued) {
+        expect(cert.issued, cert.name).toMatch(/^\d{4}-(0[1-9]|1[0-2])$/);
+      }
       if (cert.verifyUrl) {
         expect(cert.verifyUrl, cert.name).toMatch(/^https:\/\//);
         expect(cert.credentialId?.trim(), `${cert.name} links without an id`).toBeTruthy();
+        expect(cert.verifyUrl, `${cert.name} link must carry its own id`).toContain(
+          cert.credentialId!,
+        );
       }
     }
   });
 
-  it("lists all six Dataiku certificates", () => {
+  it("lists all six Dataiku certificates, each dated and verifiable", () => {
     const dataiku = certifications.filter((c) => c.issuer === "Dataiku");
     expect(dataiku).toHaveLength(6);
     expect(new Set(dataiku.map((c) => c.credentialId)).size, "duplicate ids").toBe(6);
+    for (const cert of dataiku) {
+      expect(cert.issued, cert.name).toMatch(/^\d{4}-(0[1-9]|1[0-2])$/);
+      expect(cert.verifyUrl, cert.name).toBeTruthy();
+    }
   });
 ```
 
@@ -627,23 +647,62 @@ Expected: FAIL — `issued` is `undefined` on all five, and only four Dataiku en
 
 - [ ] **Step 5: Replace the certifications array**
 
-Using the mapping from Step 1. Template — substitute the real names against the real IDs:
+Ordered newest first, so the most advanced credential leads:
 
 ```ts
 export const certifications: readonly Certification[] = [
   {
-    name: "<from PDF>",
+    name: "MLOps Practitioner Certificate",
+    issuer: "Dataiku",
+    issued: "2025-01",
+    credentialId: "rriyymrx88zz",
+    verifyUrl: "https://verify.skilljar.com/c/rriyymrx88zz",
+    image: "/certifications/dataiku-mlops-practitioner",
+  },
+  {
+    name: "Developer Certificate",
+    issuer: "Dataiku",
+    issued: "2024-12",
+    credentialId: "7pj8jh3ruaue",
+    verifyUrl: "https://verify.skilljar.com/c/7pj8jh3ruaue",
+    image: "/certifications/dataiku-developer",
+  },
+  {
+    name: "Generative AI Practitioner Certificate",
+    issuer: "Dataiku",
+    issued: "2024-12",
+    credentialId: "tuj5pxkizvjo",
+    verifyUrl: "https://verify.skilljar.com/c/tuj5pxkizvjo",
+    image: "/certifications/dataiku-generative-ai-practitioner",
+  },
+  {
+    name: "ML Practitioner Certificate",
+    issuer: "Dataiku",
+    issued: "2024-12",
+    credentialId: "bwqycmmtuced",
+    verifyUrl: "https://verify.skilljar.com/c/bwqycmmtuced",
+    image: "/certifications/dataiku-ml-practitioner",
+  },
+  {
+    name: "Advanced Designer Certificate",
+    issuer: "Dataiku",
+    issued: "2024-12",
+    credentialId: "v439v63i2daa",
+    verifyUrl: "https://verify.skilljar.com/c/v439v63i2daa",
+    image: "/certifications/dataiku-advanced-designer",
+  },
+  {
+    name: "Core Designer Certificate",
     issuer: "Dataiku",
     issued: "2024-12",
     credentialId: "6uqybt6jajtr",
     verifyUrl: "https://verify.skilljar.com/c/6uqybt6jajtr",
-    image: "/certifications/dataiku-<slug>",
+    image: "/certifications/dataiku-core-designer",
   },
-  // …five more, one per credential ID from the Step 1 table
   {
     name: "Sertifikat MSIB",
     issuer: "Kampus Merdeka",
-    issued: "2024-01",
+    // `issued` only if the PDF states it — see Step 2. Omit rather than invent.
     image: "/certifications/msib",
   },
 ];
