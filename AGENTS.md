@@ -20,17 +20,24 @@ Djunaedi, with a 3D hero graph and a tool-calling chatbot.
 
 ## Confidentiality — read this before writing any content
 
-Raihan's current employer's products are live and public, but **he cannot state
-publicly that he worked on them.**
+Three tiers, per `docs/spec-repositioning.md` § Confidentiality Policy Change.
+They are not equivalent risks and are not treated the same:
 
-**Never** put the employer's name, its products, or its clients anywhere — page
-copy, `alt` text, metadata, commit messages, comments, or the chatbot's system
-prompt. Case studies are anonymized by construction: *"an on-premises AI
-intelligence platform for public-sector institutions."*
+| Tier | Examples | Rule |
+|---|---|---|
+| Employer name | Company Raihan works or worked for | **Allowed** — an NDA covers confidential information, not the fact of employment |
+| Client name / engagement | Who an employer's product was built for | **Forbidden** — client lists are standard confidential information |
+| Product / module names, architecture, screenshots, metrics | Internal product and module names, UI screenshots, feature taxonomy | **Forbidden** — always restricted |
 
-Describing what he built is fine. Publishing employer code is not. There is an
-automated denylist test over `src/content/`; **never weaken it to make content
-pass.** Full rules in `docs/spec.md` § Confidentiality.
+Describing what he built is fine — page copy, `alt` text, metadata, commit
+messages, comments, the chatbot's system prompt. Naming or identifying a client
+or a product/module is not, anywhere. Case studies name the employer but keep
+the client anonymized by construction: *"an on-premises AI intelligence
+platform for a national government revenue agency."*
+
+There is an automated denylist test over `src/content/`; **never weaken it to
+make content pass.** Full rules in `docs/spec.md` § Confidentiality and
+`docs/spec-repositioning.md` § Confidentiality Policy Change.
 
 ## Verify before claiming done
 

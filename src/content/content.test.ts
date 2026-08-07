@@ -25,9 +25,10 @@ import { projects } from "./projects";
  * That gap is what let a protected employer name sit in `profile.ts` while its
  * domain form was already on this list.
  *
- * One of the tokens below is a short acronym. If a legitimate future case study
- * about advertising metrics ever fails this test on a `profile`/`projects` path
- * with no obvious cause, that is why — the term is genuine, not a bug.
+ * Three tiers, per docs/spec-repositioning.md § Confidentiality Policy Change:
+ * employer names are ALLOWED, client names are FORBIDDEN, product and module
+ * names are FORBIDDEN. This list holds tiers 2 and 3 only. Adding an employer
+ * token here would be a regression, not a tightening.
  */
 const FORBIDDEN_HASHES = new Set([
   "ebca001a1b5df7f3e79469fa2771aa7220ab7764773d7d42032a7f9b89d42d8b",
@@ -36,7 +37,11 @@ const FORBIDDEN_HASHES = new Set([
   "1ddcf9d6eb81598bcfa50718e13a7bea01ba9cfdd8d47635c164c8edcc0a6b61",
   "1aef5ea8211ecde355d626694c368130b5bc3c4422c0a877b6012a91c499ff5c",
   "2eb8b8eca57b9361b698897b165f8ea3bc19288b8f54bbcd5bf40ad5b2f339f2",
-  "788eb2efc52660fe41472319f0d2c623be6540c956921b3632fcc934bf1be10d",
+  "b6e1557a1ed3900d7be8e28bb5f137d91812f31e59a90ceddac0276bc532d18e",
+  "a5565adcb845bebf12b6cc83e868f875d6b3fc12757220d818c288d77465f066",
+  "9ba6e703507e96918784e6d48182356636fe331e310104e59c10ba4319f634a1",
+  "45e285133b891bc3bc022fdd5eda0726b15b609396e5b8e734078ab9f5ccdd6b",
+  "b1ebbb22e5b223e129c82202dca80429970cbd0d181dcec88254e36f111943df",
 ]);
 
 const sha256 = (text: string) => createHash("sha256").update(text).digest("hex");
@@ -82,6 +87,22 @@ describe("confidentiality", () => {
     expect(containsForbidden("BANANA-flavoured", control)).toBe(true);
     expect(containsForbidden("bananas are different tokens", control)).toBe(false);
     expect(containsForbidden("nothing to see here", control)).toBe(false);
+  });
+
+  it("no longer guards the employer", () => {
+    // Tier 1 is allowed as of docs/spec-repositioning.md § Confidentiality
+    // Policy Change. Safe to write in the clear: it is publishable now.
+    expect(containsForbidden("ads", FORBIDDEN_HASHES)).toBe(false);
+  });
+
+  it("holds every tier-2 and tier-3 term", () => {
+    // The client spellings are deliberately NOT written here in the clear.
+    // A test file listing them would be exactly the leak this list exists to
+    // prevent — the same reason the terms are stored as hashes at all.
+    //
+    // Six product/module terms (unchanged) + five client spellings = 11.
+    // Change this number only when adding or removing a term on purpose.
+    expect(FORBIDDEN_HASHES.size).toBe(11);
   });
 
   it("scans a non-trivial amount of content", () => {

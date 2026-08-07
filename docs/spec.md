@@ -26,20 +26,35 @@ Concept doc: [`docs/ideas/agent-graph-portfolio.md`](./ideas/agent-graph-portfol
 
 **Hard constraint. This shapes the entire content strategy.**
 
-The current employer's products are live and public, but Raihan **cannot state
-publicly that he worked on them**. Therefore the site must **never**:
+> **Superseded in part** — see
+> [`docs/spec-repositioning.md`](./spec-repositioning.md) § Confidentiality
+> Policy Change for the current, authoritative rule. The three tiers below
+> reflect that update; the rest of this section (the "no name at all" framing)
+> is historical context for why the policy exists.
 
-- Name the employer, its products, or its clients
-- Link to those product sites
-- Screenshot their UI, or reproduce their module names or feature taxonomy
-- Include any detail specific enough to identify them by search
+Three tiers of risk, not one, and they are not treated the same:
 
-Case studies are **anonymized by construction**: "an on-premises AI intelligence
-platform for public-sector institutions." No name, no link, no metric.
+| Tier | Risk | Rule |
+|---|---|---|
+| Employer name | Essentially never restricted — an NDA covers confidential *information*, not the *fact of employment* | **Allowed** |
+| Client name / engagement | Commonly restricted — client lists are standard confidential information in agency work | **Forbidden** |
+| Product names, module names, architecture, screenshots, metrics | Always restricted | **Forbidden** |
 
-**Consequence, stated plainly:** every claim about his current work is
-unverifiable by the reader. The site's own craft is not part of the credibility
-argument — it is *most* of it.
+Therefore the site must **never**:
+
+- Name a client, or include any detail specific enough to identify one by search
+- Name a product or internal module, link to a product site, or screenshot its UI
+- Reproduce a module name or feature taxonomy
+
+The employer's name **may** appear. Case studies still **anonymize the client
+by construction**: "an on-premises AI intelligence platform for a national
+government revenue agency." No client name, no product name, no link to the
+product, no metric identifying either.
+
+**Consequence, stated plainly:** every claim about the client and the product
+is unverifiable by the reader. The site's own craft, and independently
+verifiable evidence such as the published Hugging Face models, carry the
+credibility argument that a named client or product would otherwise carry.
 
 **Recommended mitigation (pending decision):** publish one or two small,
 finished, open-source projects of his own that demonstrate the same skills — an
