@@ -24,6 +24,8 @@ Every task's requirements implicitly include these.
 - **No compensation figure in the chat prompt** (Decision 9). Rates are conversations.
 - **Server Components by default.** `"use client"` only where interactivity demands it. Nothing in this plan needs it.
 - **Commit style:** Conventional Commits, matching git history (`feat(work):`, `fix(a11y):`, `docs(spec):`).
+- **Never `git add -A` or `git add .`.** Stage only the files your task names. Other work is in flight on this branch and must not be swept into your commit.
+- **Branch:** `feat/repositioning`. Never commit to `main`.
 - **Frame-rate claims** are measured on the reference device only. No task here should make one.
 
 ---
@@ -154,25 +156,30 @@ The visible failure this fixes: `experience` ends Dec 2024 while the work index 
 Add to the `profile` describe block in `src/content/content.test.ts`:
 
 ```ts
-  it("has no gap between leaving one role and starting the next", () => {
-    // The 20-month hole between Dec 2024 and the Jan 2025 case studies is the
-    // failure this guards. Sorted by start; each entry must begin within a
-    // month of the previous one ending.
-    const dated = [...experience].sort((a, b) => a.start.localeCompare(b.start));
-    const current = dated.filter((entry) => !entry.end);
-
-    expect(current.length, "exactly one role should be current").toBe(1);
-    expect(dated.at(-1)?.end, "the current role must be the most recent").toBeUndefined();
+  it("has exactly one current role", () => {
+    const current = experience.filter((entry) => !entry.end);
+    expect(current.length, "exactly one role should be open-ended").toBe(1);
   });
 
-  it("covers every month the case studies claim work", () => {
-    const earliestProject = projects
-      .map((p) => p.started)
-      .sort()
-      .at(0)!;
-    const earliestRole = [...experience].map((e) => e.start).sort().at(0)!;
+  it("accounts for every month a case study claims work", () => {
+    // The failure this guards: `experience` ended Dec 2024 while the work
+    // index showed case studies dated Jan–Apr 2025, so the page claimed six
+    // projects from a period that listed no employment.
+    //
+    // Deliberately NOT a "no gaps anywhere" check. Feb 2024 – Jul 2024 is a
+    // real gap (finishing the degree, which `education` covers), and roles
+    // legitimately overlap — the mentorship ran alongside the ARMS start.
+    const covered = (month: string) =>
+      experience.some(
+        (entry) => entry.start <= month && (entry.end ?? "9999-99") >= month,
+      );
 
-    expect(earliestRole <= earliestProject, "a case study predates every role").toBe(true);
+    for (const project of projects) {
+      expect(
+        covered(project.started),
+        `${project.slug} (${project.started}) falls inside no role`,
+      ).toBe(true);
+    }
   });
 ```
 
@@ -1044,9 +1051,13 @@ Reload `http://localhost:3000/en#evidence` and confirm: four model rows with lik
 - [ ] **Step 9: Commit**
 
 ```bash
-git add -A src/components src/app
+git add src/components/evidence-section.tsx "src/app/[lang]/page.tsx" \
+        "src/app/[lang]/dictionaries/en.json" "src/app/[lang]/dictionaries/id.json"
+git rm --cached --ignore-unmatch src/components/certifications-section.tsx
 git commit -m "feat(evidence): replace certifications with a verifiable evidence section"
 ```
+
+**Never `git add -A`.** Stage the files this task names and nothing else.
 
 ---
 
@@ -1255,9 +1266,13 @@ Reload `#contact` at desktop and at 375px. Confirm the two columns stack on mobi
 - [ ] **Step 8: Commit**
 
 ```bash
-git add -A src/components src/content src/app
+git add src/components/contact-section.tsx src/content/profile.ts \
+        "src/app/[lang]/page.tsx" \
+        "src/app/[lang]/dictionaries/en.json" "src/app/[lang]/dictionaries/id.json"
 git commit -m "feat(contact): two-block engagement section with real terms"
 ```
+
+**Never `git add -A`.** Stage the files this task names and nothing else.
 
 ---
 
@@ -1719,9 +1734,14 @@ Then load `/en/work` and confirm all six case studies render and every card link
 - [ ] **Step 11: Commit**
 
 ```bash
-git add -A src
+git add src/content/projects.ts src/components/work-index.tsx \
+        "src/app/[lang]/page.tsx" "src/app/[lang]/work/page.tsx" src/app/sitemap.ts \
+        "src/app/[lang]/dictionaries/en.json" "src/app/[lang]/dictionaries/id.json" \
+        src/content/content.test.ts
 git commit -m "feat(work): feature three on home, move the full index to /work"
 ```
+
+**Never `git add -A`.** Stage the files this task names and nothing else.
 
 ---
 
