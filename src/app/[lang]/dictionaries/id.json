@@ -80,8 +80,7 @@
     "verify": "Verifikasi",
     "credentialId": "ID Kredensial",
     "certificate": "Sertifikat",
-    "likes": "suka",
-    "mediaHint": "Tambahkan JPG atau PNG di public/certifications/"
+    "likes": "suka"
   },
   "contact": {
     "heading": "Mari bekerja sama",
@@ -91,8 +90,7 @@
     "freelanceRate": "Proyek mulai dari ${minimum}.",
     "freelanceResponse": "Saya membalas dalam {hours} jam.",
     "fulltimeHeading": "Penuh waktu",
-    "fulltimeBody": "Tidak sedang aktif mencari. Saya mempertimbangkan peran AI senior atau lead yang remote-first dan jelas merupakan peningkatan cakupan.",
-    "emailLabel": "Email"
+    "fulltimeBody": "Tidak sedang aktif mencari. Saya mempertimbangkan peran AI senior atau lead yang remote-first dan jelas merupakan peningkatan cakupan."
   },
   "chat": {
     "open": "Tanya seputar karya",

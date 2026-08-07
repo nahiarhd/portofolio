@@ -130,7 +130,7 @@ export function EvidenceSection({
           target="_blank"
           className={cn(BUTTON.secondary, "mt-6")}
         >
-          github.com/raihanhd12 &#8599;
+          {GITHUB_URL.replace(/^https?:\/\//, "")} &#8599;
         </a>
       </div>
 

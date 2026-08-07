@@ -80,8 +80,7 @@
     "verify": "Verify",
     "credentialId": "Credential ID",
     "certificate": "Certificate",
-    "likes": "likes",
-    "mediaHint": "Add JPG or PNG under public/certifications/"
+    "likes": "likes"
   },
   "contact": {
     "heading": "Work together",
@@ -91,8 +90,7 @@
     "freelanceRate": "Projects from ${minimum}.",
     "freelanceResponse": "I reply within {hours} hours.",
     "fulltimeHeading": "Full-time",
-    "fulltimeBody": "Not actively looking. I'll consider senior or lead AI roles that are remote-first and a clear step up in scope.",
-    "emailLabel": "Email"
+    "fulltimeBody": "Not actively looking. I'll consider senior or lead AI roles that are remote-first and a clear step up in scope."
   },
   "chat": {
     "open": "Ask about the work",

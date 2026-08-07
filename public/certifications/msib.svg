@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="625" viewBox="0 0 1000 625" fill="none" role="img">
-  <rect width="1000" height="625" fill="#1a1813"/>
-  <path d="M64 64H936" stroke="#5f78e8" stroke-width="3"/>
-  <text x="64" y="108.64" fill="#5f78e8" font-family="ui-monospace, 'Space Mono', monospace" font-size="24" letter-spacing="6">KAMPUS MERDEKA</text>
-  <text fill="#f5f4f0" font-family="'Outfit', system-ui, -apple-system, sans-serif" font-size="72" font-weight="500" letter-spacing="-2.16"><tspan x="64" y="555.24">Certificate</tspan></text>
-</svg>
