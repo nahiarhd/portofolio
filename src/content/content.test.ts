@@ -1,4 +1,8 @@
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
@@ -137,6 +141,84 @@ describe("confidentiality", () => {
 
     // Report the path only. Echoing the offending text would print the term.
     expect(offenders.map((o) => o.path)).toEqual([]);
+  });
+});
+
+/**
+ * The block above only walks the exported values of src/content/*.ts. Twice
+ * on this branch a client-name token reached the repository outside that
+ * surface — once in a test file (src/lib/chat-prompt.test.ts), once in a
+ * planning doc (tasks/plan-repositioning.md) — and neither was caught,
+ * because nothing scanned dictionaries, tests, or docs. This walks every
+ * git-tracked text file under the directories where that class of leak
+ * actually happened, reusing the same FORBIDDEN_HASHES and containsForbidden
+ * above — never a second, drifting copy of the denylist.
+ */
+describe("confidentiality (whole repository)", () => {
+  const REPO_ROOT = process.cwd();
+  const SCAN_ROOTS = ["src", "docs", "tasks"];
+  // This file holds the hash constants and the detector itself — it is the
+  // checker, not content to check, so it is excluded from the file list
+  // rather than scanned for its own hash literals.
+  const SELF_PATH = "src/content/content.test.ts";
+  const BINARY_EXT = /\.(ico|png|jpe?g|gif|webp|avif|woff2?|ttf|eot)$/i;
+
+  /** Every git-tracked file under SCAN_ROOTS, minus this file and binaries. */
+  function trackedFiles(): string[] {
+    const out = execFileSync("git", ["ls-files"], { cwd: REPO_ROOT, encoding: "utf8" });
+    return out
+      .split("\n")
+      .filter(Boolean)
+      .filter((path) => SCAN_ROOTS.some((root) => path === root || path.startsWith(`${root}/`)))
+      .filter((path) => path !== SELF_PATH && !BINARY_EXT.test(path));
+  }
+
+  /** Read each file from disk and flag it if any token hashes to a forbidden term. */
+  function scan(absolutePaths: string[], hashes: ReadonlySet<string>): string[] {
+    return absolutePaths.filter((path) => containsForbidden(readFileSync(path, "utf8"), hashes));
+  }
+
+  it("scans a non-trivial number of tracked files under src, docs, and tasks", () => {
+    // Guards against a refactor — or a git-less shell — that silently empties
+    // the file list. A scanner that scans nothing always passes.
+    const files = trackedFiles();
+    expect(files.length).toBeGreaterThan(50);
+    expect(files).not.toContain(SELF_PATH);
+    expect(files.some((p) => p.startsWith("node_modules/") || p.startsWith(".next/"))).toBe(
+      false,
+    );
+  });
+
+  it("detects a forbidden term planted in a real file on disk", () => {
+    // The control test at the top of this file proves `containsForbidden`
+    // works on an in-memory string. This proves the other half — that
+    // `scan` actually reads a real file from disk and catches it — using a
+    // fake term (never the real denylist) written to a file outside the
+    // repo, so it can never appear in the production file list above.
+    const dir = mkdtempSync(join(tmpdir(), "confidentiality-guard-"));
+    const planted = join(dir, "planted.md");
+    const control = new Set([sha256("banana")]);
+
+    try {
+      writeFileSync(planted, "This paragraph mentions Banana in passing.");
+      expect(scan([planted], control)).toEqual([planted]);
+      // The fake term is not on the real denylist — sanity check that the
+      // two sets aren't accidentally being conflated.
+      expect(scan([planted], FORBIDDEN_HASHES)).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("contains no forbidden term in any tracked file under src, docs, or tasks", () => {
+    const offenders = scan(
+      trackedFiles().map((path) => join(REPO_ROOT, path)),
+      FORBIDDEN_HASHES,
+    );
+
+    // Report the path only, relative to the repo root. Echoing the
+    // offending text would print the term.
+    expect(offenders.map((path) => path.slice(REPO_ROOT.length + 1))).toEqual([]);
   });
 });
 
