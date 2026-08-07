@@ -219,35 +219,59 @@ export const education: readonly Education[] = [
   },
 ];
 
-/**
- * `issued`, `credentialId` and `verifyUrl` are deliberately absent: they are
- * facts Raihan has not published here yet, and inventing them would be worse
- * than omitting them. Every field is optional — fill them in as they arrive.
- */
 export const certifications: readonly Certification[] = [
   {
-    name: "Dataiku Generative AI Practitioner",
+    name: "MLOps Practitioner Certificate",
     issuer: "Dataiku",
+    issued: "2025-01",
+    credentialId: "rriyymrx88zz",
+    verifyUrl: "https://verify.skilljar.com/c/rriyymrx88zz",
+    image: "/certifications/dataiku-mlops-practitioner",
+  },
+  {
+    name: "Developer Certificate",
+    issuer: "Dataiku",
+    issued: "2024-12",
+    credentialId: "7pj8jh3ruaue",
+    verifyUrl: "https://verify.skilljar.com/c/7pj8jh3ruaue",
+    image: "/certifications/dataiku-developer",
+  },
+  {
+    name: "Generative AI Practitioner Certificate",
+    issuer: "Dataiku",
+    issued: "2024-12",
+    credentialId: "tuj5pxkizvjo",
+    verifyUrl: "https://verify.skilljar.com/c/tuj5pxkizvjo",
     image: "/certifications/dataiku-generative-ai-practitioner",
   },
   {
-    name: "Dataiku ML Practitioner",
+    name: "ML Practitioner Certificate",
     issuer: "Dataiku",
+    issued: "2024-12",
+    credentialId: "bwqycmmtuced",
+    verifyUrl: "https://verify.skilljar.com/c/bwqycmmtuced",
     image: "/certifications/dataiku-ml-practitioner",
   },
   {
-    name: "Dataiku Advanced Designer",
+    name: "Advanced Designer Certificate",
     issuer: "Dataiku",
+    issued: "2024-12",
+    credentialId: "v439v63i2daa",
+    verifyUrl: "https://verify.skilljar.com/c/v439v63i2daa",
     image: "/certifications/dataiku-advanced-designer",
   },
   {
-    name: "Dataiku Developer",
+    name: "Core Designer Certificate",
     issuer: "Dataiku",
-    image: "/certifications/dataiku-developer",
+    issued: "2024-12",
+    credentialId: "6uqybt6jajtr",
+    verifyUrl: "https://verify.skilljar.com/c/6uqybt6jajtr",
+    image: "/certifications/dataiku-core-designer",
   },
   {
     name: "Sertifikat MSIB",
     issuer: "Kampus Merdeka",
+    // `issued` only if the PDF states it — see Step 2. Omit rather than invent.
     image: "/certifications/msib",
   },
 ];

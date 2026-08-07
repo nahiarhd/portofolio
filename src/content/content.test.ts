@@ -259,4 +259,33 @@ describe("evidence", () => {
       expect(url).toMatch(/^https:\/\//);
     }
   });
+
+  it("keeps every certification's optional fields well-formed", () => {
+    // `issued` stays optional: an unknown date is omitted, never invented.
+    // What this guards is that whatever IS present is internally consistent —
+    // a verify link with no credential id behind it is the real failure mode.
+    for (const cert of certifications) {
+      expect(cert.issuer.trim(), cert.name).toBeTruthy();
+      if (cert.issued) {
+        expect(cert.issued, cert.name).toMatch(/^\d{4}-(0[1-9]|1[0-2])$/);
+      }
+      if (cert.verifyUrl) {
+        expect(cert.verifyUrl, cert.name).toMatch(/^https:\/\//);
+        expect(cert.credentialId?.trim(), `${cert.name} links without an id`).toBeTruthy();
+        expect(cert.verifyUrl, `${cert.name} link must carry its own id`).toContain(
+          cert.credentialId!,
+        );
+      }
+    }
+  });
+
+  it("lists all six Dataiku certificates, each dated and verifiable", () => {
+    const dataiku = certifications.filter((c) => c.issuer === "Dataiku");
+    expect(dataiku).toHaveLength(6);
+    expect(new Set(dataiku.map((c) => c.credentialId)).size, "duplicate ids").toBe(6);
+    for (const cert of dataiku) {
+      expect(cert.issued, cert.name).toMatch(/^\d{4}-(0[1-9]|1[0-2])$/);
+      expect(cert.verifyUrl, cert.name).toBeTruthy();
+    }
+  });
 });
