@@ -76,11 +76,15 @@ That value is the first entry in `FORBIDDEN_HASHES`. Confirm before deleting.
 
 - [ ] **Step 2: Compute the client hashes to add**
 
+The five client spellings are supplied out of band by the controller. **They must
+never be written into a tracked file — including this plan.** Substitute them
+into the command below at the shell, and commit only the resulting hashes:
+
 ```bash
-node -e 'const c=require("node:crypto");for(const t of [/* client spellings — supplied out of band, never committed */])console.log(t.padEnd(10), c.createHash("sha256").update(t).digest("hex"))'
+node -e 'const c=require("node:crypto");for(const t of process.argv.slice(1))console.log(c.createHash("sha256").update(t).digest("hex"))' <spelling1> <spelling2> …
 ```
 
-Record all five. They replace the removed entry.
+Record all five hashes. They replace the removed entry.
 
 - [ ] **Step 3: Write the failing test**
 
@@ -1367,15 +1371,14 @@ Add to `src/lib/chat-prompt.test.ts`:
     expect(prompt).toContain("Dataiku");
   });
 
-  it("names no client and quotes no money", () => {
+  it("quotes no money", () => {
+    // Client names are NOT checked here. "never interpolates a forbidden term"
+    // above already covers them, by hash — and spelling them out in this file
+    // would be precisely the leak that hashing exists to prevent.
     for (const locale of LOCALES) {
-      const prompt = buildSystemPrompt(locale).toLowerCase();
-      for (const token of [/* client spellings — supplied out of band, never committed */]) {
-        expect(prompt, `${locale} leaks ${token}`).not.toContain(token);
-      }
       // Rates are conversations, not bot answers. A bot that knows the
       // project minimum will negotiate on his behalf.
-      expect(prompt).not.toMatch(/\$\s?\d/);
+      expect(buildSystemPrompt(locale), locale).not.toMatch(/\$\s?\d/);
     }
   });
 
