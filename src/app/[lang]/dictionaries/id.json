@@ -30,8 +30,8 @@
     "titleLine2": "dan antarmukanya.",
     "body": "Pipeline agent, pemrosesan dokumen dan media, serta antarmuka operator yang membuatnya bisa dipakai.",
     "ctaPrimary": "Lihat karya",
-    "ctaSecondary": "Kontak",
-    "status": "Terbuka untuk kerja"
+    "ctaSecondary": "Ajak kerja sama",
+    "status": "Terbuka untuk proyek terpilih"
   },
   "work": {
     "confidential": "Nda",
@@ -59,7 +59,7 @@
     "education": "Pendidikan",
     "present": "Sekarang",
     "photo": "Foto",
-    "lead": "Lulusan teknologi informasi yang menggarap AI terapan, dengan pengalaman sebelumnya mengajar pengembangan blockchain dan membangun produk analitik."
+    "lead": "AI lead engineer, sebagian besar menangani sistem on-premises di balik firewall klien. Sebelumnya mengajar pengembangan blockchain dan membangun produk analitik."
   },
   "certifications": {
     "heading": "Sertifikasi",
