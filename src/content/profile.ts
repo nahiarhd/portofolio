@@ -53,6 +53,44 @@ export type Certification = {
   image?: string;
 };
 
+/**
+ * A peer-reviewed paper. The DOI is the whole point: it is the one claim on
+ * this site a stranger can verify in a single click.
+ */
+export type Publication = {
+  title: string;
+  venue: string;
+  year: number;
+  /** Full resolvable DOI URL, not the bare identifier. */
+  doi: string;
+  /** 1-indexed position in the author list. Stated, never implied. */
+  authorPosition: number;
+  authorCount: number;
+  /** What he built. Not a claim about what the other authors did. */
+  contribution: Localized;
+  topics: string[];
+};
+
+/**
+ * A model published under his own Hugging Face account.
+ *
+ * This is the strongest evidence on the site: the NDA work can only be
+ * asserted, but these are public artefacts strangers chose to use.
+ */
+export type PublishedModel = {
+  /** Hugging Face repo id, e.g. "nahiar/sentiment-analysis-v2". */
+  id: string;
+  task: Localized;
+  /**
+   * Recorded by hand at author time. Not fetched — the site is static and a
+   * build-time network call for a vanity number is a bad trade. Refresh it
+   * when it drifts; a stale number is worse than none, so omit rather than
+   * guess.
+   */
+  likes?: number;
+  baseModel?: string;
+};
+
 export const profile = {
   name: "Raihan Hidayatullah Djunaedi",
   tagline: {
@@ -211,5 +249,56 @@ export const certifications: readonly Certification[] = [
     name: "Sertifikat MSIB",
     issuer: "Kampus Merdeka",
     image: "/certifications/msib",
+  },
+];
+
+export const GITHUB_URL = "https://github.com/raihanhd12";
+export const HUGGINGFACE_URL = "https://huggingface.co/nahiar";
+
+export const publications: readonly Publication[] = [
+  {
+    title:
+      "Towards Trustless Academic Records in Higher Education: Integrating Blockchain and IPFS for Verifiable Student Credentials",
+    venue:
+      "2025 International Conference on Innovation and Intelligence for Informatics, Computing, and Technologies (3ICT)",
+    year: 2025,
+    doi: "https://doi.org/10.1109/3ICT68299.2025.11442139",
+    authorPosition: 3,
+    authorCount: 9,
+    contribution: {
+      en: "Implemented the permissioned Hyperledger Besu network, the credential smart contracts with role-based access control, the IPFS storage layer, and the ReactJS client built on the Thirdweb SDK.",
+      id: "Mengimplementasikan jaringan Hyperledger Besu berizin, smart contract kredensial dengan kontrol akses berbasis peran, lapisan penyimpanan IPFS, dan klien ReactJS di atas Thirdweb SDK.",
+    },
+    topics: ["Hyperledger Besu", "IPFS", "Solidity", "ReactJS", "Thirdweb"],
+  },
+];
+
+/**
+ * The four with real third-party traction, not all 34. A long list of
+ * unremarkable models reads as noise; four with usage reads as a track record.
+ */
+export const publishedModels: readonly PublishedModel[] = [
+  {
+    id: "nahiar/sentiment-analysis-v2",
+    task: { en: "Text classification", id: "Klasifikasi teks" },
+    likes: 124,
+  },
+  {
+    id: "nahiar/spam-detection-xlm-roberta-v3",
+    task: { en: "Text classification", id: "Klasifikasi teks" },
+    likes: 83,
+    baseModel: "XLM-RoBERTa",
+  },
+  {
+    id: "nahiar/xlm-roberta-ner-v2",
+    task: { en: "Token classification", id: "Klasifikasi token" },
+    likes: 75,
+    baseModel: "XLM-RoBERTa",
+  },
+  {
+    id: "nahiar/whisper-v1",
+    task: { en: "Speech recognition", id: "Pengenalan suara" },
+    likes: 15,
+    baseModel: "Whisper",
   },
 ];

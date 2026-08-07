@@ -4,7 +4,16 @@ import { describe, expect, it } from "vitest";
 
 import { LOCALES } from "@/lib/locale";
 
-import { certifications, education, experience, profile } from "./profile";
+import {
+  GITHUB_URL,
+  HUGGINGFACE_URL,
+  certifications,
+  education,
+  experience,
+  profile,
+  publications,
+  publishedModels,
+} from "./profile";
 import { projects } from "./projects";
 
 /**
@@ -75,6 +84,8 @@ const allContent = [
   ...collectStrings(experience, "experience"),
   ...collectStrings(education, "education"),
   ...collectStrings(certifications, "certifications"),
+  ...collectStrings(publications, "publications"),
+  ...collectStrings(publishedModels, "publishedModels"),
 ];
 
 describe("confidentiality", () => {
@@ -222,6 +233,30 @@ describe("profile", () => {
         covered(project.started),
         `${project.slug} (${project.started}) falls inside no role`,
       ).toBe(true);
+    }
+  });
+});
+
+describe("evidence", () => {
+  it("gives every publication a resolvable DOI and an honest author position", () => {
+    expect(publications.length).toBeGreaterThan(0);
+    for (const paper of publications) {
+      expect(paper.doi, paper.title).toMatch(/^https:\/\/doi\.org\/10\./);
+      expect(paper.authorPosition, paper.title).toBeGreaterThan(0);
+      expect(paper.authorPosition, paper.title).toBeLessThanOrEqual(paper.authorCount);
+    }
+  });
+
+  it("namespaces every published model under the real account", () => {
+    expect(publishedModels.length).toBeGreaterThan(0);
+    for (const model of publishedModels) {
+      expect(model.id, model.id).toMatch(/^nahiar\/[\w.-]+$/);
+    }
+  });
+
+  it("points the profile links at https", () => {
+    for (const url of [HUGGINGFACE_URL, GITHUB_URL]) {
+      expect(url).toMatch(/^https:\/\//);
     }
   });
 });
