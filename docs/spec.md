@@ -12,9 +12,10 @@ Concept doc: [`docs/ideas/agent-graph-portfolio.md`](./ideas/agent-graph-portfol
    function (`/api/chat`); nothing about it needs a persistent server.
 2. **`en` is the default locale**, `id` is the toggle. Root `/` redirects to a
    locale based on `Accept-Language`.
-3. ~~Company names can be mentioned.~~ **WRONG — corrected 2026-08-03.**
-   Employer and product names **cannot** be stated publicly. See "Confidentiality"
-   below.
+3. ~~Company names can be mentioned.~~ ~~**WRONG — corrected 2026-08-03.**
+   Employer and product names cannot be stated publicly.~~ **Superseded
+   2026-08-07** — see the three-tier table under "Confidentiality": employer
+   names are allowed; client names and product/module names are not.
 4. **One person maintains this.** No collaborators, no review process.
 5. **The chat is answer-only.** It reads project data and returns cards. It
    never sends email, never books meetings, never writes anywhere.
@@ -295,8 +296,9 @@ verified by hand on a real device.
 - Ship an unrate-limited public LLM endpoint.
 - Hardcode a provider URL, key, or model id in source — env vars only, so the
   provider stays swappable.
-- Name the employer, its products, or its clients — anywhere, including
-  `alt` text, meta tags, commit messages, and the chatbot's system prompt.
+- Name the client, or name a product or internal module — anywhere,
+  including `alt` text, meta tags, commit messages, and the chatbot's system
+  prompt.
 - Add a lint exemption to make a gate pass.
 - Claim a performance number without measuring it on a real device.
 
