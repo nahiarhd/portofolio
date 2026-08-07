@@ -93,7 +93,11 @@ export function WorkIndex({
 
                 <p className={cn("mt-2 flex-1 text-sm leading-relaxed", TEXT.subtle)}>
                   {project.confidential
-                    ? withRedactions(project.summary[lang], dictionary.redacted)
+                    ? withRedactions(
+                        project.summary[lang],
+                        dictionary.redacted,
+                        dictionary.redactedAnnounced,
+                      )
                     : project.summary[lang]}
                 </p>
 

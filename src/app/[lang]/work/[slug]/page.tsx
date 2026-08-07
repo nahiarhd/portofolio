@@ -91,7 +91,7 @@ export default async function CaseStudyPage({ params }: Params) {
           </h1>
           <p className={cn("mt-5 max-w-[52ch] text-base leading-relaxed sm:text-lead", TEXT.subtle)}>
             {project.confidential
-              ? withRedactions(project.summary[lang], copy.redacted)
+              ? withRedactions(project.summary[lang], copy.redacted, copy.redactedAnnounced)
               : project.summary[lang]}
           </p>
         </header>

@@ -36,6 +36,7 @@
   "work": {
     "confidential": "Nda",
     "redacted": "Redacted · Nda",
+    "redactedAnnounced": "redacted under NDA",
     "problem": "Problem",
     "role": "Role",
     "outcome": "Outcome",
