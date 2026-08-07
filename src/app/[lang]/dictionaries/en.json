@@ -80,7 +80,15 @@
     "mediaHint": "Add JPG or PNG under public/certifications/"
   },
   "contact": {
-    "body": "Open to conversations about AI engineering, data, and blockchain work."
+    "heading": "Work together",
+    "freelanceHeading": "Freelance projects",
+    "freelanceScope": "Agent pipelines, on-premises LLM deployment, document and media processing, and the operator-facing interfaces on top.",
+    "freelanceCapacity": "I'm employed full-time, so this runs evenings and weekends — roughly {from}–{to} hours a week. Project-based and async: no daytime calls or standups.",
+    "freelanceRate": "Projects from ${minimum}.",
+    "freelanceResponse": "I reply within {hours} hours.",
+    "fulltimeHeading": "Full-time",
+    "fulltimeBody": "Not actively looking. I'll consider senior or lead AI roles that are remote-first and a clear step up in scope.",
+    "emailLabel": "Email"
   },
   "chat": {
     "open": "Ask about the work",

@@ -80,7 +80,15 @@
     "mediaHint": "Tambahkan JPG atau PNG di public/certifications/"
   },
   "contact": {
-    "body": "Terbuka untuk berdiskusi soal AI engineering, data, dan blockchain."
+    "heading": "Mari bekerja sama",
+    "freelanceHeading": "Proyek freelance",
+    "freelanceScope": "Pipeline agent, penerapan LLM on-premises, pemrosesan dokumen dan media, serta antarmuka operator di atasnya.",
+    "freelanceCapacity": "Saya bekerja penuh waktu, jadi ini berjalan pada malam hari dan akhir pekan — sekitar {from}–{to} jam per minggu. Berbasis proyek dan asinkron: tanpa panggilan atau standup di jam kerja.",
+    "freelanceRate": "Proyek mulai dari ${minimum}.",
+    "freelanceResponse": "Saya membalas dalam {hours} jam.",
+    "fulltimeHeading": "Penuh waktu",
+    "fulltimeBody": "Tidak sedang aktif mencari. Saya mempertimbangkan peran AI senior atau lead yang remote-first dan jelas merupakan peningkatan cakupan.",
+    "emailLabel": "Email"
   },
   "chat": {
     "open": "Tanya seputar karya",

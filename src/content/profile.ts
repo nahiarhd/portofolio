@@ -117,6 +117,18 @@ export const profile = {
   },
 } as const;
 
+/**
+ * Engagement terms. `projectMinimumUsd` is deliberately optional: the section
+ * omits the line entirely rather than render a placeholder, and no number is
+ * invented here. See docs/spec-repositioning.md Open Question 1.
+ */
+export const engagement = {
+  /** Set this before publishing. Undefined renders no rate line at all. */
+  projectMinimumUsd: undefined as number | undefined,
+  responseHours: 48,
+  hoursPerWeek: { from: 10, to: 15 },
+} as const;
+
 export const experience: readonly Experience[] = [
   {
     organization: "ADS Digital Partner",

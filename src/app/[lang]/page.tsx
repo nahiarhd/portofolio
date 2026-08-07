@@ -50,11 +50,7 @@ export default async function HomePage({
         dictionary={dictionary.about}
       />
       <EvidenceSection lang={lang} dictionary={dictionary.evidence} />
-      <ContactSection
-        heading={dictionary.nav.contact}
-        body={dictionary.contact.body}
-        lang={lang}
-      />
+      <ContactSection lang={lang} dictionary={dictionary.contact} />
     </main>
   );
 }
