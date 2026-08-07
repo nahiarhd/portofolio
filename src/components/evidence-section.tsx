@@ -76,6 +76,7 @@ export function EvidenceSection({
                     {model.likes} {dictionary.likes}
                   </span>
                 ) : null}
+                <span className="sr-only"> (opens in a new tab)</span>
               </a>
             </li>
           ))}
@@ -83,11 +84,12 @@ export function EvidenceSection({
 
         <a
           href={HUGGINGFACE_URL}
-          rel="noreferrer"
+          rel="me noreferrer"
           target="_blank"
           className={cn(BUTTON.secondary, "mt-8")}
         >
           {dictionary.modelsAll} &#8599;
+          <span className="sr-only"> (opens in a new tab)</span>
         </a>
       </div>
 
@@ -114,6 +116,7 @@ export function EvidenceSection({
             className={cn(BUTTON.secondary, "mt-6")}
           >
             {dictionary.paperRead} &#8599;
+            <span className="sr-only"> (opens in a new tab)</span>
           </a>
         </div>
       ))}
@@ -126,11 +129,12 @@ export function EvidenceSection({
         </p>
         <a
           href={GITHUB_URL}
-          rel="noreferrer"
+          rel="me noreferrer"
           target="_blank"
           className={cn(BUTTON.secondary, "mt-6")}
         >
           {GITHUB_URL.replace(/^https?:\/\//, "")} &#8599;
+          <span className="sr-only"> (opens in a new tab)</span>
         </a>
       </div>
 
