@@ -56,7 +56,7 @@ export default async function CaseStudyPage({ params }: Params) {
     <main id="content" className="flex-1 pb-24 pt-28 sm:pb-32 sm:pt-32">
       <div className={CONTAINER}>
         <Link
-          href={`/${lang}#work`}
+          href={`/${lang}/work`}
           className={cn(
             "inline-flex min-h-10 items-center font-mono text-eyebrow uppercase tracking-[0.14em]",
             TEXT.subtle,

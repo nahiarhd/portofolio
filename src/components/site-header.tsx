@@ -22,6 +22,15 @@ const ANCHORS: Record<(typeof SECTIONS)[number] | "contact", string> = {
   contact: "contact",
 };
 
+/**
+ * "work" no longer anchors here — the full case-study index moved to its own
+ * route (`/work`) — so it resolves there instead of a same-page hash. Every
+ * other section is still a same-page anchor on the home page.
+ */
+function navHref(lang: Locale, section: (typeof SECTIONS)[number] | "contact"): string {
+  return section === "work" ? `/${lang}/work` : `/${lang}#${ANCHORS[section]}`;
+}
+
 type NavCopy = Record<
   (typeof SECTIONS)[number] | "contact" | "shelf" | "skipToContent",
   string
@@ -110,7 +119,7 @@ export function SiteHeader({
 
         <div className="hidden items-center gap-8 md:flex">
           {SECTIONS.map((section) => (
-            <Link key={section} href={`/${lang}#${ANCHORS[section]}`} className={linkClass}>
+            <Link key={section} href={navHref(lang, section)} className={linkClass}>
               {nav[section]}
             </Link>
           ))}
@@ -123,7 +132,7 @@ export function SiteHeader({
             names={{ en: localeSwitch.en, id: localeSwitch.id }}
           />
           <Link
-            href={`/${lang}#contact`}
+            href={navHref(lang, "contact")}
             className={cn(BUTTON.primary, "hidden !min-h-9 !px-4 !py-1.5 text-xs sm:inline-flex")}
           >
             {nav.contact}
@@ -170,7 +179,7 @@ export function SiteHeader({
             {[...SECTIONS, "contact" as const].map((section) => (
               <li key={section} className="border-b border-border last:border-b-0">
                 <Link
-                  href={`/${lang}#${ANCHORS[section]}`}
+                  href={navHref(lang, section)}
                   onClick={() => setOpen(false)}
                   className="block py-4 font-display text-2xl font-medium tracking-tight text-foreground"
                 >
