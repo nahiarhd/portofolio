@@ -25,8 +25,10 @@ export function ProjectCard({
     <Link
       href={`/${lang}/work/${project.slug}`}
       className={cn(
-        "mt-1 block rounded-xl border border-border bg-background/60 px-4 py-3 transition-colors",
-        "hover:border-primary/40 hover:bg-surface-2",
+        "chat-msg mt-1 block rounded-xl border border-border bg-background/70 px-4 py-3",
+        "transition-[border-color,background-color,transform] duration-200",
+        "[transition-timing-function:var(--ease-out-quart)]",
+        "hover:border-primary/50 hover:bg-surface-2 active:scale-[0.99]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
       )}
     >

@@ -14,6 +14,7 @@ import {
   useRef,
   useState,
   type FormEvent,
+  type KeyboardEvent,
   type ReactNode,
 } from "react";
 
@@ -25,6 +26,7 @@ import type { ShowProjectOutput } from "@/lib/chat-tools";
 import type { Locale } from "@/lib/locale";
 import { cn } from "@/lib/utils";
 
+import { MessageContent } from "./message-content";
 import { ProjectCard } from "./project-card";
 
 type ChatCopy = Dictionary["chat"];
@@ -61,17 +63,34 @@ function highlightSlugsFromMessages(messages: UIMessage[]): string[] {
   return slugs;
 }
 
+function messageHasVisibleText(message: UIMessage): boolean {
+  return message.parts.some(
+    (part) => part.type === "text" && Boolean(part.text?.trim()),
+  );
+}
+
 function renderParts(
   message: UIMessage,
   lang: Locale,
   work: WorkCopy,
+  streaming: boolean,
 ): ReactNode[] {
   return message.parts.flatMap((part, index) => {
     if (part.type === "text" && part.text) {
+      const showCaret =
+        streaming &&
+        message.role === "assistant" &&
+        index === message.parts.length - 1;
       return [
-        <p key={`${message.id}-t-${index}`} className="whitespace-pre-wrap">
-          {part.text}
-        </p>,
+        <div key={`${message.id}-t-${index}`} className="relative">
+          <MessageContent text={part.text} />
+          {showCaret ? (
+            <span
+              className="chat-stream-caret ml-0.5 inline-block h-[1em] w-[2px] translate-y-[0.15em] bg-primary align-baseline"
+              aria-hidden
+            />
+          ) : null}
+        </div>,
       ];
     }
 
@@ -91,7 +110,10 @@ function renderParts(
         return [
           <p
             key={part.toolCallId}
-            className={cn("font-mono text-eyebrow uppercase tracking-[0.14em]", TEXT.faint)}
+            className={cn(
+              "font-mono text-eyebrow uppercase tracking-[0.14em]",
+              TEXT.faint,
+            )}
           >
             …
           </p>,
@@ -118,6 +140,25 @@ function errorCopy(error: Error | undefined, copy: ChatCopy): string | null {
   return copy.unavailable;
 }
 
+function BusyDots({ label }: { label: string }) {
+  return (
+    <div
+      className="chat-msg flex items-center gap-3 text-sm text-muted-foreground"
+      role="status"
+      aria-live="polite"
+    >
+      <span className="flex items-center gap-1" aria-hidden>
+        <span className="chat-busy-dot size-1.5 rounded-full bg-primary" />
+        <span className="chat-busy-dot size-1.5 rounded-full bg-primary" />
+        <span className="chat-busy-dot size-1.5 rounded-full bg-primary" />
+      </span>
+      <span className="font-mono text-[0.58rem] uppercase tracking-[0.14em] text-primary">
+        {label}
+      </span>
+    </div>
+  );
+}
+
 export function ChatPanel({
   lang,
   copy,
@@ -129,6 +170,7 @@ export function ChatPanel({
 }) {
   const [input, setInput] = useState("");
   const listRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const titleId = useId();
 
   const { setStreaming, setHighlightSlugs } = useGraphActivity();
@@ -147,7 +189,15 @@ export function ChatPanel({
   });
 
   const busy = status === "submitted" || status === "streaming";
+  const streaming = status === "streaming";
   const errText = errorCopy(error, copy);
+
+  const lastMessage = messages[messages.length - 1];
+  const awaitingFirstToken =
+    busy &&
+    (messages.length === 0 ||
+      lastMessage?.role === "user" ||
+      (lastMessage?.role === "assistant" && !messageHasVisibleText(lastMessage)));
 
   useEffect(() => {
     setStreaming(busy);
@@ -162,13 +212,16 @@ export function ChatPanel({
     const el = listRef.current;
     if (!el) return;
     el.scrollTop = el.scrollHeight;
-  }, [messages, status, errText]);
+  }, [messages, status, errText, awaitingFirstToken]);
 
   const submitText = (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || busy) return;
     void sendMessage({ text: trimmed });
     setInput("");
+    // Reset textarea height after send.
+    const node = inputRef.current;
+    if (node) node.style.height = "auto";
   };
 
   const onSubmit = (event: FormEvent) => {
@@ -176,20 +229,45 @@ export function ChatPanel({
     submitText(input);
   };
 
+  const onKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key !== "Enter" || event.shiftKey) return;
+    event.preventDefault();
+    submitText(input);
+  };
+
+  const onInput = (value: string) => {
+    setInput(value);
+    const node = inputRef.current;
+    if (!node) return;
+    node.style.height = "auto";
+    node.style.height = `${Math.min(node.scrollHeight, 160)}px`;
+  };
+
   return (
     <div
-      className="flex min-h-[26rem] flex-col overflow-hidden border border-border-strong bg-surface-2"
+      className={cn(
+        "chat-shell flex min-h-[28rem] flex-col overflow-hidden",
+        "border border-border-strong bg-surface-2",
+      )}
       aria-labelledby={titleId}
     >
       <header className="flex items-center justify-between gap-4 border-b border-border px-5 py-4 sm:px-6">
-        <h3
-          id={titleId}
-          className="font-mono text-eyebrow uppercase tracking-[0.14em] text-muted-foreground"
-        >
-          {copy.title}
-        </h3>
+        <div className="min-w-0">
+          <h3
+            id={titleId}
+            className="font-mono text-eyebrow uppercase tracking-[0.14em] text-muted-foreground"
+          >
+            {copy.title}
+          </h3>
+          <p className={cn("mt-1 truncate text-xs leading-snug sm:text-sm", TEXT.faint)}>
+            {copy.lead}
+          </p>
+        </div>
         {busy ? (
-          <span className="font-mono text-[0.58rem] uppercase tracking-[0.14em] text-primary" aria-live="polite">
+          <span
+            className="hidden shrink-0 font-mono text-[0.58rem] uppercase tracking-[0.14em] text-primary sm:inline"
+            aria-live="polite"
+          >
             {copy.thinking}
           </span>
         ) : null}
@@ -197,14 +275,12 @@ export function ChatPanel({
 
       <div
         ref={listRef}
-        className="flex max-h-[min(50vh,24rem)] flex-1 flex-col gap-5 overflow-y-auto px-5 py-5 sm:px-6"
+        className="flex max-h-[min(58vh,28rem)] min-h-[16rem] flex-1 flex-col gap-4 overflow-y-auto overscroll-contain px-4 py-5 sm:px-6"
         aria-live="polite"
       >
-        {messages.length === 0 && (
-          <div className="my-auto">
-            <p className={cn("text-sm", TEXT.subtle)}>{copy.emptyHint}</p>
-            {/* Chips, not full-width rows: three short questions in a stack of
-             * 1100px-wide buttons reads as a broken list. */}
+        {messages.length === 0 && !busy ? (
+          <div className="chat-msg my-auto max-w-xl">
+            <p className={cn("text-sm leading-relaxed", TEXT.subtle)}>{copy.emptyHint}</p>
             <ul className="mt-4 flex flex-wrap gap-2">
               {SUGGESTION_KEYS.map((key) => (
                 <li key={key}>
@@ -213,8 +289,10 @@ export function ChatPanel({
                     disabled={busy}
                     onClick={() => submitText(copy.suggestions[key])}
                     className={cn(
-                      "rounded-full border border-border-strong px-4 py-2 text-left text-sm leading-snug",
-                      "transition-colors hover:border-primary hover:text-primary",
+                      "rounded-full border border-border-strong bg-background/40 px-4 py-2 text-left text-sm leading-snug",
+                      "transition-[border-color,color,transform,opacity] duration-200",
+                      "[transition-timing-function:var(--ease-out-quart)]",
+                      "hover:border-primary hover:text-primary active:scale-[0.98]",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                       "disabled:opacity-50",
                     )}
@@ -225,32 +303,58 @@ export function ChatPanel({
               ))}
             </ul>
           </div>
-        )}
+        ) : null}
 
         {messages.map((message) => {
-          const parts = renderParts(message, lang, work);
+          const parts = renderParts(message, lang, work, streaming && message === lastMessage);
           if (parts.length === 0) return null;
           const isUser = message.role === "user";
           return (
-            <div
+            <article
               key={message.id}
               className={cn(
-                "space-y-2 text-sm leading-relaxed",
-                isUser
-                  ? "ml-auto max-w-[min(100%,28rem)] rounded-2xl border border-primary/25 bg-primary/10 px-4 py-3 text-foreground"
-                  : "max-w-[min(100%,36rem)]",
+                "chat-msg flex w-full flex-col gap-1.5",
+                isUser ? "items-end" : "items-start",
               )}
             >
-              <p className={cn("font-mono text-[0.58rem] uppercase tracking-[0.14em]", TEXT.faint)}>
+              <p
+                className={cn(
+                  "font-mono text-[0.58rem] uppercase tracking-[0.14em]",
+                  TEXT.faint,
+                )}
+              >
                 {isUser ? copy.you : copy.assistant}
               </p>
-              <div className={cn("space-y-3", !isUser && TEXT.subtle)}>{parts}</div>
-            </div>
+              <div
+                className={cn(
+                  "max-w-[min(100%,36rem)] text-sm leading-relaxed",
+                  isUser
+                    ? "rounded-2xl rounded-br-md border border-primary/30 bg-primary/10 px-4 py-3 text-foreground"
+                    : cn(
+                        "rounded-2xl rounded-bl-md border border-border bg-surface-1/80 px-4 py-3",
+                        TEXT.subtle,
+                      ),
+                )}
+              >
+                {isUser ? (
+                  <p className="whitespace-pre-wrap text-pretty text-foreground">
+                    {message.parts
+                      .filter((p) => p.type === "text")
+                      .map((p) => (p.type === "text" ? p.text : ""))
+                      .join("")}
+                  </p>
+                ) : (
+                  <div className="space-y-3">{parts}</div>
+                )}
+              </div>
+            </article>
           );
         })}
 
-        {errText && (
-          <div className="space-y-3 border border-border bg-surface-1 px-4 py-3 text-sm">
+        {awaitingFirstToken ? <BusyDots label={copy.thinking} /> : null}
+
+        {errText ? (
+          <div className="chat-msg space-y-3 border border-border bg-surface-1 px-4 py-3 text-sm">
             <p className={TEXT.subtle}>{errText}</p>
             <Button
               type="button"
@@ -262,25 +366,34 @@ export function ChatPanel({
               {copy.retry}
             </Button>
           </div>
-        )}
+        ) : null}
       </div>
 
-      <form onSubmit={onSubmit} className="border-t border-border p-4 sm:p-5">
+      <form
+        onSubmit={onSubmit}
+        className="border-t border-border bg-surface-2/90 px-4 py-4 backdrop-blur-sm sm:px-5"
+      >
         <label className="sr-only" htmlFor={`${titleId}-input`}>
           {copy.placeholder}
         </label>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <input
+        <div className="flex items-end gap-2">
+          <textarea
+            ref={inputRef}
             id={`${titleId}-input`}
             value={input}
-            onChange={(event) => setInput(event.target.value)}
+            onChange={(event) => onInput(event.target.value)}
+            onKeyDown={onKeyDown}
             placeholder={copy.placeholder}
             disabled={busy}
             maxLength={2000}
+            rows={1}
             autoComplete="off"
+            enterKeyHint="send"
             className={cn(
-              "min-h-11 min-w-0 flex-1 rounded-full border border-border-strong bg-background px-4 py-2.5 text-sm",
+              "min-h-11 max-h-40 min-w-0 flex-1 resize-none rounded-2xl border border-border-strong bg-background px-4 py-2.5 text-sm leading-relaxed",
               "placeholder:text-muted-foreground-faint",
+              "transition-[border-color,box-shadow] duration-200",
+              "[transition-timing-function:var(--ease-out-quart)]",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               "disabled:opacity-50",
             )}
@@ -290,11 +403,14 @@ export function ChatPanel({
               {copy.stop}
             </Button>
           ) : (
-            <Button type="submit" size="sm" disabled={!input.trim()}>
+            <Button type="submit" size="sm" disabled={!input.trim()} className="shrink-0">
               {copy.send}
             </Button>
           )}
         </div>
+        <p className={cn("mt-2 hidden text-[0.65rem] sm:block", TEXT.faint)}>
+          {copy.composerHint}
+        </p>
       </form>
     </div>
   );

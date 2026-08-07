@@ -78,6 +78,7 @@
     "title": "Tanya seputar karya",
     "lead": "Asisten yang menjawab dari studi kasus di halaman ini, dan tidak dari yang lain.",
     "placeholder": "Ajukan pertanyaan…",
+    "composerHint": "Enter untuk kirim · Shift+Enter baris baru",
     "send": "Kirim",
     "stop": "Berhenti",
     "thinking": "Sedang berpikir…",

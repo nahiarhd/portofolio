@@ -78,6 +78,7 @@
     "title": "Ask about the work",
     "lead": "An assistant that answers from the case studies on this page, and nothing else.",
     "placeholder": "Ask a question…",
+    "composerHint": "Enter to send · Shift+Enter for a new line",
     "send": "Send",
     "stop": "Stop",
     "thinking": "Thinking…",

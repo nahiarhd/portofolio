@@ -28,10 +28,16 @@ const ChatPanel = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className="min-h-[26rem] animate-pulse border border-border-strong bg-surface-1"
+        className="chat-shell flex min-h-[28rem] items-center justify-center border border-border-strong bg-surface-2"
         aria-busy="true"
         aria-label="Loading chat"
-      />
+      >
+        <span className="flex items-center gap-1" aria-hidden>
+          <span className="chat-busy-dot size-1.5 rounded-full bg-primary" />
+          <span className="chat-busy-dot size-1.5 rounded-full bg-primary" />
+          <span className="chat-busy-dot size-1.5 rounded-full bg-primary" />
+        </span>
+      </div>
     ),
   },
 );
@@ -84,10 +90,11 @@ export function ChatMount({ lang, copy, work, heading }: Props) {
         ) : (
           <div
             className={cn(
-              "flex min-h-[26rem] items-center justify-center border border-border-strong bg-surface-1 p-6",
+              "chat-shell flex min-h-[28rem] flex-col items-center justify-center gap-3 border border-border-strong bg-surface-2 p-6",
               "font-mono text-sm text-muted-foreground",
             )}
           >
+            <span className="size-1.5 rounded-full bg-primary/70" aria-hidden />
             {copy.open}
           </div>
         )}
