@@ -188,6 +188,15 @@ describe("projects", () => {
       expect(project.started, project.slug).toMatch(/^\d{4}-(0[1-9]|1[0-2])$/);
     }
   });
+
+  it("features exactly three projects, led by AI", () => {
+    const featured = projects.filter((p) => p.featured);
+    expect(featured).toHaveLength(3);
+    expect(featured.filter((p) => p.pillar === "ai").length).toBeGreaterThanOrEqual(2);
+    // At least one featured project must be checkable. Three redacted cards in
+    // a row reads as "he can show me nothing".
+    expect(featured.some((p) => !p.confidential), "all featured work is redacted").toBe(true);
+  });
 });
 
 describe("profile", () => {

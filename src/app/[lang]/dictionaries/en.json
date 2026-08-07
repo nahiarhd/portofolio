@@ -49,6 +49,9 @@
     "mediaHint": "Add cover/frame images under public/work/<slug>/",
     "indexHeading": "All work",
     "listLead": "Six case studies across AI, blockchain, and data. Client work under an NDA is described without naming anyone.",
+    "featuredHeading": "Selected work",
+    "featuredLead": "Three of six. AI systems built on-premises, plus the blockchain work behind a published paper.",
+    "viewAll": "All six case studies",
     "pillars": {
       "ai": "AI",
       "blockchain": "Blockchain",

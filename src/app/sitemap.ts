@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const paths = [
     "",
+    "/work",
     ...projects.map((project) => `/work/${project.slug}`),
   ];
 

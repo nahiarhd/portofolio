@@ -49,6 +49,9 @@
     "mediaHint": "Tambah gambar cover/frame di public/work/<slug>/",
     "indexHeading": "Semua karya",
     "listLead": "Enam studi kasus di bidang AI, blockchain, dan data. Pekerjaan klien di bawah NDA dijelaskan tanpa menyebut nama siapa pun.",
+    "featuredHeading": "Karya pilihan",
+    "featuredLead": "Tiga dari enam. Sistem AI yang dibangun on-premises, ditambah karya blockchain di balik makalah yang diterbitkan.",
+    "viewAll": "Enam studi kasus lengkap",
     "pillars": {
       "ai": "AI",
       "blockchain": "Blockchain",

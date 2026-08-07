@@ -4,7 +4,7 @@ import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { MediaFrame } from "@/components/media-frame";
 import { withRedactions } from "@/components/redaction";
 import { projects } from "@/content/projects";
-import { CONTAINER, SECTION, TEXT } from "@/lib/design";
+import { BUTTON, CONTAINER, SECTION, TEXT } from "@/lib/design";
 import { formatMonth } from "@/lib/format";
 import type { Locale } from "@/lib/locale";
 import { mediaDropHint, resolvePublicMedia } from "@/lib/public-media";
@@ -23,12 +23,18 @@ export function WorkIndex({
   lang,
   heading,
   dictionary,
+  featured = false,
+  viewAllHref,
 }: {
   lang: Locale;
   heading: string;
   dictionary: Dictionary["work"];
+  /** Home shows the featured three; /work shows everything. */
+  featured?: boolean;
+  viewAllHref?: string;
 }) {
-  const ordered = [...projects].sort((a, b) => {
+  const source = featured ? projects.filter((p) => p.featured) : projects;
+  const ordered = [...source].sort((a, b) => {
     const byPillar = PILLAR_ORDER.indexOf(a.pillar) - PILLAR_ORDER.indexOf(b.pillar);
     return byPillar !== 0 ? byPillar : b.started.localeCompare(a.started);
   });
@@ -40,7 +46,7 @@ export function WorkIndex({
           <RedactLine>{heading}</RedactLine>
         </h2>
         <p className={cn("mt-3 max-w-[52ch] text-base leading-relaxed", TEXT.subtle)}>
-          {dictionary.listLead}
+          {featured ? dictionary.featuredLead : dictionary.listLead}
         </p>
       </div>
 
@@ -114,6 +120,12 @@ export function WorkIndex({
           </li>
         ))}
       </ul>
+
+      {viewAllHref ? (
+        <a href={viewAllHref} className={cn(BUTTON.secondary, "mt-14")}>
+          {dictionary.viewAll} &#8594;
+        </a>
+      ) : null}
     </section>
   );
 }

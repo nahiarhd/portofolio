@@ -35,6 +35,8 @@ export type Project = {
   /** Confidential work has neither. Enforced by test. */
   links?: { repo?: string; live?: string };
   confidential: boolean;
+  /** Shown on the home page. The rest live at /work. */
+  featured?: boolean;
   /**
    * Optional media under `/public`. Logical path without required extension
    * (e.g. `/work/agent-orchestration/cover`). `resolvePublicMedia` prefers
@@ -142,6 +144,7 @@ export const projects: readonly Project[] = [
       "/work/document-ingestion/02",
     ],
     confidential: true,
+    featured: true,
   },
   {
     slug: "ai-service-interfaces",
@@ -174,6 +177,7 @@ export const projects: readonly Project[] = [
       "/work/ai-service-interfaces/02",
     ],
     confidential: true,
+    featured: true,
   },
 
   // ---------------------------------------------------------------------
@@ -210,6 +214,7 @@ export const projects: readonly Project[] = [
       "/work/carbon-credit-tokenization/02",
     ],
     confidential: false,
+    featured: true,
   },
   {
     slug: "social-media-analytics",

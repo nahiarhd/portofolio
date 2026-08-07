@@ -34,8 +34,10 @@ export default async function HomePage({
       <CapabilityMarquee />
       <WorkIndex
         lang={lang}
-        heading={dictionary.work.indexHeading}
+        heading={dictionary.work.featuredHeading}
         dictionary={dictionary.work}
+        featured
+        viewAllHref={`/${lang}/work`}
       />
       <Statement />
       <ChatMount
