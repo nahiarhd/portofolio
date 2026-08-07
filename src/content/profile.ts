@@ -64,8 +64,8 @@ export const profile = {
     id: "Bekasi, Jawa Barat, Indonesia",
   },
   bio: {
-    en: "Developer working across web, blockchain, and data. I build AI agent pipelines, media processing, and the interfaces on top of them, and I care as much about how a thing is presented as about whether it runs.",
-    id: "Developer yang bekerja di web, blockchain, dan data. Saya membangun pipeline AI agent, pemrosesan media, dan antarmuka di atasnya — dan saya peduli pada bagaimana sesuatu disajikan, bukan hanya apakah ia berjalan.",
+    en: "AI lead engineer. I build agent pipelines, document and media processing, and the operator-facing interfaces on top of them — mostly on-premises, behind client firewalls. Earlier work in blockchain and data still shows up in how I think about systems.",
+    id: "AI lead engineer. Saya membangun pipeline agent, pemrosesan dokumen dan media, serta antarmuka operator di atasnya — sebagian besar on-premises, di balik firewall klien. Pengalaman awal di blockchain dan data masih membentuk cara saya memandang sistem.",
   },
   email: "raihanhd.dev@gmail.com",
   linkedin: "https://www.linkedin.com/in/raihanhd/",
@@ -80,6 +80,30 @@ export const profile = {
 } as const;
 
 export const experience: readonly Experience[] = [
+  {
+    organization: "ADS Digital Partner",
+    role: { en: "Web Developer (Intern)", id: "Web Developer (Magang)" },
+    start: "2023-08",
+    end: "2023-12",
+    location: "Surabaya, Indonesia",
+    highlights: [
+      {
+        en: "Built a social media analytics website end to end",
+        id: "Membangun situs analitik media sosial secara menyeluruh",
+      },
+      {
+        en: "Integrated frontend views with backend services",
+        id: "Mengintegrasikan tampilan frontend dengan layanan backend",
+      },
+    ],
+    photo: {
+      src: "/about/agency-team",
+      alt: {
+        en: "The team in Surabaya, 2023",
+        id: "Tim di Surabaya, 2023",
+      },
+    },
+  },
   {
     organization: "Politeknik Negeri Malang",
     role: { en: "Blockchain Mentor", id: "Mentor Blockchain" },
@@ -106,33 +130,42 @@ export const experience: readonly Experience[] = [
     ],
   },
   {
-    // Anonymised by category, the same way the AI case studies are. This is the
-    // employer the NDA covers, so naming it here would identify the client work
-    // described elsewhere on the site. The role, dates and location are real.
-    organization: "Digital agency",
-    role: { en: "Web Developer", id: "Web Developer" },
-    start: "2023-08",
-    end: "2023-12",
-    location: "Surabaya, Indonesia",
+    organization: "ARMS (PT. Andal Rancang Multi Solusi)",
+    role: { en: "Data Scientist", id: "Data Scientist" },
+    start: "2024-11",
+    end: "2024-12",
+    location: "Jakarta, Indonesia",
     highlights: [
       {
-        en: "Built a social media analytics website end to end",
-        id: "Membangun situs analitik media sosial secara menyeluruh",
+        // The client is a tier-2 term. Category only, never the name.
+        en: "First data scientist on a data platform engagement for a national government revenue agency",
+        id: "Data scientist pertama pada penugasan platform data untuk lembaga penerimaan negara",
       },
       {
-        en: "Integrated frontend views with backend services",
-        id: "Mengintegrasikan tampilan frontend dengan layanan backend",
+        en: "Earned six Dataiku certifications in the first two months",
+        id: "Meraih enam sertifikasi Dataiku dalam dua bulan pertama",
       },
     ],
-    photo: {
-      // The media path is rendered into the `src` attribute, so it leaks into
-      // the page source as surely as visible copy does.
-      src: "/about/agency-team",
-      alt: {
-        en: "The team in Surabaya, 2023",
-        id: "Tim di Surabaya, 2023",
+  },
+  {
+    organization: "ADS Digital Partner",
+    role: { en: "AI Lead Engineer", id: "AI Lead Engineer" },
+    start: "2025-01",
+    location: "Jakarta, Indonesia",
+    highlights: [
+      {
+        en: "Returned to the company where I interned, now leading its AI engineering team",
+        id: "Kembali ke perusahaan tempat saya magang, kini memimpin tim AI engineering-nya",
       },
-    },
+      {
+        en: "Lead engineer for on-premises LLM deployment behind client firewalls",
+        id: "Lead engineer untuk penerapan LLM on-premises di balik firewall klien",
+      },
+      {
+        en: "Built agent pipelines, document and media processing, and the operator-facing interfaces on top",
+        id: "Membangun pipeline agent, pemrosesan dokumen dan media, serta antarmuka operator di atasnya",
+      },
+    ],
   },
 ];
 

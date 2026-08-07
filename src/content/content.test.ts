@@ -198,4 +198,30 @@ describe("profile", () => {
       expect(entry.end >= entry.start).toBe(true);
     }
   });
+
+  it("has exactly one current role", () => {
+    const current = experience.filter((entry) => !entry.end);
+    expect(current.length, "exactly one role should be open-ended").toBe(1);
+  });
+
+  it("accounts for every month a case study claims work", () => {
+    // The failure this guards: `experience` ended Dec 2024 while the work
+    // index showed case studies dated Jan–Apr 2025, so the page claimed six
+    // projects from a period that listed no employment.
+    //
+    // Deliberately NOT a "no gaps anywhere" check. Feb 2024 – Jul 2024 is a
+    // real gap (finishing the degree, which `education` covers), and roles
+    // legitimately overlap — the mentorship ran alongside the ARMS start.
+    const covered = (month: string) =>
+      experience.some(
+        (entry) => entry.start <= month && (entry.end ?? "9999-99") >= month,
+      );
+
+    for (const project of projects) {
+      expect(
+        covered(project.started),
+        `${project.slug} (${project.started}) falls inside no role`,
+      ).toBe(true);
+    }
+  });
 });
