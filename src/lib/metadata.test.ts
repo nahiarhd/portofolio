@@ -65,6 +65,43 @@ describe("buildPageMetadata", () => {
     expect(meta.alternates?.languages?.en).toBe("/en/work/agent-orchestration");
   });
 
+  it("labels the home page, the /work index, and a case study correctly", () => {
+    // openGraph.type used to be derived from whether pathAfterLocale had a
+    // suffix, which mislabeled /work — an index, not one piece of content —
+    // as "article". Home and listing pages default to "website"; only a
+    // case study opts into "article".
+    //
+    // `openGraph` is typed as a union of OG object shapes with no shared
+    // `type` field, so reading it back needs a narrowing cast.
+    const ogType = (og: ReturnType<typeof buildPageMetadata>["openGraph"]) =>
+      (og as { type?: string } | null | undefined)?.type;
+
+    const home = buildPageMetadata({
+      lang: "en",
+      pathAfterLocale: "",
+      title: "t",
+      description: "d",
+    });
+    expect(ogType(home.openGraph)).toBe("website");
+
+    const listing = buildPageMetadata({
+      lang: "en",
+      pathAfterLocale: "/work",
+      title: "t",
+      description: "d",
+    });
+    expect(ogType(listing.openGraph)).toBe("website");
+
+    const caseStudy = buildPageMetadata({
+      lang: "en",
+      pathAfterLocale: "/work/agent-orchestration",
+      title: "t",
+      description: "d",
+      ogType: "article",
+    });
+    expect(ogType(caseStudy.openGraph)).toBe("article");
+  });
+
   it("never puts a forbidden term in home or case-study metadata", () => {
     for (const lang of LOCALES) {
       const home = buildPageMetadata({

@@ -31,6 +31,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     pathAfterLocale: `/work/${project.slug}`,
     title: project.title[lang],
     description: stripRedactionMarkers(project.summary[lang]),
+    ogType: "article",
   });
 }
 

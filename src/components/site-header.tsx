@@ -14,7 +14,7 @@ import { LocaleSwitch } from "./locale-switch";
 /** Primary destinations. `contact` is the pill, so it is not repeated here. */
 const SECTIONS = ["work", "about", "ask"] as const;
 
-/** "Work" lands on the stage, which is the first of the two work surfaces. */
+/** Same-page anchor ids. "work" is handled separately by `navHref` below. */
 const ANCHORS: Record<(typeof SECTIONS)[number] | "contact", string> = {
   work: "work",
   about: "about",

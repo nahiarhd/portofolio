@@ -256,7 +256,7 @@ describe("profile", () => {
 });
 
 describe("evidence", () => {
-  it("gives every publication a resolvable DOI and an honest author position", () => {
+  it("gives every publication a well-formed DOI URL and an honest author position", () => {
     expect(publications.length).toBeGreaterThan(0);
     for (const paper of publications) {
       expect(paper.doi, paper.title).toMatch(/^https:\/\/doi\.org\/10\./);

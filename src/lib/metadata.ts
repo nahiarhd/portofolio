@@ -17,17 +17,23 @@ const OG_LOCALE: Record<Locale, string> = {
 
 /**
  * @param pathAfterLocale - "" for home, "/work/slug" for a case study
+ * @param ogType - Open Graph object type. Defaults to "website": that's
+ *   correct for the home page and for index/listing pages like `/work`.
+ *   Only a page that *is* one piece of content — a case study — should pass
+ *   "article".
  */
 export function buildPageMetadata({
   lang,
   pathAfterLocale,
   title,
   description,
+  ogType = "website",
 }: {
   lang: Locale;
   pathAfterLocale: string;
   title: string;
   description: string;
+  ogType?: "website" | "article";
 }): Metadata {
   const suffix =
     pathAfterLocale === "" || pathAfterLocale === "/"
@@ -51,7 +57,7 @@ export function buildPageMetadata({
       languages,
     },
     openGraph: {
-      type: suffix ? "article" : "website",
+      type: ogType,
       locale: OG_LOCALE[lang],
       alternateLocale: LOCALES.filter((locale) => locale !== lang).map(
         (locale) => OG_LOCALE[locale],
