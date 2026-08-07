@@ -52,6 +52,7 @@ import { projects } from "./projects";
  * owner, not a weakening to make content pass.
  */
 const FORBIDDEN_HASHES = new Set([
+  "4f062d0a078692326192961e6cd832e0e025d4327171fe19a6ad78aaf4fc76a9",
   "ebca001a1b5df7f3e79469fa2771aa7220ab7764773d7d42032a7f9b89d42d8b",
   "2ce6ab9fc84f9e761269d907b91c5df9a35c297cec8e36391c12b621cdbf1532",
   "563f77ba16279d08ca5e70eb14f470de6c72b0eeb697447dc53f84bc3bb9e934",
@@ -126,7 +127,7 @@ describe("confidentiality", () => {
     // employer-entity hash reclassified to tier 1 (see the EXCEPTION note
     // above FORBIDDEN_HASHES) = 10.
     // Change this number only when adding or removing a term on purpose.
-    expect(FORBIDDEN_HASHES.size).toBe(10);
+    expect(FORBIDDEN_HASHES.size).toBe(11);
   });
 
   it("scans a non-trivial amount of content", () => {

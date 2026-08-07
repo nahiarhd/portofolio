@@ -351,8 +351,8 @@ Named so they are not silently absorbed:
 
 ### `Development/Work/` — hard stop, verified
 
-Raihan asked (2026-08-07) for the intelligence service, location resolver,
-[redacted] and the AI agent work to be detailed on the site. **This is not
+Raihan asked (2026-08-07) for several named internal products, services and
+features — plus the AI agent work — to be detailed on the site. **This is not
 possible under the policy above, and the existing gate already proves it:**
 
 - Every repository under `Development/Work/` has its `origin` on the employer's
