@@ -2,9 +2,9 @@ import { notFound } from "next/navigation";
 
 import { AboutSection } from "@/components/about-section";
 import { CapabilityMarquee } from "@/components/capability-marquee";
-import { CertificationsSection } from "@/components/certifications-section";
 import { ChatMount } from "@/components/chat/chat-mount";
 import { ContactSection } from "@/components/contact-section";
+import { EvidenceSection } from "@/components/evidence-section";
 import { Hero } from "@/components/hero";
 import { Statement } from "@/components/statement";
 import { WorkIndex } from "@/components/work-index";
@@ -49,7 +49,7 @@ export default async function HomePage({
         heading={dictionary.nav.about}
         dictionary={dictionary.about}
       />
-      <CertificationsSection lang={lang} dictionary={dictionary.certifications} />
+      <EvidenceSection lang={lang} dictionary={dictionary.evidence} />
       <ContactSection
         heading={dictionary.nav.contact}
         body={dictionary.contact.body}

@@ -61,12 +61,22 @@
     "photo": "Foto",
     "lead": "AI lead engineer, sebagian besar menangani sistem on-premises di balik firewall klien. Sebelumnya mengajar pengembangan blockchain dan membangun produk analitik."
   },
-  "certifications": {
-    "heading": "Sertifikasi",
-    "lead": "Kredensial dengan tautan verifikasi publik bila penerbitnya menyediakan.",
+  "evidence": {
+    "heading": "Bisa diperiksa",
+    "lead": "Sebagian besar pekerjaan di atas berada di bawah NDA. Ini bagian yang bisa Anda periksa sendiri.",
+    "modelsHeading": "Model yang dipublikasikan",
+    "modelsLead": "34 model dan 48 dataset dipublikasikan di akun saya sendiri.",
+    "modelsAll": "Semua model",
+    "paperHeading": "Publikasi",
+    "paperRead": "Baca makalahnya",
+    "paperAuthor": "Penulis ke-{position} dari {count}",
+    "codeHeading": "Kode",
+    "codeLead": "Open source dan eksperimen.",
+    "certificationsHeading": "Sertifikasi",
     "verify": "Verifikasi",
     "credentialId": "ID Kredensial",
     "certificate": "Sertifikat",
+    "likes": "suka",
     "mediaHint": "Tambahkan JPG atau PNG di public/certifications/"
   },
   "contact": {

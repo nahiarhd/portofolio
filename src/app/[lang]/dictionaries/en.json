@@ -61,12 +61,22 @@
     "photo": "Photo",
     "lead": "AI lead engineer, working mostly on on-premises systems behind client firewalls. Earlier work teaching blockchain development and building analytics products."
   },
-  "certifications": {
-    "heading": "Certifications",
-    "lead": "Credentials with a public verification link where the issuer provides one.",
+  "evidence": {
+    "heading": "On the record",
+    "lead": "Most of the work above is under NDA. This is the part you can check yourself.",
+    "modelsHeading": "Published models",
+    "modelsLead": "34 models and 48 datasets published under my own account.",
+    "modelsAll": "All models",
+    "paperHeading": "Publication",
+    "paperRead": "Read the paper",
+    "paperAuthor": "Author {position} of {count}",
+    "codeHeading": "Code",
+    "codeLead": "Open source and experiments.",
+    "certificationsHeading": "Certifications",
     "verify": "Verify",
     "credentialId": "Credential ID",
     "certificate": "Certificate",
+    "likes": "likes",
     "mediaHint": "Add JPG or PNG under public/certifications/"
   },
   "contact": {
