@@ -38,6 +38,14 @@ import { projects } from "./projects";
  * employer names are ALLOWED, client names are FORBIDDEN, product and module
  * names are FORBIDDEN. This list holds tiers 2 and 3 only. Adding an employer
  * token here would be a regression, not a tightening.
+ *
+ * EXCEPTION (owner-authorised, recorded): the hash of "adma" was removed here.
+ * It named the legal entity of the employer, which the owner reclassified
+ * from unresolved to tier 1 (allowed) after confirming it against the MSIB
+ * certificate himself — see docs/spec-repositioning.md and
+ * .superpowers/sdd/task-4-report.md. This is the one deliberate exception to
+ * "only Task 1 touches FORBIDDEN_HASHES": a tier reclassification by the
+ * owner, not a weakening to make content pass.
  */
 const FORBIDDEN_HASHES = new Set([
   "ebca001a1b5df7f3e79469fa2771aa7220ab7764773d7d42032a7f9b89d42d8b",
@@ -45,7 +53,6 @@ const FORBIDDEN_HASHES = new Set([
   "563f77ba16279d08ca5e70eb14f470de6c72b0eeb697447dc53f84bc3bb9e934",
   "1ddcf9d6eb81598bcfa50718e13a7bea01ba9cfdd8d47635c164c8edcc0a6b61",
   "1aef5ea8211ecde355d626694c368130b5bc3c4422c0a877b6012a91c499ff5c",
-  "2eb8b8eca57b9361b698897b165f8ea3bc19288b8f54bbcd5bf40ad5b2f339f2",
   "b6e1557a1ed3900d7be8e28bb5f137d91812f31e59a90ceddac0276bc532d18e",
   "a5565adcb845bebf12b6cc83e868f875d6b3fc12757220d818c288d77465f066",
   "9ba6e703507e96918784e6d48182356636fe331e310104e59c10ba4319f634a1",
@@ -111,9 +118,11 @@ describe("confidentiality", () => {
     // A test file listing them would be exactly the leak this list exists to
     // prevent — the same reason the terms are stored as hashes at all.
     //
-    // Six product/module terms (unchanged) + five client spellings = 11.
+    // Six product/module terms + five client spellings = 11, minus the one
+    // employer-entity hash reclassified to tier 1 (see the EXCEPTION note
+    // above FORBIDDEN_HASHES) = 10.
     // Change this number only when adding or removing a term on purpose.
-    expect(FORBIDDEN_HASHES.size).toBe(11);
+    expect(FORBIDDEN_HASHES.size).toBe(10);
   });
 
   it("scans a non-trivial amount of content", () => {
@@ -286,6 +295,25 @@ describe("evidence", () => {
     for (const cert of dataiku) {
       expect(cert.issued, cert.name).toMatch(/^\d{4}-(0[1-9]|1[0-2])$/);
       expect(cert.verifyUrl, cert.name).toBeTruthy();
+    }
+  });
+
+  it("pins each Dataiku credential id to the certificate that carries it", () => {
+    // Read off the certificates themselves. A swap between two entries would
+    // pass every other test here while publishing a checkable falsehood.
+    const expected: Record<string, string> = {
+      "MLOps Practitioner Certificate": "rriyymrx88zz",
+      "Developer Certificate": "7pj8jh3ruaue",
+      "Generative AI Practitioner Certificate": "tuj5pxkizvjo",
+      "ML Practitioner Certificate": "bwqycmmtuced",
+      "Advanced Designer Certificate": "v439v63i2daa",
+      "Core Designer Certificate": "6uqybt6jajtr",
+    };
+
+    for (const [name, credentialId] of Object.entries(expected)) {
+      const cert = certifications.find((c) => c.name === name);
+      expect(cert, `missing: ${name}`).toBeDefined();
+      expect(cert!.credentialId, name).toBe(credentialId);
     }
   });
 });

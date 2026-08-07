@@ -271,7 +271,7 @@ export const certifications: readonly Certification[] = [
   {
     name: "Sertifikat MSIB",
     issuer: "Kampus Merdeka",
-    // `issued` only if the PDF states it — see Step 2. Omit rather than invent.
+    issued: "2023-12",
     image: "/certifications/msib",
   },
 ];
