@@ -91,6 +91,29 @@ This is a policy change, recorded here, applied in the same commit as the
 the thing `AGENTS.md` forbids — that prohibition exists to stop a hash being
 quietly deleted to turn a red test green.
 
+### Amendment, 2026-08-07 — one further tier-1 reclassification
+
+A second hash was removed after Task 4, for a distinct and recorded reason.
+
+The MSIB internship certificate names the employer by its **legal entity name**
+rather than its trading name. That token was on the denylist from when tier 1 was
+forbidden outright. Raihan confirmed the two names are the same company, and it
+was corroborated independently: the trading name's logo appears on the
+certificate beside the legal name, and the role and dates on it match the
+`experience` entry exactly.
+
+It is therefore tier 1 — allowed, like the trading name already used throughout
+the site — and the hash was removed. `FORBIDDEN_HASHES` went 11 → 10.
+
+**No content was failing the gate when this was done.** That distinction is the
+whole test for whether a denylist change is legitimate: this was a
+reclassification decided by the person who owns the confidential information, not
+a hash deleted to turn a red test green. Every client and product hash is
+untouched, and a size assertion in the test pins the count so silent drift fails.
+
+**The site still uses the trading name everywhere.** The legal name is permitted,
+not required, and appears nowhere in `src/content/`.
+
 ---
 
 ## Work Items
