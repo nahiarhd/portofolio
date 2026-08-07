@@ -122,9 +122,9 @@ export function WorkIndex({
       </ul>
 
       {viewAllHref ? (
-        <a href={viewAllHref} className={cn(BUTTON.secondary, "mt-14")}>
+        <Link href={viewAllHref} className={cn(BUTTON.secondary, "mt-14")}>
           {dictionary.viewAll} &#8594;
-        </a>
+        </Link>
       ) : null}
     </section>
   );
