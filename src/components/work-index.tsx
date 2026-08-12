@@ -66,7 +66,8 @@ export function WorkIndex({
                   priority={i < 2}
                   sizes="(max-width: 640px) 100vw, 44vw"
                   parallax
-                  className="w-full border-border-strong transition-colors duration-300 group-hover:border-primary"
+                  transitionName={`work-cover-${project.slug}`}
+                  className="work-card-media w-full border-border-strong group-hover:border-primary"
                 />
 
                 <div className="mt-5 flex flex-wrap items-center gap-3">

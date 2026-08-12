@@ -17,14 +17,14 @@ export const EYEBROW =
   "font-mono text-eyebrow uppercase tracking-[0.16em] text-muted-foreground-faint";
 
 export const SURFACE = {
-  /** Raised paper plate. */
+  /** Raised paper plate — hairline shadow. */
   panel: "panel",
-  /** Paper plate that needs to lift off the page (overlays, controls). */
+  /** Plate that lifts off the page (overlays, sticky dossiers, chat). */
   panelStrong: "panel-strong",
-  /** Flat block, hairline only. */
-  flat: "border border-border bg-surface-1",
-  /** Recessed well. */
-  inset: "border border-border bg-surface-3/60",
+  /** Flat block with the same hairline language as `.panel`. */
+  flat: "border border-border bg-surface-1 shadow-[var(--shadow-hairline)]",
+  /** Recessed well — inset shadow, opposite of a plate. */
+  inset: "surface-inset",
   pill: "nav-pill",
 } as const;
 

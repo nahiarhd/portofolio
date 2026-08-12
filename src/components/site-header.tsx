@@ -75,19 +75,41 @@ export function SiteHeader({
   useEffect(() => {
     const node = headerRef.current;
     const sentinel = document.querySelector("[data-hero-chapter-end]");
-    if (!node || !sentinel) return;
+
+    /* Non-home routes are ink for the whole visit — no sentinel to watch. */
+    if (!startsHero || !node || !sentinel) {
+      if (node) node.dataset.hero = "false";
+      document.body.dataset.chapter = "ink";
+      return;
+    }
+
+    const apply = (overHero: boolean) => {
+      node.dataset.hero = String(overHero);
+      /* Grain + any future chapter chrome read this; keep it off React state
+       * so a scroll boundary never re-renders the shell. */
+      document.body.dataset.chapter = overHero ? "paper" : "ink";
+    };
+
+    /* First paint matches the route default (paper on home); correct if the
+     * reader restored a mid-page scroll before the observer fires. */
+    apply(true);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry) return;
         const overHero = entry.isIntersecting || entry.boundingClientRect.top > 0;
-        node.dataset.hero = String(overHero);
+        apply(overHero);
       },
-      { rootMargin: "-72px 0px 0px 0px" },
+      /* Trigger slightly before the sentinel hits the bar so the token flip
+       * and the paper rule land as one expensive cut, not two. */
+      { rootMargin: "-64px 0px 0px 0px" },
     );
     observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, []);
+    return () => {
+      observer.disconnect();
+      delete document.body.dataset.chapter;
+    };
+  }, [startsHero]);
 
   const linkClass = cn(
     "link-underline text-xs font-medium uppercase tracking-[0.14em] transition-colors",

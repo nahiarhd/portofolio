@@ -58,6 +58,14 @@
    * because that layer is fixed to the viewport and cannot inherit a chapter. */
   --rule: rgba(247, 246, 242, 0.055);
 
+  /* Shadow ladder on ink — black ambient + a hairline top highlight so plates
+   * read as stock, not flat fills. Paper chapter redeclares these softer. */
+  --shadow-hairline:
+    0 1px 0 0 rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 0 rgba(247, 246, 242, 0.045);
+  --shadow-lift: 0 14px 36px -22px rgba(0, 0, 0, 0.78);
+  --shadow-float: 0 28px 56px -30px rgba(0, 0, 0, 0.88);
+
   --radius: 0rem;
   --radius-pill: 999px;
 }
@@ -167,35 +175,59 @@ h3 {
 
 /* Outlined display line. The stroke is derived from --foreground rather than a
  * literal, so it inverts inside .chapter-paper instead of vanishing. Width scales
- * with the type so it does not thin out at the top of the display clamp. */
+ * with the type so it does not thin out at the top of the display clamp.
+ *
+ * `.text-outline--deep` is the second beat in a solid/outline pair (hero line 2,
+ * statement line 2) — slightly heavier stroke so the pair has real range. */
 .text-outline {
   color: transparent;
-  --outline-ink: color-mix(in srgb, var(--foreground) 92%, transparent);
-  -webkit-text-stroke: clamp(1.25px, 0.028em, 2.5px) var(--outline-ink);
-  text-stroke: clamp(1.25px, 0.028em, 2.5px) var(--outline-ink);
+  --outline-ink: color-mix(in srgb, var(--foreground) 88%, transparent);
+  --outline-width: clamp(1.2px, 0.03em, 2.4px);
+  -webkit-text-stroke: var(--outline-width) var(--outline-ink);
+  text-stroke: var(--outline-width) var(--outline-ink);
+  paint-order: stroke fill;
 }
 
-/* Paper plate: raised stock over the newsprint ground. */
+.text-outline--deep {
+  --outline-ink: color-mix(in srgb, var(--foreground) 100%, transparent);
+  --outline-width: clamp(1.5px, 0.036em, 3px);
+}
+
+/* Paper plate: raised stock over the newsprint ground.
+ * Shadows use the token ladder so ink and paper chapters stay coherent. */
 .panel {
   background: var(--surface-2);
   border: 1px solid var(--border);
-  box-shadow: 0 1px 0 0 rgba(26, 24, 19, 0.04);
+  box-shadow: var(--shadow-hairline);
 }
 
 .panel-strong {
   background: var(--surface-2);
   border: 1px solid var(--border-strong);
-  box-shadow: 0 18px 40px -28px rgba(26, 24, 19, 0.45);
+  box-shadow: var(--shadow-hairline), var(--shadow-lift);
+}
+
+/* Recessed well — opposite of a plate: inset highlight + dark floor. */
+.surface-inset {
+  background: color-mix(in srgb, var(--surface-3) 70%, var(--background));
+  border: 1px solid var(--border);
+  box-shadow: inset 0 1px 0 0 rgba(0, 0, 0, 0.35);
 }
 
 .nav-bar {
   background: rgba(13, 12, 11, 0.82);
   border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  /* Long cinematic flip at the paper↔ink cut — the bar is the only chrome
+   * that changes chapter with the reader. */
   transition:
-    background-color 0.4s var(--ease-cinematic),
-    border-color 0.4s var(--ease-cinematic);
+    background-color 0.55s var(--ease-cinematic),
+    border-color 0.55s var(--ease-cinematic),
+    box-shadow 0.55s var(--ease-cinematic),
+    backdrop-filter 0.55s var(--ease-cinematic),
+    -webkit-backdrop-filter 0.55s var(--ease-cinematic);
+  box-shadow: 0 12px 28px -24px rgba(0, 0, 0, 0.65);
 }
 
 /* Over the paper chapter the bar carries that chapter's tokens (block above)
@@ -205,6 +237,7 @@ h3 {
   border-bottom-color: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+  box-shadow: none;
 }
 
 @media (prefers-reduced-transparency: reduce) {
@@ -320,6 +353,9 @@ h3 {
   --muted-foreground-faint: #625d54;
   --border: rgba(20, 19, 16, 0.14);
   --border-strong: rgba(20, 19, 16, 0.26);
+  --shadow-hairline: 0 1px 0 0 rgba(20, 19, 16, 0.06);
+  --shadow-lift: 0 16px 36px -24px rgba(20, 19, 16, 0.18);
+  --shadow-float: 0 28px 52px -28px rgba(20, 19, 16, 0.22);
   /* Violet dropped into the dark half of the ramp to clear AA on paper. */
   --primary: #5a189a;
   --primary-foreground: #ffffff;
@@ -357,10 +393,56 @@ h3 {
 .chapter-paper {
   background-color: var(--background);
   color: var(--foreground);
+  /* The paper↔ink cut: a hard rule at the chapter end, then a short ink
+   * falloff so the drop into the body does not read as an accidental seam. */
+  isolation: isolate;
+}
+
+.chapter-paper::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 12;
+  height: 1px;
+  background: color-mix(in srgb, var(--foreground) 22%, transparent);
+  pointer-events: none;
+}
+
+.chapter-paper::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -2.75rem;
+  z-index: 4;
+  height: 2.75rem;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, #0d0c0b 42%, transparent),
+    transparent
+  );
+  pointer-events: none;
 }
 
 body[data-world="live"] .chapter-paper {
   background-color: transparent;
+}
+
+/* First ink section after paper — heavier top rule so the cut is a decision. */
+.chapter-paper + section {
+  border-top-color: var(--border-strong);
+}
+
+/* Grain densifies over the paper chapter and eases off under ink — same
+ * observer that flips the nav sets `data-chapter` on body (site-header). */
+body[data-chapter="paper"] .bg-grain {
+  opacity: 0.3;
+  transition: opacity 0.55s var(--ease-cinematic);
+}
+
+body[data-chapter="ink"] .bg-grain {
+  opacity: 0.18;
+  transition: opacity 0.55s var(--ease-cinematic);
 }
 
 /* ---------------------------------------------------------------------------
@@ -459,8 +541,8 @@ body[data-world="live"] .chapter-paper {
  * ------------------------------------------------------------------------ */
 
 .chat-shell {
-  /* Slight lift so the console reads as a plate over the ink ground. */
-  box-shadow: 0 24px 48px -36px rgba(0, 0, 0, 0.55);
+  /* Float tier — the richest plate on the page; everything else climbs toward it. */
+  box-shadow: var(--shadow-hairline), var(--shadow-float);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -527,6 +609,10 @@ body[data-world="live"] .chapter-paper {
       opacity: 0;
       transform: translateY(10px) scale(0.98);
     }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
   @keyframes chat-card-ring {
@@ -549,29 +635,39 @@ body[data-world="live"] .chapter-paper {
  * Next 16's `experimental.viewTransition` runs a root view transition on
  * route navigations; these animate its old/new snapshots. The world graph's
  * pulse (RoutePulse → GraphActivityProvider → canvas) is the other half.
- * Under reduced motion the snapshots swap instantly — the `*` animation kill
- * in the reduce block does not reach the view-transition pseudo tree, so the
- * gate here is explicit.
+ *
+ * Signature is a redaction wipe: the old page is covered left→right (a bar
+ * drawing over), the new page peels open the same direction. Soft crossfades
+ * read generic; this matches the headline device.
+ *
+ * Shared covers use `view-transition-name: work-cover-<slug>` (set on
+ * MediaFrame) so index → case study morphs the image. Under reduced motion
+ * the snapshots swap instantly — the `*` animation kill in the reduce block
+ * does not reach the view-transition pseudo tree, so the gate here is explicit.
  * ------------------------------------------------------------------------ */
 ::view-transition-old(root) {
-  animation: page-out 280ms var(--ease-out-quart) both;
+  animation: page-redact-out 300ms cubic-bezier(0.7, 0, 0.2, 1) both;
 }
 
 ::view-transition-new(root) {
-  animation: page-in 320ms var(--ease-out-quart) both;
+  animation: page-redact-in 380ms var(--ease-out-quart) both;
 }
 
-@keyframes page-out {
+@keyframes page-redact-out {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
   to {
-    opacity: 0;
-    transform: translateY(-12px);
+    clip-path: inset(0 0 0 100%);
   }
 }
 
-@keyframes page-in {
+@keyframes page-redact-in {
   from {
-    opacity: 0;
-    transform: translateY(8px);
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }
 
@@ -598,6 +694,35 @@ body[data-world="live"] .chapter-paper {
       opacity: 1;
       transform: translateY(0);
     }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Work card hover — media tilts in perspective; the image is free for the
+ * scroll parallax (GSAP owns transform on `img`). Pointer-fine only so touch
+ * does not leave a stuck tilt after a tap.
+ * ------------------------------------------------------------------------ */
+.work-card-media {
+  transform-style: preserve-3d;
+  transition:
+    transform 0.55s var(--ease-out-quart),
+    border-color 0.35s var(--ease-out-quart),
+    box-shadow 0.55s var(--ease-out-quart);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .group:hover .work-card-media,
+  .group:focus-visible .work-card-media {
+    transform: perspective(1100px) rotateX(2deg) rotateY(-3.5deg) translateY(-6px);
+    box-shadow: var(--shadow-hairline), var(--shadow-lift);
+  }
+
+  .group:hover .work-card-media img,
+  .group:focus-visible .work-card-media img {
+    /* Nudge on top of the parallax resting scale — short so it does not fight
+     * the scroll-scrubbed transform for long. */
+    filter: brightness(1.06) contrast(1.04);
+    transition: filter 0.45s var(--ease-out-quart);
   }
 }
 

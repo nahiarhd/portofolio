@@ -89,23 +89,41 @@ export function ScrollChoreography() {
           },
         });
 
-        /* Section headings get the same wipe, once, on the way in. */
+        /* Section headings: redaction bars pull off the title (signature),
+         * then the lead develops through a line mask. Bars alone stay for
+         * heads without a lead (e.g. contact). */
         gsap.utils
           .toArray<HTMLElement>('[data-anim="reveal-head"]')
           .forEach((head) => {
             const bars = head.querySelectorAll('[data-anim="redact-bar"]');
-            if (!bars.length) return;
-            gsap.fromTo(
-              bars,
-              { scaleX: 1 },
-              {
-                scaleX: 0,
-                duration: 0.8,
-                stagger: 0.1,
-                ease: "power3.inOut",
-                scrollTrigger: { trigger: head, start: "top 82%", once: true },
-              },
-            );
+            const leads = head.querySelectorAll<HTMLElement>(":scope > p");
+            if (bars.length) {
+              gsap.fromTo(
+                bars,
+                { scaleX: 1 },
+                {
+                  scaleX: 0,
+                  duration: 0.8,
+                  stagger: 0.1,
+                  ease: "power3.inOut",
+                  scrollTrigger: { trigger: head, start: "top 82%", once: true },
+                },
+              );
+            }
+            if (leads.length) {
+              gsap.fromTo(
+                leads,
+                { clipPath: "inset(0 0 100% 0)", y: 12 },
+                {
+                  clipPath: "inset(0 0 -12% 0)",
+                  y: 0,
+                  duration: 0.85,
+                  stagger: 0.08,
+                  ease: "power3.out",
+                  scrollTrigger: { trigger: head, start: "top 82%", once: true },
+                },
+              );
+            }
           });
 
         /* Media drifts inside its frame so image and type travel at different

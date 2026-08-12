@@ -8,6 +8,7 @@
  */
 
 import Image from "next/image";
+import type { CSSProperties } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -31,6 +32,11 @@ type Props = {
   objectFit?: "cover" | "contain";
   /** Marks the frame for the scroll parallax in `scroll-choreography`. */
   parallax?: boolean;
+  /**
+   * Shared-element name for the route view transition (cover morph from
+   * work index → case study). Must be unique on the page.
+   */
+  transitionName?: string;
 };
 
 export function MediaFrame({
@@ -44,12 +50,20 @@ export function MediaFrame({
   sizes = "(max-width: 768px) 100vw, 48vw",
   objectFit = "cover",
   parallax = false,
+  transitionName,
 }: Props) {
   const isSvg = Boolean(src?.endsWith(".svg"));
 
   return (
     <figure
       data-anim={parallax ? "parallax" : undefined}
+      style={
+        transitionName
+          ? // `viewTransitionName` is still catching up in React's CSSProperties
+            // typings across releases — cast keeps the call site clean.
+            ({ viewTransitionName: transitionName } as CSSProperties)
+          : undefined
+      }
       className={cn(
         // `overflow-clip` rather than `hidden`: `hidden` would make the frame a
         // scroll container and freeze the parallax timeline on the image.

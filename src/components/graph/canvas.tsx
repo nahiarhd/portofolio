@@ -250,14 +250,19 @@ function WorldScene({
   const pulseSeen = useRef(0);
   const pulseStart = useRef(-10);
 
-  // Baseline matrices + colours when theme changes or highlights clear to idle.
+  // Baseline matrices + colours when theme changes or geometry rebuilds.
+  // Presence matches the current chapter so a remount under ink does not
+  // flash paper-sized nodes before the first useFrame rewrite.
   useLayoutEffect(() => {
     const instance = mesh.current;
     if (!instance) return;
 
+    const presence =
+      INK_PRESENCE + (PAPER_PRESENCE - INK_PRESENCE) * paperness.current;
+
     for (let i = 0; i < nodeCount; i++) {
       dummy.position.set(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
-      dummy.scale.setScalar(i === signalIndex ? 1.8 : 1);
+      dummy.scale.setScalar((i === signalIndex ? 1.8 : 1) * presence);
       dummy.updateMatrix();
       instance.setMatrixAt(i, dummy.matrix);
       instance.setColorAt(i, i === signalIndex ? colors.accent : colors.base);
@@ -465,6 +470,8 @@ function WorldScene({
   });
 
   // When activity ends, snap back to the calm baseline once.
+  // Scale by chapter presence — under ink a bare `1` would pop nodes up
+  // relative to the dimmed network the useFrame loop had been drawing.
   useEffect(() => {
     if (streaming || highlightSlugs.length > 0) return;
     const instance = mesh.current;
@@ -473,16 +480,19 @@ function WorldScene({
     highlightWeight.current.fill(0);
     weightsActive.current = false;
 
+    const presence =
+      INK_PRESENCE + (PAPER_PRESENCE - INK_PRESENCE) * paperness.current;
+
     for (let i = 0; i < nodeCount; i++) {
       dummy.position.set(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
-      dummy.scale.setScalar(i === signalIndex ? 1.8 : 1);
+      dummy.scale.setScalar((i === signalIndex ? 1.8 : 1) * presence);
       dummy.updateMatrix();
       instance.setMatrixAt(i, dummy.matrix);
       instance.setColorAt(i, i === signalIndex ? colors.accent : colors.base);
     }
     instance.instanceMatrix.needsUpdate = true;
     if (instance.instanceColor) instance.instanceColor.needsUpdate = true;
-    if (edgeMaterial.current) edgeMaterial.current.opacity = 0.22;
+    if (edgeMaterial.current) edgeMaterial.current.opacity = 0.22 * presence;
   }, [
     streaming,
     highlightSlugs,

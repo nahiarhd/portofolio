@@ -22,10 +22,13 @@ export function Statement({ lang }: { lang: Locale }) {
     >
       <div className={CONTAINER}>
         <p className="font-display text-display font-medium leading-[0.98] tracking-[-0.05em]">
-          <span data-anim="statement-line" className="block">
+          <span data-anim="statement-line" className="block text-foreground">
             {first},
           </span>
-          <span data-anim="statement-line" className="text-outline block pb-2">
+          <span
+            data-anim="statement-line"
+            className="text-outline text-outline--deep block pb-2"
+          >
             {second}.
           </span>
         </p>

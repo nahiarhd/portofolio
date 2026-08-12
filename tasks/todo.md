@@ -92,36 +92,53 @@ hero) moved to R2 — it's choreography, not scene.
 
 ---
 
-## Phase R2 — Motion: choreography across the whole site
+## Phase R2 — Motion: choreography across the whole site — ✅ done 2026-08-12
 
-- [ ] **Page transitions.** Home ↔ `/work` ↔ case study get a real transition
-      — the redaction wipe crossing routes is the obvious signature. Check the
-      current Next 16 API in `node_modules/next/dist/docs/` before writing a
-      line of this (the framework moved; do not write from memory).
-- [ ] **Line-mask reveals.** Section headings arrive through clip-path masks,
-      upgrading the current GSAP opacity/stagger.
-- [ ] **Case studies become the richest pages** — they are currently the
-      plainest. Sticky meta column, media reveals on scroll, reading progress,
-      pull-quote type moments.
-- [ ] **One event, two media.** When `showProject` lands, the card entrance in
-      the chat and the node swell in the graph must feel like the same event
-      (plan 004 eased the node's half; the card's half is missing).
-- [ ] Landing check for `plans/003–006` — review each by eye in slow motion
-      before calling them done.
+- [x] **Page transitions.** Root view-transition uses a **redaction wipe**
+      (`page-redact-out` / `page-redact-in` clip-path) instead of a soft fade;
+      graph `RoutePulse` remains the 3D half. Work covers share
+      `view-transition-name: work-cover-<slug>` so index → case study morphs
+      the media. PRM: animations off. (Next 16 `experimental.viewTransition`
+      already enabled; API checked in `node_modules/next/dist/docs/`.)
+- [x] **Line-mask reveals.** `reveal-head` keeps the redaction bar wipe on
+      titles and now **mask-ins the lead** (`:scope > p`). Case-study header
+      and body sections use `mask-in` (no redaction bars on that page family).
+- [x] **Case studies become the richest pages.** Cover + frames `media-in`,
+      outcome as pull-quote (`blockquote` + accent rule), sticky stack + meta
+      dossier, site-wide `.scroll-line` as reading progress, shared cover
+      morph from the work index.
+- [x] **One event, two media.** When `showProject` lands, the card entrance in
+      the chat and the node swell in the graph must feel like the same event.
+      Card: `.chat-card` 350ms ease-out-quart + ring flash. Node: plan 004
+      weight ramp ~350ms. Slugs publish via `useLayoutEffect` so both start on
+      the same paint (landing check 2026-08-12).
+- [x] Landing check for `plans/003–006` — code-audited 2026-08-12 against the
+      R1 world-canvas rewrite:
+      - **003** camera dolly: `CameraIntro` 8.2 → 7.2, settled-once guard ✓
+      - **004** eased highlights: `highlightWeight` ref, `delta/0.35`, idle
+        gate ✓
+      - **005** mobile nav: `#mobile-nav` 180ms entrance, exit instant ✓
+      - **006** button press + dead `.reveal`: 150ms / `--ease-out-quart` on
+        `BUTTON` + cva; `.reveal` gone ✓
+      Fixes from the pass: snap-back/baseline now scale by chapter presence
+      (no paper-size pop under ink); dual-media paint sync (above).
 
 ---
 
-## Phase R3 — UI richness pass
+## Phase R3 — UI richness pass — ✅ done 2026-08-12
 
-- [ ] **Material depth audit.** Layered surfaces, hairlines, a real shadow
-      hierarchy. Find the richest section, drag every other section up to it.
-- [ ] **Work card hover.** Media parallax or tilt inside the frame — not just
-      colour swaps.
-- [ ] **Type moments.** Bigger display contrast where pages read flat; the
-      outline/solid pair has more range than it currently uses.
-- [ ] **The paper↔ink cut.** The chapter transition is the site's one theme
-      switch — make it feel deliberate and expensive (the scroll position it
-      happens at, the nav token flip, the grain crossing).
+- [x] **Material depth audit.** Shadow ladder (`--shadow-hairline` /
+      `--shadow-lift` / `--shadow-float`) on ink + paper; `.panel` /
+      `.panel-strong` / `.surface-inset` use it. Chat is the float tier;
+      case-study sticky dossier is panel-strong; flat surfaces get the hairline.
+- [x] **Work card hover.** `.work-card-media` perspective tilt + lift on
+      fine-pointer hover (PRM- and touch-safe); scroll parallax on `img` kept.
+- [x] **Type moments.** Solid/outline pair range via `.text-outline--deep` on
+      hero line 2 and statement line 2; contact heading climbs the display
+      clamp.
+- [x] **The paper↔ink cut.** Paper bottom rule + ink falloff; heavier top rule
+      on the first ink section; nav flip 0.55s cinematic with shadow; body
+      `data-chapter` drives grain density paper↔ink from the same observer.
 
 ---
 

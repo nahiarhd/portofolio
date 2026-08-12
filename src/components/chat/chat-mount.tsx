@@ -90,7 +90,7 @@ export function ChatMount({ lang, copy, work, heading }: Props) {
         ) : (
           <div
             className={cn(
-              "chat-shell flex min-h-[28rem] flex-col items-center justify-center gap-3 border border-border-strong bg-surface-2 p-6",
+              "chat-shell panel-strong flex min-h-[28rem] flex-col items-center justify-center gap-3 p-6",
               "font-mono text-sm text-muted-foreground",
             )}
           >

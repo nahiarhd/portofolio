@@ -110,7 +110,7 @@ export function Hero({
 
         <h1 className="font-display text-display font-medium text-foreground">
           <RedactLine className="block">{copy.titleLine1}</RedactLine>
-          <RedactLine className="text-outline mt-1 block pb-2">
+          <RedactLine className="text-outline text-outline--deep mt-1 block pb-2">
             {copy.titleLine2}
           </RedactLine>
         </h1>

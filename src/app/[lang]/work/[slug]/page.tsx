@@ -67,9 +67,9 @@ export default async function CaseStudyPage({ params }: Params) {
           ← {copy.back}
         </Link>
 
-        {/* The one page family without redaction bars — it develops through
-         * a line mask instead (scroll-choreography `mask-in`). */}
-        <header className="mt-8 max-w-[40rem]" data-anim="mask-in">
+        {/* Case studies skip redaction bars — line masks develop the title
+         * block instead (scroll-choreography `mask-in`). */}
+        <header className="mt-8 max-w-[42rem]" data-anim="mask-in">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <span
               className={cn(
@@ -89,7 +89,7 @@ export default async function CaseStudyPage({ params }: Params) {
             ) : null}
           </div>
 
-          <h1 className="mt-5 font-display text-title font-normal tracking-tight">
+          <h1 className="mt-5 font-display text-title font-normal tracking-tight text-balance">
             {project.title[lang]}
           </h1>
           <p className={cn("mt-5 max-w-[52ch] text-base leading-relaxed sm:text-lead", TEXT.subtle)}>
@@ -100,8 +100,8 @@ export default async function CaseStudyPage({ params }: Params) {
         </header>
       </div>
 
-      {/* Cover is the primary media beat — full container width, not a small inset.
-       * `media-in` develops it on entry: frame clips open, image settles. */}
+      {/* Cover is the primary media beat — full container width.
+       * Shared `transitionName` morphs from the work-index card. */}
       <div className={`${CONTAINER} mt-12`} data-anim="media-in">
         <MediaFrame
           src={coverSrc}
@@ -111,6 +111,7 @@ export default async function CaseStudyPage({ params }: Params) {
           aspectClassName="aspect-[16/9] sm:aspect-[21/9]"
           priority
           sizes="100vw"
+          transitionName={`work-cover-${project.slug}`}
           className="w-full max-w-none rounded-2xl border-border"
         />
         {process.env.NODE_ENV !== "production" ? (
@@ -118,43 +119,47 @@ export default async function CaseStudyPage({ params }: Params) {
         ) : null}
       </div>
 
-      {/* Frames: secondary strip under cover — smaller, equal cells, not a second gallery title dump. */}
       {frames.length > 0 ? (
         <section className={`${CONTAINER} mt-4`} aria-label={copy.frames}>
           <div
-            data-anim="stagger"
             className={cn(
               "grid gap-3",
               frames.length === 1 ? "max-w-xl grid-cols-1" : "sm:grid-cols-2",
             )}
           >
             {frames.map((src, index) => (
-              <MediaFrame
-                key={src}
-                src={src}
-                alt={`${project.title[lang]} ${copy.frame} ${index + 1}`}
-                label={`${copy.frame} ${String(index + 1).padStart(2, "0")}`}
-                aspectClassName="aspect-[16/10]"
-                sizes="(max-width: 768px) 100vw, 50vw"
-                // Frames carry architecture diagrams, and `cover` crops them.
-                objectFit="contain"
-              />
+              <div key={src} data-anim="media-in">
+                <MediaFrame
+                  src={src}
+                  alt={`${project.title[lang]} ${copy.frame} ${index + 1}`}
+                  label={`${copy.frame} ${String(index + 1).padStart(2, "0")}`}
+                  aspectClassName="aspect-[16/10]"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  // Frames carry architecture diagrams, and `cover` crops them.
+                  objectFit="contain"
+                />
+              </div>
             ))}
           </div>
         </section>
       ) : null}
 
-      <div className={`${CONTAINER} mt-16 grid gap-12 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-14`}>
-        <div data-anim="stagger" className="divide-y divide-border/70 border-y border-border/70">
+      {/* Prose + sticky dossier. Reading progress is the site-wide `.scroll-line`
+       * in the layout — no second progress chrome here. */}
+      <div
+        className={`${CONTAINER} mt-16 grid gap-12 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-start lg:gap-16`}
+      >
+        <div className="divide-y divide-border/70 border-y border-border/70">
           {sections.map((section) => (
-            <section key={section.label} className="py-8 sm:py-10">
+            <section key={section.label} className="py-9 sm:py-11" data-anim="mask-in">
               <p className={EYEBROW}>{section.label}</p>
               {section.outcome ? (
-                /* The payoff gets display type and the accent bar — a case
-                 * study's outcome is its pull quote, not another paragraph. */
-                <p className="mt-4 max-w-[56ch] border-l-2 border-primary pl-5 font-display text-lead font-medium leading-snug tracking-tight text-foreground sm:text-heading">
-                  {section.body}
-                </p>
+                /* The payoff is a pull-quote, not another body paragraph. */
+                <blockquote className="mt-5 max-w-[36rem] border-l-2 border-primary pl-5 sm:pl-6">
+                  <p className="font-display text-lead font-medium leading-snug tracking-tight text-foreground sm:text-heading">
+                    {section.body}
+                  </p>
+                </blockquote>
               ) : (
                 <p className="mt-4 max-w-[62ch] text-base leading-relaxed sm:text-lead">
                   {section.body}
@@ -164,9 +169,9 @@ export default async function CaseStudyPage({ params }: Params) {
           ))}
         </div>
 
-        <aside data-anim="stagger" className="lg:sticky lg:top-28 lg:self-start">
-          <div className={cn(SURFACE.flat, "p-5")}>
-            <h2 className={cn(EYEBROW, "mb-4")}>{copy.stack}</h2>
+        <aside className="lg:sticky lg:top-28 lg:self-start" data-anim="stagger">
+          <div className={cn(SURFACE.panelStrong, "p-5 sm:p-6")}>
+            <h2 className={cn(EYEBROW, "mb-5")}>{copy.stack}</h2>
             <ul className="flex flex-col gap-2.5">
               {project.stack.map((item) => (
                 <li
@@ -177,6 +182,29 @@ export default async function CaseStudyPage({ params }: Params) {
                 </li>
               ))}
             </ul>
+          </div>
+
+          {/* Meta dossier under the stack — same sticky column so a long read
+           * keeps pillar / date / NDA without re-scrolling the header. */}
+          <div className={cn(SURFACE.flat, "mt-4 space-y-3 px-5 py-4")}>
+            <p
+              className={cn(
+                "font-mono text-eyebrow uppercase tracking-[0.14em]",
+                project.pillar === "ai" ? "text-primary" : TEXT.faint,
+              )}
+            >
+              {copy.pillars[project.pillar]}
+            </p>
+            <p className={cn("font-mono text-eyebrow uppercase tracking-[0.14em]", TEXT.faint)}>
+              {formatMonth(project.started, lang)}
+            </p>
+            {project.confidential ? (
+              <p className="border-t border-border pt-3">
+                <span className="chapter-stamp chapter-stamp--classified !text-[0.55rem]">
+                  {copy.confidential}
+                </span>
+              </p>
+            ) : null}
           </div>
 
           {project.links ? (

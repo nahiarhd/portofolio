@@ -30,7 +30,7 @@ export function ContactSection({
     <section id="contact" className="scroll-mt-24 border-t border-border py-24 sm:py-32">
       <div className={CONTAINER}>
         <div data-anim="reveal-head">
-          <h2 className="font-display text-[clamp(2.25rem,6vw,4rem)] font-medium leading-[1.05] tracking-tight">
+          <h2 className="font-display text-[clamp(2.5rem,7vw,4.75rem)] font-medium leading-[1.02] tracking-tight text-balance">
             <RedactLine>{dictionary.heading}</RedactLine>
           </h2>
         </div>

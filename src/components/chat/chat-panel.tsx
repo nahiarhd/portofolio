@@ -10,6 +10,7 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import {
   useEffect,
   useId,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -204,7 +205,9 @@ export function ChatPanel({
     return () => setStreaming(false);
   }, [busy, setStreaming]);
 
-  useEffect(() => {
+  // Layout effect so the graph node swell starts on the same paint as the
+  // project card's 350ms entrance — one event, two media.
+  useLayoutEffect(() => {
     setHighlightSlugs(highlightSlugsFromMessages(messages));
   }, [messages, setHighlightSlugs]);
 
@@ -246,8 +249,7 @@ export function ChatPanel({
   return (
     <div
       className={cn(
-        "chat-shell flex min-h-[28rem] flex-col overflow-hidden",
-        "border border-border-strong bg-surface-2",
+        "chat-shell panel-strong flex min-h-[28rem] flex-col overflow-hidden",
       )}
       aria-labelledby={titleId}
     >
