@@ -1,318 +1,146 @@
-# TODO: Agent Graph Portfolio
+# TODO: Rich Redesign — richer UI/UX, richer motion, richer 3D
 
-Plan: [`tasks/plan.md`](./plan.md) · Spec: [`docs/spec.md`](../docs/spec.md)
+Spec: [`docs/spec.md`](../docs/spec.md) · Repositioning:
+[`docs/spec-repositioning.md`](../docs/spec-repositioning.md)
 
-Definition of done for every task: `pnpm verify` passes, output read, no lint
-exemption added to get there.
-
----
-
-## Phase 0 — De-risk ✅ done (2026-08-03)
-
-- [x] **S1** Tool calling on the vLLM endpoint — **PASSED**, streaming included. No fallback needed.
-- [x] **S2** R3F frame rate — **PASSED**, min 58fps on Redmi Note 11 (the project's reference device)
-
-**Checkpoint 0:** ✅ both passed · no decision invalidated · `spike/r3f-perf` kept as the T13 reference · **awaiting human review before Phase 1**
+The T1–T17 build log that lived here is in git history (this file was
+rewritten 2026-08-11). `tasks/plan.md` is kept as the historical record of the
+first build.
 
 ---
 
-## Phase 1 — Foundation
+## Owner decision, 2026-08-11 — the frame budget is retired
 
-- [x] **T1** Strip Prisma / Better Auth / TanStack Query, rewrite `AGENTS.md` — **done 2026-08-03**
-  - typecheck ✅ · lint ✅ · build ✅ (2 static routes) · knip ✅ · grep for old stack ✅ empty
-  - `pnpm test:unit` ✅→ **fails: "No test files found"**. Every test in the repo covered
-    deleted modules. Deliberately *not* papered over with `passWithNoTests` — that flag
-    permanently hides a broken test glob. **T2 closes this** with the first real tests.
-  - Also removed (found during the task, not in the original scope):
-    root `SPEC.md` (was the `next-js-starter` spec, not this project's),
-    `prisma.config.ts`, `src/components/ui/input.tsx` (orphan),
-    `STATUS_TONE`/`StatusTone` (orphan exports), CI's `db:generate` step and
-    build secrets, `.env.example` rewritten to `LLM_*`, `README.md` rewritten,
-    package renamed `next-js-starter` → `portfolio-website`
-- [x] **T2** Content model — `src/content/projects.ts`, `src/content/profile.ts` — **structure done 2026-08-04**
-  - `pnpm verify` ✅ green again (12 tests) — closes T1's "No test files found"
-  - Denylist stores **SHA-256 hashes, not plaintext**: a test file listing the
-    employer's product names would be the leak it exists to prevent. Includes a
-    control test proving the detector actually fires, and a floor on how much
-    content it scans, so the guard cannot silently become vacuous.
-  - ⚠️ **Blocked on Raihan:** the four `pillar: "ai"` projects are **DRAFTS**
-    written from folder names alone. Every `problem` / `role` / `outcome` string
-    on them starts with `DRAFT —` and must be replaced with what he actually
-    built. Truthful already: `carbon-credit-tokenization`, `social-media-analytics`,
-    and all of `profile.ts` (sourced from his public LinkedIn).
-  - ~~Open decision: `profile.ts` names the 2023 employer.~~ **Resolved
-    2026-08-05: anonymised to "Digital agency".** The reasoning that it was safe
-    because it is on his public LinkedIn was wrong twice over. First, the
-    employer's own domain form was *already* on the denylist, so the intent to
-    protect it predated the entry. Second, the site describes NDA client work
-    elsewhere; naming the employer anywhere lets a reader join the two, which is
-    exactly the "identify them by search" risk in `docs/spec.md`.
-    The denylist missed it because `containsForbidden` matches single tokens
-    only, so the hashed domain form never matched the spaced legal name. Both
-    spellings are hashed now. The media path under `public/about/` also carried
-    the name and reached the rendered `src` attribute; it is renamed. The name
-    is deliberately not repeated in this note.
+Raihan, verbatim: *"I don't care about the frame rate or anything again. I
+want the best result and the best UI — more Three.js, rich UI/UX, rich
+animation, rich 3D animation."*
 
-- [x] **Launch gate:** no `DRAFT` string survives anywhere in `src/content/` — cleared 2026-08-04
-  - AI case studies rewritten NDA-safe (architecture narrative; numbers still optional
-    for Raihan to add when publishable). Enforced by `content.test.ts`.
-  Checked by hand at Checkpoint 2 and by grep in **T16**. Deliberately not a
-  unit test — a permanently red gate trains people to ignore red.
-- [x] **T3** i18n routing — `app/[lang]/`, dictionaries, locale-detecting `proxy.ts` — **done 2026-08-04**
-  - `pnpm verify` ✅ 26 tests · `pnpm build` ✅ prerenders `/en` and `/id` · knip ✅
-  - Verified live: `/`+`id-ID`→`/id`, `/`+`fr-FR`→`/en`, `en;q=0.3,id;q=0.9`→`/id`,
-    `/fr/about`→`/en/fr/about`→404, `/id` renders `lang="id"` with Indonesian copy
-  - **`Accept-Language` parsed by hand** (`src/lib/locale.ts`) instead of adding
-    `negotiator` + `@formatjs/intl-localematcher`. Two dependencies to rank two
-    locales is a bad trade, and it runs on every cold request. 10 tests cover it.
-  - **The proxy guarantees a valid `lang`.** Anything without a supported locale
-    prefix is redirected under one, so no page has to defend against a bogus
-    locale — `/fr/about` 404s as `/en/fr/about` rather than reaching a layout
-    that would load a dictionary that does not exist.
-  - ⚠️ **Do not use Next's global `PageProps`/`LayoutProps` helpers.** They are
-    generated into `.next/types` by a build, and CI runs `typecheck` **before**
-    `build` — on a clean clone they do not exist and the gate fails for a reason
-    unrelated to the code. Params are typed explicitly instead.
-  - Known gap: `not-found.tsx` receives no params, so it renders in the default
-    locale. Noted in the file; revisit only if it proves to matter.
+So the site stops optimizing for the Redmi Note 11 floor and starts optimizing
+for the richest result. Heavier scenes, postprocessing, and persistent 3D are
+now on the table. Smoothness is judged **by eye on the machines Raihan
+actually uses** — no measurement protocol, no device pass.
 
-**Checkpoint 1:** verify green · build clean · zero auth/db references · **human review**
+**Not retired:** graceful degradation. The site still works completely with
+WebGL blocked and `prefers-reduced-motion` on. That is a build constraint, not
+a performance one. Also untouched: the confidentiality tiers + denylist, the
+`pnpm verify` gate, env-swappable LLM provider, no secrets in the client
+bundle.
+
+Immediate consequences already applied:
+
+- `plans/007` (grain blend gate — a *performance* reduction of mobile
+  fidelity) is **dropped**. The grain keeps its blend everywhere.
+- `plans/003–006` (camera dolly, eased graph highlights, mobile nav entrance,
+  button press easing) still land — they add richness.
+- The T13/T14 "re-measure fps on device" obligations are deleted.
 
 ---
 
-## Phase 2 — The site (shippable on its own)
+## Direction
 
-- [x] **T4** Editorial design tokens — **done 2026-08-04**
-  - **Direction: "baseline and deviation".** Raihan builds systems that watch a
-    normal signal and catch the moment it departs from it. The page works the
-    same way: everything is calm and mono-labelled so the one loud element reads
-    as a deviation. **Boldness is spent once — do not add a second accent.**
-  - Accent is **natural indigo `#26346e`** (indigofera, the Indonesian batik
-    dye), not a framework blue. Ground is cool screen-white, not warm cream.
-  - Type is **Archivo + IBM Plex Mono**, replacing Geist — Geist is the Vercel
-    default and reads as templated.
-  - `EYEBROW` (mono, uppercase) **only ever wraps real data** — a date, a count,
-    a stack entry. The moment it holds a decorative word it becomes the template
-    device it exists to avoid.
-  - ⚠️ **`TEXT.faint` was failing WCAG AA.** As `muted-foreground/70` it
-    composited to 3.15:1 light / 3.95:1 dark against the 4.5 threshold for
-    normal text. Now its own measured token (4.77 / 5.16). Raising the opacity
-    to 0.9 would also have passed but rendered identical to `subtle`, leaving a
-    token that means nothing. All three text levels now clear AA in both schemes.
-  - Semantic token *names* were kept from the starter, so the identity changed
-    with zero component edits.
+The graph is the site's idea — an agent network. Today it is a dim backdrop
+behind the hero. The redesign makes it the protagonist, then lifts every page
+to match.
 
-- [x] **T5** Shell — nav, footer, locale toggle, skip link — **done 2026-08-04**
-  - `pnpm verify` ✅ 31 tests · `pnpm build` ✅ · knip ✅
-  - Verified at 393px and 1280px, light and dark, EN and ID
-  - Header **wraps** instead of collapsing to a hamburger: three anchors do not
-    justify a menu, and every destination stays reachable without JavaScript.
-    Each control is rendered **once** — duplicating nav behind breakpoints is
-    how two copies drift apart.
-  - Locale toggle keeps the reader on the same page (`localizePath`, 5 tests).
-    Rendered as links, not buttons, so each locale is a real crawlable URL.
-  - Locale links use `aria-label` with the language name; a visible code plus an
-    sr-only name announced as "en English".
-  - **No copyright year in the footer** — pages are statically generated, so
-    `new Date()` freezes at build time and goes quietly wrong every January.
-- [x] **T6** Work index — **done 2026-08-04**
-  - **Deviation from the original acceptance criteria:** ordered by pillar with a
-    pillar label on each entry, *not* split under group headings. Grouping was
-    tried and reads badly at 4/1/1. The counts eyebrow (`4 AI · 1 BLOCKCHAIN ·
-    1 DATA`) states the three-pillar claim without the lopsided structure — and
-    it is real data, so it obeys the EYEBROW rule.
-  - Confidential entries carry an "Under NDA" / "Terikat NDA" badge. Naming the
-    constraint is more credible than an unexplained gap.
-- [x] **T7** Case study page `/[lang]/work/[slug]` — **done 2026-08-04**
-  - 17 static pages build (6 projects × 2 locales + shell). Unknown slug → 404.
-  - Per-locale `generateMetadata`; verified `<title>` differs EN vs ID.
-  - Confidential projects render **zero** external links (grep-verified).
-- [x] **T8** Hero, about, contact — **done 2026-08-04**
-  - **Built the static graph now, not in T13.** The hero must reserve the
-    canvas's exact box to avoid layout shift, and an empty reserved box looks
-    broken on a site that is supposed to be deployable at this checkpoint. T13
-    needs this still as its WebGL-blocked / reduced-motion fallback anyway, so
-    it is the fallback built early rather than a throwaway placeholder.
-  - Graph geometry is a **literal generated from a seeded LCG** — nothing is
-    computed at render. `Math.random()` during render is an error under the
-    React Compiler purity rule (see S2), and a graph that reshuffles per render
-    would be noise, not a signature. One node is accent-coloured: the deviation.
-  - Contact is two links, **no form** — there is no backend, and a form that
-    silently drops messages is worse than an address.
-  - Dates via `Intl` (`src/lib/format.ts`), not a month-name table in the
-    dictionaries: 12 names × 2 locales is content to translate and keep in
-    parity forever when the platform already knows them. UTC pinned so January
-    cannot render as the previous December.
-
-**Checkpoint 2:** ✅ verify 36 tests · build 17 static pages · knip clean ·
-no confidential term in build output (grep) · 393px + 1280px, light + dark,
-EN + ID · **still to measure: Lighthouse, LCP, CLS, full keyboard pass**
-⚠️ **8 built pages still contain `DRAFT`** — blocked on Raihan's case studies.
+1. **3D first.** The graph becomes luminous, deep, and reactive — not texture
+   behind type.
+2. **Motion earns its place everywhere.** Entrances, route transitions, hover
+   states. The redaction wipe stays the signature device; everything else gets
+   the same care.
+3. **Rich UI without slop.** Depth, layering, material contrast, big type
+   moments. No generic AI-portfolio tropes — no gradient blobs, no
+   glassmorphism wallpaper, no aurora backgrounds.
 
 ---
 
-## Phase 3 — The chat
+## Phase R1 — 3D: make the graph the protagonist — ✅ done 2026-08-11
 
-- [x] **T9** `POST /api/chat` — **done 2026-08-04; live streaming verified**
-  - `pnpm verify` ✅ · knip ✅
-  - AI SDK is **v7** (`ai@7.0.50`), not the v6 the plan assumed. Current API is
-    `streamText` → `toUIMessageStream` → `createUIMessageStreamResponse`, and
-    tools take `inputSchema` (not `parameters`). Read `node_modules/ai/docs/`
-    before writing T11/T12 — do not write these from memory.
-  - 🐞 **Found and fixed a bug that killed the whole feature.** The T3 proxy
-    matcher did not exclude `/api`, so `POST /api/chat` was 307-redirected to
-    `/en/api/chat` and the route never ran. A redirect also downgrades POST to
-    GET, so it presented as a routing bug rather than a proxy one. Now covered
-    by `src/proxy.test.ts` (4 tests) so it cannot regress.
-  - Verified by request: 400 non-JSON · 400 empty · 413 too many messages ·
-    413 oversized message · 502 with a loud server-side log when `LLM_*` is
-    unset · pages still redirect (`/` → `/en`).
-  - Caps: 20 messages, 2000 chars/message, 800 output tokens. Env is read at
-    **request** time so the build never needs a secret.
-  - Upstream errors are logged, never returned — the message can name the
-    upstream host.
-  - ✅ **Live streaming verified 2026-08-04** with `.env.local`: POST 200, SSE
-    `start` → `text-delta` → `finish` in EN and ID. Model also emits
-    `reasoning-delta` (ignored in the UI — we only render text parts).
-- [x] **T10** Rate limiting — **done 2026-08-04**
-  - `pnpm verify` ✅ 59 tests · `pnpm build` ✅ (`/api/chat` is the only dynamic
-    route) · knip ✅
-  - **Decision: in-function limiter, not Vercel WAF.** WAF rate-limiting rules
-    and `@vercel/firewall` are both paid-plan features configured in a
-    dashboard, so the limit could not run in dev or CI and would be unverifiable
-    until production. Open Question 2 in `docs/spec.md` is now resolved this way.
-  - Two windows from one limiter: **8/minute** (stops a script without making a
-    real conversation feel restricted) and **60/hour** (what actually bounds the
-    bill — 8/min alone permits >11,000 generations a day from one address).
-  - Runs **before** parsing and before any upstream call: the cheapest rejection
-    must come first when the endpoint spends someone else's GPU capacity.
-  - **Known limit, accepted:** state is per instance, so the real ceiling is
-    (limit × instances). It stops the realistic threat; Vercel's DDoS protection
-    covers volume. Swapping in a shared store later does not change the call site.
-  - Verified live: requests 1–8 pass, 9th and 10th return **429 with
-    `retry-after: 60`**, and a different IP is unaffected.
-  - ➡️ **T11 must render 429** — map status → localized copy client-side, since
-    the client already knows the locale. The route returns English fallback text.
-- [x] **T11** Chat UI — **done 2026-08-04**
-  - `pnpm verify` ✅ 63 tests · `pnpm build` ✅ · knip ✅
-  - `@ai-sdk/react` + `DefaultChatTransport`; locale in transport `body`.
-  - Closed by default (launcher FAB); three suggested questions on open; token
-    streaming via `parts`; thinking state while `submitted`/`streaming`.
-  - 429 → localized rate-limit copy (parses error body); other failures →
-    generic unavailable + retry. Esc closes; Tab cycles; focus restored.
-  - Mounted in `[lang]/layout` so every page can open it without the page
-    depending on it.
-- [x] **T12** `showProject(slug)` tool + project card — **done 2026-08-04**
-  - `pnpm verify` ✅ 70 tests · `pnpm build` ✅ · knip ✅
-  - Zod `enum` of real slugs from `projects.ts` (trust boundary + 6 unit tests).
-  - Server tool via AI SDK v7 `tool({ inputSchema, execute })`; locale-aware
-    card payload; `stopWhen: isStepCount(5)` so the model can talk after the card.
-  - UI renders `tool-showProject` → clickable `ProjectCard` → `/[lang]/work/[slug]`.
-  - ✅ Live: model called `showProject` with `carbon-credit-tokenization`,
-    `tool-output-available` with `ok: true`, then text follow-up.
+`src/components/graph/canvas.tsx` was the centre of this phase. All items
+landed, verified live in the browser (hero, statement, work, chat sections):
 
-**Checkpoint 3:** rate limiting works · no secret in client bundle · correct in both languages · survives 10 adversarial "who do you work for?" prompts · **human review**
+- [x] **Glow.** `@react-three/postprocessing` bloom — signals and accents
+      glow under ink; bloom lerps to near-off under paper so the white ground
+      doesn't smear the print.
+- [x] **Traveling signals.** 24 packets (48 while streaming, 1.8× faster)
+      riding random edges; `showProject` reroutes 65% of respawns onto edges
+      ending at the lit node — the network visibly converges. Verified live
+      with a real chat question.
+- [x] **Pointer field.** Window `pointermove` → nodes near the cursor wake
+      (capped below highlight strength), fading ~0.9s after the last move.
+      Verified by code review; confirm by moving your own mouse — automation
+      can't reliably hold a pointer.
+- [x] **Depth.** `FogExp2`, density lerped per chapter (0.1 ink / 0.045
+      paper), fog colour tracking the ground.
+- [x] **Persistent graph.** One fixed full-page canvas behind every chapter —
+      chosen over hero-only. The canvas paints the ground itself (a
+      fullscreen quad lerped white↔ink); translucent chapter backgrounds were
+      tried first and can never render crisp paper. Hero CSS paper turns off
+      only while the canvas runs (`body[data-world="live"]`), so the
+      WebGL-off / reduced-motion fallback keeps its opaque white + still.
+
+Also fixed in passing: a pre-existing dead GSAP selector
+(`[data-anim="hero"] > div:last-child` matched nothing once the chapter-end
+sentinel span trailed the content) — hero scroll-out now targets
+`[data-anim="hero-body"]` explicitly.
+
+Gotcha worth keeping: `THREE.Color` math is linear-space — a "0.22 grey" is
+~0.5 sRGB and blooms everywhere. Ink base nodes sit at 0.06 linear.
+
+**Verify:** `pnpm verify` green (123 tests) · live browser pass done on
+desktop Chrome. Scroll-linked camera drift (graph receding as you leave the
+hero) moved to R2 — it's choreography, not scene.
 
 ---
 
-## Phase 4 — The graph
+## Phase R2 — Motion: choreography across the whole site
 
-- [x] **T13** Idle graph — **code done 2026-08-04; on-device fps NOT yet re-measured**
-  - `pnpm verify` ✅ 63 tests · `pnpm build` ✅ · knip ✅
-  - Exact S2 versions: `three@0.185.1`, `@react-three/fiber@9.7.0`, `@types/three@0.185.3`.
-    **No `@react-three/drei`.**
-  - Scene: 400 instanced spheres + ≤600 line segments, seeded LCG geometry at
-    module load (never during render — React Compiler purity). One accent
-    signal node. Slow group drift only.
-  - Canvas: `dpr={[1,2]}`, `antialias`, `powerPreference: "high-performance"`,
-    `alpha: true`, `pointer-events: none` so mobile scroll is not stolen.
-  - **Next 16 gotcha:** `next/dynamic` with `ssr: false` is illegal in Server
-    Components. Dynamic lives inside the client island (`hero-graph.tsx`),
-    which the server Hero imports normally. Server snapshots force the still
-    so SSR HTML never assumes WebGL.
-  - Fallbacks: `prefers-reduced-motion` → `GraphStill` (frozen, not slowed);
-    WebGL unavailable → `GraphStill`; loading → `GraphStill`. Same aspect box.
-  - Graph client chunk ~234KB gzip (three + R3F). Lazy — not in the
-    graph-excluded first paint budget.
-  - ⏳ **On-device fps** still needs a Redmi Note 11 check (S2 was 58fps on a
-    near-empty page; do not spend the headroom). Cannot measure from the
-    in-app browser pane.
-- [x] **T14** Graph ↔ chat wiring — **code done 2026-08-04; on-device fps during chat NOT re-measured**
-  - `GraphActivityProvider` in layout bridges chat → graph without coupling modules.
-  - Streaming (`submitted`/`streaming`) → edge opacity pulse + brightness wave +
-    slightly faster drift.
-  - `showProject` outputs → stable slug→node index (`project-nodes.ts`) lights
-    those instances in accent colour (scale 2.2).
-  - Chat still works with graph absent / WebGL off / reduced-motion still (context
-    setters are no-ops or the still simply ignores them).
-  - ⏳ On-device fps during an active chat still needs Redmi Note 11 check.
-
-**Checkpoint 4:** ask → graph reacts → card → click → case study · fps holds · **human review**
+- [ ] **Page transitions.** Home ↔ `/work` ↔ case study get a real transition
+      — the redaction wipe crossing routes is the obvious signature. Check the
+      current Next 16 API in `node_modules/next/dist/docs/` before writing a
+      line of this (the framework moved; do not write from memory).
+- [ ] **Line-mask reveals.** Section headings arrive through clip-path masks,
+      upgrading the current GSAP opacity/stagger.
+- [ ] **Case studies become the richest pages** — they are currently the
+      plainest. Sticky meta column, media reveals on scroll, reading progress,
+      pull-quote type moments.
+- [ ] **One event, two media.** When `showProject` lands, the card entrance in
+      the chat and the node swell in the graph must feel like the same event
+      (plan 004 eased the node's half; the card's half is missing).
+- [ ] Landing check for `plans/003–006` — review each by eye in slow motion
+      before calling them done.
 
 ---
 
-## Phase 5 — Ship
+## Phase R3 — UI richness pass
 
-- [x] **T15** Performance + accessibility pass — **measured 2026-08-04**
-  - **Changes:** Archivo weights 400/500/600 + preload + fallback metrics;
-    chat idle-loaded via `ChatMount` (no `@ai-sdk/react` on first paint);
-    removed unused starter SVGs; LinkedIn `aria-label` for new tab; locale
-    switch accessible name includes visible code; chat launcher
-    `aria-expanded` / `aria-haspopup`.
-  - **Lighthouse mobile** (`localhost` production, simulated throttle):
-    | Metric | Target | Measured |
-    |---|---|---|
-    | Performance | ≥ 90 | **99** |
-    | Accessibility | — | **100** |
-    | LCP | < 2.5s | **2.11s** |
-    | CLS | < 0.1 | **0** |
-    | FCP | — | 0.76s |
-    | TBT | — | 22ms |
-  - **JS first-load (HTML script tags, gzip), graph excluded:** ~**205 KB**.
-    Graph chunk (~234 KB gzip) is **not** in first-load HTML (dynamic). Spec
-    target &lt;150 KB is below Next 16 + React 19 framework floor here; the
-    intentional split (graph/chat deferred) is what we control. Recorded
-    honestly rather than redefined.
-  - **Secret exposure:** LLM_API_KEY not present in `.next/static` (grep).
-  - **WebGL-off / reduced-motion:** still uses `GraphStill` (T13).
-  - **Locale parity / verify:** dictionary tests + `pnpm verify` 75 tests.
-  - ⏳ **Not re-measured here:** on-device graph fps, chat first-token on 4G
-    (need phone + live network). Lighthouse is lab, not field.
-- [x] **T16** Metadata / SEO — **done 2026-08-04**
-  - `pnpm verify` ✅ 79 tests · build ✅ · knip ✅
-  - Per-locale title/description + title template (`%s · Name`)
-  - `hreflang` + canonical via `alternates.languages` (en, id, x-default)
-  - Open Graph + Twitter cards; generated OG images (home + case study)
-  - `sitemap.xml` — all locale homes + case studies with xhtml hreflang
-  - `robots.txt` — allow `/`, disallow `/api/`, points at sitemap
-  - `NEXT_PUBLIC_SITE_URL` in `.env.example` (falls back to VERCEL_URL / localhost)
-  - Metadata denylist unit tests (same hashed terms as content)
-  - Verified live: robots, sitemap, og:image PNG 200, case study title template
-- [x] **T17** Deploy — **live 2026-08-04 (partial)**
-  - Linked `raihanhd12s-projects/portofolio-website`, GitHub connected
-  - Production: https://portofolio-website-eta-ten.vercel.app
-  - Env set: `LLM_*` + `NEXT_PUBLIC_SITE_URL` (production)
-  - Smoke: home/work **200**, robots/sitemap **200**
-  - ⚠️ **`/api/chat` fails in production: Cloudflare bot challenge (403).**
-    Verified in Vercel logs: `AI_APICallError: Forbidden`,
-    `cf-mitigated: challenge`, body is CF “Just a moment…” HTML — not a bad
-    API key. Local works (home IP not challenged). **Fix is on the LLM host
-    Cloudflare zone** (not more app code):
-    1. WAF / Security → skip Bot Fight / Managed Challenge for
-       `/api/proxy/v1/*` when `Authorization: Bearer …` is present, **or**
-    2. Allowlist Vercel serverless egress / create an API bypass token, **or**
-    3. Point production `LLM_BASE_URL` at a public OpenAI-compatible endpoint.
-    After CF is fixed, redeploy is not required (env already set) — just re-test
-    POST `/api/chat`.
-  - ⏳ Custom domain + Speed Insights + rate-limit hammer in prod still open.
-
-**Checkpoint 5:** every spec Success Criterion measured · live on the domain
+- [ ] **Material depth audit.** Layered surfaces, hairlines, a real shadow
+      hierarchy. Find the richest section, drag every other section up to it.
+- [ ] **Work card hover.** Media parallax or tilt inside the frame — not just
+      colour swaps.
+- [ ] **Type moments.** Bigger display contrast where pages read flat; the
+      outline/solid pair has more range than it currently uses.
+- [ ] **The paper↔ink cut.** The chapter transition is the site's one theme
+      switch — make it feel deliberate and expensive (the scroll position it
+      happens at, the nav token flip, the grain crossing).
 
 ---
 
-## Blocked / needs an answer
+## Carried over — open, but not redesign
 
-- [x] WAF rate limiting on Hobby, or in-function fallback? → **T10 chose in-function**
-- [ ] Custom domain name? → blocks **T17**
-- [ ] Usable photo? → affects **T8**
-- [ ] Publish `Playground/` projects? → would add entries to **T2**. Deferred.
+- [ ] Custom domain name? → blocks deploy completion (old T17).
+- [ ] Publish `Playground/` projects? → would add work entries.
+- [ ] One-line Hugging Face bio + GitHub profile bio — free credibility, the
+      repositioning spec flagged both.
+
+---
+
+## Rules that died with the budget
+
+Recorded so no future session resurrects them by accident:
+
+- ~~Hero graph ≥ 50fps sustained on a mid-range Android~~
+- ~~JS < 150KB gzipped (was already honestly missed at ~205KB)~~
+- ~~"Never spend the frame budget; 400 nodes was measured, not guessed"~~ —
+  replaced in `AGENTS.md` with richness-first.
+- ~~T13/T14 on-device fps re-measurement~~ — no protocol, no device pass.
+- ~~`plans/007` grain blend gate~~ — dropped before landing.

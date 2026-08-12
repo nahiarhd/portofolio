@@ -33,11 +33,11 @@ const FOCUS =
 
 export const BUTTON = {
   /** Ink pill — the one primary action per view. */
-  primary: `inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full bg-cta px-6 py-2.5 text-sm font-medium tracking-tight text-cta-foreground transition-[transform,opacity] duration-200 hover:opacity-90 active:scale-[0.98] ${FOCUS}`,
+  primary: `inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full bg-cta px-6 py-2.5 text-sm font-medium tracking-tight text-cta-foreground transition-[transform,opacity] duration-150 [transition-timing-function:var(--ease-out-quart)] hover:opacity-90 active:scale-[0.98] ${FOCUS}`,
   /** Outlined pill. */
-  secondary: `inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full border border-border-strong px-6 py-2.5 text-sm font-medium tracking-tight text-foreground transition-colors duration-200 hover:border-primary hover:text-primary active:scale-[0.98] ${FOCUS}`,
+  secondary: `inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full border border-border-strong px-6 py-2.5 text-sm font-medium tracking-tight text-foreground transition-[color,border-color,transform] duration-150 [transition-timing-function:var(--ease-out-quart)] hover:border-primary hover:text-primary active:scale-[0.98] ${FOCUS}`,
   /** Text action. */
-  ghost: `inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full px-2 py-2.5 text-sm font-medium text-primary transition-opacity duration-200 hover:opacity-70 active:scale-[0.98] ${FOCUS}`,
+  ghost: `inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full px-2 py-2.5 text-sm font-medium text-primary transition-[opacity,transform] duration-150 [transition-timing-function:var(--ease-out-quart)] hover:opacity-70 active:scale-[0.98] ${FOCUS}`,
 } as const;
 
 export const CONTAINER = "relative z-10 mx-auto w-full max-w-[77.5rem] px-5 sm:px-8";

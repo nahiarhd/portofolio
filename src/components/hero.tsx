@@ -46,15 +46,12 @@ export function Hero({
       className="chapter-paper relative flex min-h-[100dvh] flex-col justify-end overflow-clip"
       aria-label={profile.name}
     >
-      {/* Idle node graph — the hero's ground, and the site's one 3D object.
-       * It is the receiver for `GraphActivityProvider`: when the chat's
-       * `showProject` tool names a project, that project's mapped node lights.
-       * Without it the chat publishes activity to nothing.
-       *
-       * Held below the type: 400 bright nodes at full strength compete with
-       * outlined display glyphs. `HeroGraph` swaps in a static SVG when WebGL
-       * is blocked or motion is reduced, so this layer never becomes a
-       * dependency. */}
+      {/* The live graph is the persistent world canvas behind the whole page
+       * (world.tsx, mounted from the layout) — the paper chapter is
+       * translucent so it composites through. This layer only hosts the
+       * static SVG still for the no-WebGL / reduced-motion fallback, at the
+       * strength the live canvas used to carry, so the fallback reads the
+       * same. */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-60" aria-hidden>
         <HeroGraph className="h-full w-full" />
       </div>
@@ -91,7 +88,10 @@ export function Hero({
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-[77.5rem] px-5 pb-14 pt-28 sm:px-8 sm:pb-20">
+      <div
+        data-anim="hero-body"
+        className="relative z-10 mx-auto w-full max-w-[77.5rem] px-5 pb-14 pt-28 sm:px-8 sm:pb-20"
+      >
         {/* Portrait for narrow viewports, where the overlap composition fails. */}
         <div className="mb-10 w-40 border border-border-strong p-1.5 sm:w-48 lg:hidden">
           <div className="relative aspect-[4/5] w-full overflow-clip bg-surface-3">

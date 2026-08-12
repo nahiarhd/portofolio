@@ -1,18 +1,21 @@
 /**
- * Idle hero graph geometry — generated once, never during render.
+ * World graph geometry — generated once, never during render.
  *
  * React Compiler treats `Math.random()` / `performance.now()` during render as
  * errors (`react-hooks/purity`). A seeded LCG at module load is deterministic
- * and pure from React's point of view. S2 measured 58fps on this exact shape:
- * 400 instanced nodes + ≤600 line-segment edges.
+ * and pure from React's point of view.
+ *
+ * 650 instanced nodes + ≤1,000 line-segment edges, deeper in z than the old
+ * hero shape so fog has real volume to work with. The frame-rate budget that
+ * froze the old 400/600 shape was retired 2026-08-11 (tasks/todo.md).
  */
 
-export const NODE_COUNT = 400;
-export const MAX_EDGES = 600;
+export const NODE_COUNT = 650;
+export const MAX_EDGES = 1000;
 /** Accent node — the single deviation from the calm baseline. */
 export const SIGNAL_INDEX = 0;
 
-/** Fixed seed so the hero is a signature, not noise that reshuffles. */
+/** Fixed seed so the graph is a signature, not noise that reshuffles. */
 const SEED = 0xa93e5;
 
 export type GraphGeometry = {
@@ -23,6 +26,8 @@ export type GraphGeometry = {
   edgeCount: number;
   /** endpoint pairs packed as xyzxyz, length `edgeCount * 6`. */
   edgePositions: Float32Array;
+  /** Node-index pairs packed as ab, length `edgeCount * 2`. */
+  edges: Uint16Array;
 };
 
 function createRng(seed: number): () => number {
@@ -58,7 +63,9 @@ export function buildGraphGeometry(seed: number = SEED): GraphGeometry {
     const inv = (0.55 + 0.45 * rand()) / Math.sqrt(r2);
     positions[i * 3] = x * inv * 3.2;
     positions[i * 3 + 1] = y * inv * 1.75;
-    positions[i * 3 + 2] = z * inv * 1.5;
+    // Deeper than the old hero shape: the persistent world spans the whole
+    // page, and fog needs z-depth to read as volume.
+    positions[i * 3 + 2] = z * inv * 2.6;
   }
 
   const K = 3;
@@ -85,7 +92,7 @@ export function buildGraphGeometry(seed: number = SEED): GraphGeometry {
       const j = nearest[k].j;
       const a = i < j ? i : j;
       const b = i < j ? j : i;
-      // Pack undirected edge into one int key: a and b are < 400.
+      // Pack undirected edge into one int key: a and b are < NODE_COUNT.
       const key = a * NODE_COUNT + b;
       if (seen.has(key)) continue;
       seen.add(key);
@@ -97,9 +104,12 @@ export function buildGraphGeometry(seed: number = SEED): GraphGeometry {
 
   const edgeCount = pairs.length / 2;
   const edgePositions = new Float32Array(edgeCount * 6);
+  const edges = new Uint16Array(edgeCount * 2);
   for (let e = 0; e < edgeCount; e++) {
     const a = pairs[e * 2];
     const b = pairs[e * 2 + 1];
+    edges[e * 2] = a;
+    edges[e * 2 + 1] = b;
     const o = e * 6;
     edgePositions[o] = positions[a * 3];
     edgePositions[o + 1] = positions[a * 3 + 1];
@@ -115,6 +125,7 @@ export function buildGraphGeometry(seed: number = SEED): GraphGeometry {
     positions,
     edgeCount,
     edgePositions,
+    edges,
   };
 }
 

@@ -47,10 +47,10 @@ export default async function CaseStudyPage({ params }: Params) {
   const coverSrc = resolvePublicMedia(project.coverImage);
   const frames = resolveMediaList(project.screenshots);
 
-  const sections = [
+  const sections: { label: string; body: string; outcome?: boolean }[] = [
     { label: copy.problem, body: project.problem[lang] },
     { label: copy.role, body: project.role[lang] },
-    { label: copy.outcome, body: project.outcome[lang] },
+    { label: copy.outcome, body: project.outcome[lang], outcome: true },
   ];
 
   return (
@@ -67,7 +67,9 @@ export default async function CaseStudyPage({ params }: Params) {
           ← {copy.back}
         </Link>
 
-        <header className="mt-8 max-w-[40rem]">
+        {/* The one page family without redaction bars — it develops through
+         * a line mask instead (scroll-choreography `mask-in`). */}
+        <header className="mt-8 max-w-[40rem]" data-anim="mask-in">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <span
               className={cn(
@@ -98,8 +100,9 @@ export default async function CaseStudyPage({ params }: Params) {
         </header>
       </div>
 
-      {/* Cover is the primary media beat — full container width, not a small inset. */}
-      <div className={`${CONTAINER} mt-12`}>
+      {/* Cover is the primary media beat — full container width, not a small inset.
+       * `media-in` develops it on entry: frame clips open, image settles. */}
+      <div className={`${CONTAINER} mt-12`} data-anim="media-in">
         <MediaFrame
           src={coverSrc}
           alt={project.title[lang]}
@@ -119,6 +122,7 @@ export default async function CaseStudyPage({ params }: Params) {
       {frames.length > 0 ? (
         <section className={`${CONTAINER} mt-4`} aria-label={copy.frames}>
           <div
+            data-anim="stagger"
             className={cn(
               "grid gap-3",
               frames.length === 1 ? "max-w-xl grid-cols-1" : "sm:grid-cols-2",
@@ -141,18 +145,26 @@ export default async function CaseStudyPage({ params }: Params) {
       ) : null}
 
       <div className={`${CONTAINER} mt-16 grid gap-12 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-14`}>
-        <div className="divide-y divide-border/70 border-y border-border/70">
+        <div data-anim="stagger" className="divide-y divide-border/70 border-y border-border/70">
           {sections.map((section) => (
             <section key={section.label} className="py-8 sm:py-10">
               <p className={EYEBROW}>{section.label}</p>
-              <p className="mt-4 max-w-[62ch] text-base leading-relaxed sm:text-lead">
-                {section.body}
-              </p>
+              {section.outcome ? (
+                /* The payoff gets display type and the accent bar — a case
+                 * study's outcome is its pull quote, not another paragraph. */
+                <p className="mt-4 max-w-[56ch] border-l-2 border-primary pl-5 font-display text-lead font-medium leading-snug tracking-tight text-foreground sm:text-heading">
+                  {section.body}
+                </p>
+              ) : (
+                <p className="mt-4 max-w-[62ch] text-base leading-relaxed sm:text-lead">
+                  {section.body}
+                </p>
+              )}
             </section>
           ))}
         </div>
 
-        <aside className="lg:sticky lg:top-28 lg:self-start">
+        <aside data-anim="stagger" className="lg:sticky lg:top-28 lg:self-start">
           <div className={cn(SURFACE.flat, "p-5")}>
             <h2 className={cn(EYEBROW, "mb-4")}>{copy.stack}</h2>
             <ul className="flex flex-col gap-2.5">

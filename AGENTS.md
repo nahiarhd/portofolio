@@ -49,9 +49,9 @@ pnpm verify   # typecheck + lint + unit tests
 reading the output.** If a check fails, say so plainly with the real output. A
 confident "done" that was never verified costs more than saying "I'm not sure".
 
-Frame-rate claims are measured **on the reference device (Redmi Note 11)**, never
-on desktop and never from the in-app browser pane — when that pane is hidden the
-browser throttles `requestAnimationFrame` to zero and every reading is 0.
+Frame rate is **no longer a gate** — retired by owner decision 2026-08-11, see
+`tasks/todo.md`. Richness outranks the budget now; motion and 3D claims are
+verified by eye, not by a device measurement protocol.
 
 ## Use the tools
 
@@ -108,7 +108,10 @@ Each of these comes from a real failure, not style preference.
   after each batch.** Automate the edit, never the verification.
 - **Never strip validation, error handling, or accessibility** to make code
   shorter.
-- **Never spend the frame-rate headroom.** 400 nodes was measured, not guessed.
+- **Never ship rich motion without its fallbacks.** WebGL blocked and
+  `prefers-reduced-motion` must still get the complete site. This constraint
+  survives the frame-budget retirement (owner decision 2026-08-11, see
+  `tasks/todo.md`) — richness replaced the budget, degradation didn't.
 
 ## Testing
 

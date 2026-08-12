@@ -346,10 +346,21 @@ h3 {
 
 /* Tokens above are shared with the header; only the chapter itself paints a
  * surface. Keeping these separate stops this block from winning on source
- * order against the header's transparent background. */
+ * order against the header's transparent background.
+ *
+ * When the live world canvas is running it paints the ground itself
+ * (`GraphCanvas` sets `data-world="live"` on the body), so this chapter's
+ * paper surface turns off and the dark-print network shows at full strength.
+ * The opaque white stays as the default — that is the fallback path (WebGL
+ * blocked / reduced motion), which needs its own crisp paper behind the
+ * static `GraphStill`. */
 .chapter-paper {
   background-color: var(--background);
   color: var(--foreground);
+}
+
+body[data-world="live"] .chapter-paper {
+  background-color: transparent;
 }
 
 /* ---------------------------------------------------------------------------
@@ -441,26 +452,6 @@ h3 {
   pointer-events: none;
 }
 
-.reveal {
-  opacity: 1;
-  transform: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .reveal:not(.reveal-visible) {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
-
-  .reveal.reveal-visible {
-    opacity: 1;
-    transform: translateY(0);
-    transition:
-      opacity 0.6s var(--ease-cinematic),
-      transform 0.6s var(--ease-cinematic);
-  }
-}
-
 /* ---------------------------------------------------------------------------
  * Ask chat — occasional UI motion (messages, status). Under 300ms, ease-out.
  * Keyframes only on one-shot enters (stable message keys); busy indicator is
@@ -519,6 +510,93 @@ h3 {
   @keyframes chat-caret {
     50% {
       opacity: 0;
+    }
+  }
+
+  /* The project card is the DOM half of a `showProject` call — its entrance
+   * matches the graph's node swell (350ms ease-out), then a violet ring
+   * flash fades out, so card and node read as one event. */
+  .chat-card {
+    animation:
+      chat-card-in 350ms var(--ease-out-quart) both,
+      chat-card-ring 1.2s ease-out both;
+  }
+
+  @keyframes chat-card-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+  }
+
+  @keyframes chat-card-ring {
+    from {
+      box-shadow:
+        0 0 0 1px var(--primary),
+        0 0 28px color-mix(in srgb, var(--primary) 35%, transparent);
+    }
+    to {
+      box-shadow:
+        0 0 0 0 transparent,
+        0 0 0 transparent;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Page transitions — the DOM half of the graph-led route transition.
+ *
+ * Next 16's `experimental.viewTransition` runs a root view transition on
+ * route navigations; these animate its old/new snapshots. The world graph's
+ * pulse (RoutePulse → GraphActivityProvider → canvas) is the other half.
+ * Under reduced motion the snapshots swap instantly — the `*` animation kill
+ * in the reduce block does not reach the view-transition pseudo tree, so the
+ * gate here is explicit.
+ * ------------------------------------------------------------------------ */
+::view-transition-old(root) {
+  animation: page-out 280ms var(--ease-out-quart) both;
+}
+
+::view-transition-new(root) {
+  animation: page-in 320ms var(--ease-out-quart) both;
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* Mobile nav shelf — entrance only. Exit is instant by design: closing
+   precedes navigation or is a dismiss, and unmount waits for nothing. */
+@media (prefers-reduced-motion: no-preference) {
+  #mobile-nav {
+    animation: mobile-nav-in 180ms var(--ease-out-quart) both;
+  }
+
+  @keyframes mobile-nav-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 }

@@ -23,6 +23,7 @@
     "@ai-sdk/openai-compatible": "^3.0.21",
     "@ai-sdk/react": "^4.0.54",
     "@react-three/fiber": "9.7.0",
+    "@react-three/postprocessing": "^3.0.5",
     "ai": "^7.0.50",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

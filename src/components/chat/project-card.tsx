@@ -25,7 +25,7 @@ export function ProjectCard({
     <Link
       href={`/${lang}/work/${project.slug}`}
       className={cn(
-        "chat-msg mt-1 block rounded-xl border border-border bg-background/70 px-4 py-3",
+        "chat-card mt-1 block rounded-xl border border-border bg-background/70 px-4 py-3",
         "transition-[border-color,background-color,transform] duration-200",
         "[transition-timing-function:var(--ease-out-quart)]",
         "hover:border-primary/50 hover:bg-surface-2 active:scale-[0.99]",

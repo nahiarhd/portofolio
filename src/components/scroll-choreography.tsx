@@ -73,8 +73,11 @@ export function ScrollChoreography() {
             "-=0.45",
           );
 
-        /* Hero leaves under the next section rather than just scrolling off. */
-        gsap.to('[data-anim="hero"] > div:last-child', {
+        /* Hero leaves under the next section rather than just scrolling off.
+         * Targeted by attribute — a positional `div:last-child` selector goes
+         * silently dead the moment a non-div child (the chapter-end sentinel
+         * span) trails the content. */
+        gsap.to('[data-anim="hero-body"]', {
           y: -80,
           opacity: 0,
           ease: "none",
@@ -155,17 +158,66 @@ export function ScrollChoreography() {
             .fromTo(lines[1]!, { xPercent: 0 }, { xPercent: 9, ease: "none" }, 0);
         }
 
-        /* Cards rise as their row enters. Replaces the IntersectionObserver
+        /* Cards rise and sharpen as their row enters. The blur stays at 6px —
+         * heavy blur is the expensive kind. Replaces the IntersectionObserver
          * fade so the two do not both own the same transform. */
         gsap.utils.toArray<HTMLElement>('[data-anim="stagger"]').forEach((group) => {
           gsap.from(group.children, {
             opacity: 0,
-            y: 40,
-            duration: 0.7,
+            y: 32,
+            filter: "blur(6px)",
+            duration: 0.8,
             stagger: 0.09,
             ease: "power2.out",
             scrollTrigger: { trigger: group, start: "top 85%", once: true },
           });
+        });
+
+        /* Line-mask entrances — text develops upward through a clip. For the
+         * case-study header, the one page family without redaction bars. */
+        gsap.utils.toArray<HTMLElement>('[data-anim="mask-in"]').forEach((group) => {
+          gsap.fromTo(
+            group.children,
+            { clipPath: "inset(0 0 100% 0)", y: 14 },
+            {
+              clipPath: "inset(0 0 -12% 0)",
+              y: 0,
+              duration: 0.9,
+              stagger: 0.09,
+              ease: "power3.out",
+              scrollTrigger: { trigger: group, start: "top 85%", once: true },
+            },
+          );
+        });
+
+        /* Media develops on entry: the frame clips open bottom-up while the
+         * image settles from slightly oversized. Entrance only — frames that
+         * also carry `parallax` are excluded, since parallax reserves the
+         * image's scale for travel. */
+        gsap.utils.toArray<HTMLElement>('[data-anim="media-in"]').forEach((frame) => {
+          const img = frame.querySelector("img");
+          gsap.fromTo(
+            frame,
+            { clipPath: "inset(0 0 100% 0)" },
+            {
+              clipPath: "inset(0% 0 0% 0)",
+              duration: 1,
+              ease: "power3.inOut",
+              scrollTrigger: { trigger: frame, start: "top 82%", once: true },
+            },
+          );
+          if (img) {
+            gsap.fromTo(
+              img,
+              { scale: 1.12 },
+              {
+                scale: 1,
+                duration: 1.3,
+                ease: "power3.out",
+                scrollTrigger: { trigger: frame, start: "top 82%", once: true },
+              },
+            );
+          }
         });
       });
 

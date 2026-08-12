@@ -1,5 +1,6 @@
 import { profile } from "@/content/profile";
 import { CONTAINER } from "@/lib/design";
+import type { Locale } from "@/lib/locale";
 
 /**
  * Typographic beat between the work and the chat.
@@ -8,8 +9,8 @@ import { CONTAINER } from "@/lib/design";
  * so there is one copy of it in the repo. Solid over outlined echoes the hero
  * headline; `.drift` moves it against the page as the section passes.
  */
-export function Statement() {
-  const [first, ...rest] = profile.tagline.en.split(",");
+export function Statement({ lang }: { lang: Locale }) {
+  const [first, ...rest] = profile.tagline[lang].split(",");
   const second = rest.join(",").trim();
 
   return (

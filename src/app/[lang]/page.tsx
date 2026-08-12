@@ -39,7 +39,7 @@ export default async function HomePage({
         featured
         viewAllHref={`/${lang}/work`}
       />
-      <Statement />
+      <Statement lang={lang} />
       <ChatMount
         lang={lang}
         copy={dictionary.chat}

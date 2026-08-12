@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { GraphActivityProvider } from "@/components/graph/activity";
+import { RoutePulse } from "@/components/graph/route-pulse";
+import { WorldGraph } from "@/components/graph/world";
 import { ScrollChoreography } from "@/components/scroll-choreography";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -72,12 +74,20 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="relative flex min-h-full flex-col bg-background font-sans text-foreground">
-        <div className="bg-grid-lines" aria-hidden />
-        <div className="bg-grain" aria-hidden />
-        <div className="scroll-line" aria-hidden />
-        <ScrollChoreography />
-
         <GraphActivityProvider>
+          {/* The persistent world graph — fixed behind every chapter. It is
+           * the receiver for `GraphActivityProvider`: streaming brightens it,
+           * `showProject` lights its nodes, and RoutePulse sweeps a wave on
+           * every navigation. Renders nothing when WebGL is blocked or motion
+           * is reduced; the hero keeps its still instead. */}
+          <WorldGraph />
+          <RoutePulse />
+
+          <div className="bg-grid-lines" aria-hidden />
+          <div className="bg-grain" aria-hidden />
+          <div className="scroll-line" aria-hidden />
+          <ScrollChoreography />
+
           <a
             href="#content"
             className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:text-primary-foreground"
