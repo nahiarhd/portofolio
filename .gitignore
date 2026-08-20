@@ -44,6 +44,7 @@ next-env.d.ts
 !.env.example
 
 # Claude Code local settings (machine-specific)
+.claude/settings.json
 .claude/settings.local.json
 
 # graphify (generated knowledge graph + caches)
@@ -56,6 +57,7 @@ next-env.d.ts
 # Agent tooling (local; not runtime)
 /.agents/
 /.claude/skills/
+/.qwen/
 /skills-lock.json
 
 # Browser-automation artifacts. These capture rendered page content, so they
