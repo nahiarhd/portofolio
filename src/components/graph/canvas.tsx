@@ -7,21 +7,13 @@
  * Draw calls: one instancedMesh of nodes, one lineSegments of edges, one
  * instancedMesh of travelling signal packets — plus bloom.
  *
- * Chapter-aware: the palette lerps between the ink and paper ramps as the
- * reader crosses the hero boundary, keyed off the same
- * `data-hero-chapter-end` sentinel the header watches. Under ink the scene
- * dims itself so body copy keeps its contrast; under paper it prints dark.
- *
  * Alive in three ways:
  * - signals — packets ride random edges; streaming multiplies and speeds
  *   them, and `showProject` highlights make them converge on the lit node.
  * - pointer wake — nodes near the cursor brighten and swell, gently.
  * - chat highlights — slugs swell their nodes in over ~350ms (plans/004).
  *
- * The camera dollies in once on load (CameraIntro, plans/003). The
- * frame-rate budget that capped all of this was retired 2026-08-11
- * (tasks/todo.md); graceful degradation did not — `world.tsx` never mounts
- * this under reduced motion or without WebGL.
+ * The camera dollies in once on load (CameraIntro, plans/003).
  */
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -33,7 +25,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type ComponentRef,
   type RefObject,
 } from "react";
 import * as THREE from "three";
@@ -42,34 +33,19 @@ import { useGraphActivity } from "./activity";
 import { IDLE_GRAPH } from "./geometry";
 import { nodeIndicesForSlugs } from "./project-nodes";
 
-/** Paper ramp — mirrors `.chapter-paper` in src/app/globals.css. */
-const PAPER = {
-  background: "#ffffff",
-  foreground: "#141310",
-  primary: "#5a189a",
-};
-
-/** Ink base nodes dim so only attention (accent, wake, signals) blooms.
+/** Base nodes dim so only attention (accent, wake, signals) blooms.
  * NOTE: Color math is linear-space — 0.06 linear lands at ~0.29 sRGB, safely
  * under the bloom threshold; anything near 0.2 linear blooms everywhere. */
 const INK_BASE_STRENGTH = 0.06;
-/** Under ink the whole scene steps back — smaller nodes, fainter edges — so
- * body copy keeps its contrast. Paper (the hero) stays near-full but held
- * off the headline: full-size nodes on white read as clutter over display
- * type, not as a print texture. */
-const INK_PRESENCE = 0.6;
-const PAPER_PRESENCE = 0.75;
-/** Paper nodes print at charcoal, not full black — softer under type. */
-const PAPER_BASE_STRENGTH = 0.72;
+const GRAPH_PRESENCE = 0.75;
 const WAKE_RADIUS = 1.15;
 /** Wake reads gentler than a highlight — the shared weight channel caps it. */
 const WAKE_MAX = 0.45;
 const WAKE_FADE_MS = 900;
 const SIGNAL_CAPACITY = 48;
 const SIGNAL_IDLE_COUNT = 24;
-/** Fog runs deep under ink (night-network volume), gentle on paper. */
-const FOG_INK = 0.1;
-const FOG_PAPER = 0.045;
+/** Depth fog for the dark network. */
+const FOG_DENSITY = 0.08;
 /** Route pulse: the wave sweep that acknowledges a navigation. */
 const PULSE_SECONDS = 1.2;
 const EMPTY_HIGHLIGHTS: readonly number[] = [];
@@ -107,15 +83,9 @@ function buildAdjacency(edges: Uint16Array, nodeCount: number): number[][] {
 function WorldScene({
   fogRef,
   groundRef,
-  bloomRef,
-  chapterTarget,
 }: {
   fogRef: RefObject<THREE.FogExp2 | null>;
   groundRef: RefObject<THREE.MeshBasicMaterial | null>;
-  bloomRef: RefObject<ComponentRef<typeof Bloom> | null>;
-  /** 1 = paper hero, 0 = ink. Owned by `world.tsx` (route-aware) — the scene
-   * never queries the DOM. */
-  chapterTarget: number;
 }) {
   const group = useRef<THREE.Group>(null);
   const mesh = useRef<THREE.InstancedMesh>(null);
@@ -126,8 +96,8 @@ function WorldScene({
   const camera = useThree((state) => state.camera);
 
   const background = useCssColor("--background", "#0d0c0b");
-  const foreground = useCssColor("--foreground", "#141310");
-  const primary = useCssColor("--primary", "#5a189a");
+  const foreground = useCssColor("--foreground", "#f4f0ea");
+  const primary = useCssColor("--primary", "#b883ec");
 
   const { positions, edgePositions, edges, edgeCount, nodeCount, signalIndex } =
     IDLE_GRAPH;
@@ -145,17 +115,6 @@ function WorldScene({
   useEffect(() => {
     pulseNonceRef.current = pulseNonce;
   }, [pulseNonce]);
-
-  /* Chapter crossfade: 1 = paper hero, 0 = ink body. The target arrives as a
-   * prop from `world.tsx` — route-aware, so navigating away from home can
-   * never strand the palette mid-lerp (an observer on a removed sentinel
-   * never fires again). Refs seed from the prop at mount so the first frame
-   * is already the right chapter. */
-  const paperness = useRef(chapterTarget);
-  const papernessTarget = useRef(chapterTarget);
-  useEffect(() => {
-    papernessTarget.current = chapterTarget;
-  }, [chapterTarget]);
 
   /* Pointer wake — window-level; the canvas itself never takes events. */
   const wakePoint = useRef(new THREE.Vector3());
@@ -183,35 +142,35 @@ function WorldScene({
     return () => window.removeEventListener("pointermove", onMove);
   }, [camera]);
 
-  // Fog is attached declaratively at the Canvas level (`<fogExp2
-  // attach="fog">`) — react-hooks/immutability forbids writing to the
-  // `scene` object from useThree, and the ref still lets the chapter palette
-  // update its colour every frame.
-
-  // Per-node weight channel, eased toward its target over ~350ms (plans/004).
-  // Highlights drive it to 1; pointer wake drives it up to WAKE_MAX. A ref,
-  // not useMemo: the frame loop writes individual entries, and the compiler
-  // lint treats memo values as immutable. nodeCount is a module constant, so
-  // the buffer never resizes.
   const highlightWeight = useRef(new Float32Array(nodeCount));
   const weightsActive = useRef(false);
 
   const colors = useMemo(
     () => ({
-      inkBg: new THREE.Color(background),
-      inkFg: new THREE.Color(foreground),
-      inkAccent: new THREE.Color(primary),
-      paperBg: new THREE.Color(PAPER.background),
-      paperFg: new THREE.Color(PAPER.foreground),
-      paperAccent: new THREE.Color(PAPER.primary),
-      // Live-mixed palette — rewritten whenever paperness changes.
       accent: new THREE.Color(primary),
       base: new THREE.Color(foreground).multiplyScalar(INK_BASE_STRENGTH),
       dim: new THREE.Color(foreground).multiplyScalar(INK_BASE_STRENGTH * 0.45),
+      bg: new THREE.Color(background),
+      fg: new THREE.Color(foreground),
     }),
     [background, foreground, primary],
   );
-  const lastPaletteP = useRef(-1);
+
+  useEffect(() => {
+    if (fogRef.current) {
+      fogRef.current.color.copy(colors.bg);
+      fogRef.current.density = FOG_DENSITY;
+    }
+    if (groundRef.current) {
+      groundRef.current.color.copy(colors.bg);
+    }
+    if (edgeMaterial.current) {
+      edgeMaterial.current.color.copy(colors.fg);
+    }
+    if (sigMaterial.current) {
+      sigMaterial.current.color.copy(colors.accent);
+    }
+  }, [colors, fogRef, groundRef]);
 
   const edgeGeometry = useMemo(() => {
     const geometry = new THREE.BufferGeometry();
@@ -251,18 +210,13 @@ function WorldScene({
   const pulseStart = useRef(-10);
 
   // Baseline matrices + colours when theme changes or geometry rebuilds.
-  // Presence matches the current chapter so a remount under ink does not
-  // flash paper-sized nodes before the first useFrame rewrite.
   useLayoutEffect(() => {
     const instance = mesh.current;
     if (!instance) return;
 
-    const presence =
-      INK_PRESENCE + (PAPER_PRESENCE - INK_PRESENCE) * paperness.current;
-
     for (let i = 0; i < nodeCount; i++) {
       dummy.position.set(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
-      dummy.scale.setScalar((i === signalIndex ? 1.8 : 1) * presence);
+      dummy.scale.setScalar((i === signalIndex ? 1.8 : 1) * GRAPH_PRESENCE);
       dummy.updateMatrix();
       instance.setMatrixAt(i, dummy.matrix);
       instance.setColorAt(i, i === signalIndex ? colors.accent : colors.base);
@@ -281,45 +235,6 @@ function WorldScene({
     const highlights = highlightRef.current;
     const hasHighlights = highlights.size > 0;
     const t = state.clock.elapsedTime;
-
-    /* Chapter palette — ease toward the sentinel's verdict, then remix. */
-    const papernessGoal = papernessTarget.current;
-    if (paperness.current !== papernessGoal) {
-      paperness.current = THREE.MathUtils.lerp(
-        paperness.current,
-        papernessGoal,
-        Math.min(1, delta * 3),
-      );
-      if (Math.abs(paperness.current - papernessGoal) < 0.002) {
-        paperness.current = papernessGoal;
-      }
-    }
-    /* Presence: ink steps the scene back (smaller nodes, fainter edges). */
-    const presence = INK_PRESENCE + (PAPER_PRESENCE - INK_PRESENCE) * paperness.current;
-    let paletteDirty = false;
-    if (paperness.current !== lastPaletteP.current) {
-      const p = paperness.current;
-      lastPaletteP.current = p;
-      paletteDirty = true;
-      colors.accent.copy(colors.inkAccent).lerp(colors.paperAccent, p);
-      // Ink base nodes stay under the bloom threshold; paper prints charcoal.
-      const fg = scratch.copy(colors.inkFg).lerp(colors.paperFg, p);
-      const baseStrength = THREE.MathUtils.lerp(INK_BASE_STRENGTH, PAPER_BASE_STRENGTH, p);
-      colors.base.copy(fg).multiplyScalar(baseStrength);
-      colors.dim.copy(colors.base).multiplyScalar(0.45);
-      if (fogRef.current) {
-        fogRef.current.color.copy(colors.inkBg).lerp(colors.paperBg, p);
-        fogRef.current.density = THREE.MathUtils.lerp(FOG_INK, FOG_PAPER, p);
-      }
-      if (groundRef.current) {
-        groundRef.current.color.copy(colors.inkBg).lerp(colors.paperBg, p);
-      }
-      if (bloomRef.current) {
-        bloomRef.current.intensity = THREE.MathUtils.lerp(1.15, 0.15, p);
-      }
-      if (edgeMaterial.current) edgeMaterial.current.color.copy(fg);
-      if (sigMaterial.current) sigMaterial.current.color.copy(colors.accent);
-    }
 
     /* Route pulse — a brightness sweep that acknowledges a navigation. */
     if (pulseNonceRef.current !== pulseSeen.current) {
@@ -354,7 +269,7 @@ function WorldScene({
           ? 0.16 + 0.22 * (0.5 + 0.5 * Math.sin(t * 5))
           : 0.22 + 0.08 * (0.5 + 0.5 * Math.sin(t * 2))) +
           0.25 * pulseEnv) *
-        presence;
+        GRAPH_PRESENCE;
     }
 
     /* Pointer wake fades out ~0.9s after the last move. */
@@ -431,10 +346,8 @@ function WorldScene({
       }
     }
 
-    // Only rewrite instance colours/scales when something is happening. A
-    // palette remix (chapter crossfade) also forces one, or the nodes would
-    // keep the other chapter's ramp.
-    if (!energized && !hasHighlights && !weightsMoving && !paletteDirty) return;
+    // Only rewrite instance colours/scales when something is happening.
+    if (!energized && !hasHighlights && !weightsMoving) return;
 
     for (let i = 0; i < nodeCount; i++) {
       dummy.position.set(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
@@ -459,7 +372,7 @@ function WorldScene({
         scratch.copy(colors.base);
       }
 
-      dummy.scale.setScalar(scale * presence);
+      dummy.scale.setScalar(scale * GRAPH_PRESENCE);
       dummy.updateMatrix();
       instance.setMatrixAt(i, dummy.matrix);
       instance.setColorAt(i, scratch);
@@ -470,8 +383,6 @@ function WorldScene({
   });
 
   // When activity ends, snap back to the calm baseline once.
-  // Scale by chapter presence — under ink a bare `1` would pop nodes up
-  // relative to the dimmed network the useFrame loop had been drawing.
   useEffect(() => {
     if (streaming || highlightSlugs.length > 0) return;
     const instance = mesh.current;
@@ -480,19 +391,16 @@ function WorldScene({
     highlightWeight.current.fill(0);
     weightsActive.current = false;
 
-    const presence =
-      INK_PRESENCE + (PAPER_PRESENCE - INK_PRESENCE) * paperness.current;
-
     for (let i = 0; i < nodeCount; i++) {
       dummy.position.set(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
-      dummy.scale.setScalar((i === signalIndex ? 1.8 : 1) * presence);
+      dummy.scale.setScalar((i === signalIndex ? 1.8 : 1) * GRAPH_PRESENCE);
       dummy.updateMatrix();
       instance.setMatrixAt(i, dummy.matrix);
       instance.setColorAt(i, i === signalIndex ? colors.accent : colors.base);
     }
     instance.instanceMatrix.needsUpdate = true;
     if (instance.instanceColor) instance.instanceColor.needsUpdate = true;
-    if (edgeMaterial.current) edgeMaterial.current.opacity = 0.22 * presence;
+    if (edgeMaterial.current) edgeMaterial.current.opacity = 0.22 * GRAPH_PRESENCE;
   }, [
     streaming,
     highlightSlugs,
@@ -506,10 +414,7 @@ function WorldScene({
 
   return (
     <>
-      {/* The ground — the canvas paints the page background itself, so the
-       * paper hero stays crisp white with dark print nodes instead of being
-       * a translucent wash over ink. Outside the drifting group: it must not
-       * rotate. Fog-exempt so distant nodes fade into it seamlessly. */}
+      {/* The ground — matches the dark background seamless behind the whole page. */}
       <mesh position={[0, 0, -12]}>
         <planeGeometry args={[80, 40]} />
         <meshBasicMaterial
@@ -550,41 +455,110 @@ function WorldScene({
   );
 }
 
-/** One-shot dolly-in: the cloud arrives slightly pulled back and settles to
- * the composed framing. Exponential ease-out; zero work once settled. */
-function CameraIntro() {
-  const settled = useRef(false);
+const SECTION_COLORS: Record<string, string> = {
+  default: "#0d0c0b",
+  work: "#0d0c0b",
+  statement: "#090808",
+  ask: "#120a1c",
+  about: "#0a0d14",
+  contact: "#0e0d0b",
+};
+
+/**
+ * Dynamic Scroll-Driven Camera & Section Atmosphere Rig.
+ *
+ * 1. Smoothly dollies, pans, and tilts the 3D camera based on page scroll depth.
+ * 2. Dynamically shifts ambient ground and fog colors between tailored section palettes.
+ */
+function DynamicCameraAndAtmosphereRig({
+  fogRef,
+  groundRef,
+}: {
+  fogRef: RefObject<THREE.FogExp2 | null>;
+  groundRef: RefObject<THREE.MeshBasicMaterial | null>;
+}) {
+  const scrollTarget = useRef({ progress: 0, sectionColor: new THREE.Color("#0d0c0b") });
+  const introSettled = useRef(false);
+
+  useEffect(() => {
+    const targetColor = new THREE.Color("#0d0c0b");
+    const sections = ["contact", "about", "ask", "statement", "work"];
+
+    const onScroll = () => {
+      const scrollY = window.scrollY;
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const progress = THREE.MathUtils.clamp(scrollY / maxScroll, 0, 1);
+
+      // Determine active section color
+      let matched = "default";
+      const viewportCenter = scrollY + window.innerHeight * 0.45;
+
+      for (const id of sections) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          const bottom = top + el.offsetHeight;
+          if (viewportCenter >= top && viewportCenter <= bottom) {
+            matched = id;
+            break;
+          }
+        }
+      }
+
+      targetColor.set(SECTION_COLORS[matched] ?? SECTION_COLORS.default);
+      scrollTarget.current.progress = progress;
+      scrollTarget.current.sectionColor.copy(targetColor);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   useFrame(({ camera }, delta) => {
-    if (settled.current) return;
-    const next = THREE.MathUtils.lerp(camera.position.z, 7.2, Math.min(1, delta * 2));
-    if (Math.abs(next - 7.2) < 0.005) {
-      camera.position.z = 7.2;
-      settled.current = true;
+    const { progress, sectionColor } = scrollTarget.current;
+
+    // Intro dolly-in
+    if (!introSettled.current) {
+      camera.position.z = THREE.MathUtils.lerp(camera.position.z, 7.2, Math.min(1, delta * 2.5));
+      if (Math.abs(camera.position.z - 7.2) < 0.01) {
+        introSettled.current = true;
+      }
     } else {
-      camera.position.z = next;
+      // Continuous scroll-driven 3D parallax
+      const targetX = Math.sin(progress * Math.PI * 2) * 0.75;
+      const targetY = 0.35 - progress * 1.1;
+      const targetZ = 7.2 + Math.cos(progress * Math.PI) * 0.5;
+      const targetRotY = Math.sin(progress * Math.PI) * 0.06;
+
+      camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetX, delta * 2.8);
+      camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetY, delta * 2.8);
+      camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, delta * 2.8);
+      camera.rotation.y = THREE.MathUtils.lerp(camera.rotation.y, targetRotY, delta * 2.8);
+    }
+
+    // Atmospheric color lerp
+    if (fogRef.current) {
+      fogRef.current.color.lerp(sectionColor, delta * 2.5);
+    }
+    if (groundRef.current) {
+      groundRef.current.color.lerp(sectionColor, delta * 2.5);
     }
   });
+
   return null;
 }
 
 export function GraphCanvas({
   className,
-  chapterTarget,
 }: {
   className?: string;
-  /** 1 = paper hero, 0 = ink — owned by `world.tsx` (route-aware). */
-  chapterTarget: number;
 }) {
   // Phones/tablets: fixed 1×. Desktop: allow up to 1.5×.
   const [dpr, setDpr] = useState<number | [number, number]>([1, 1.5]);
   const fogRef = useRef<THREE.FogExp2>(null);
   const groundRef = useRef<THREE.MeshBasicMaterial>(null);
-  const bloomRef = useRef<ComponentRef<typeof Bloom>>(null);
 
-  /* Signal the DOM that the live canvas owns the ground — the paper
-   * chapter's CSS background turns off (see globals.css). Without this the
-   * fallback path keeps its opaque white hero, which is what we want when
-   * the canvas isn't running. */
   useEffect(() => {
     document.body.dataset.world = "live";
     return () => {
@@ -616,17 +590,17 @@ export function GraphCanvas({
           pointerEvents: "none",
         }}
       >
-        <fogExp2 ref={fogRef} attach="fog" args={["#0d0c0b", FOG_INK]} />
+        <fogExp2 ref={fogRef} attach="fog" args={["#0d0c0b", FOG_DENSITY]} />
         <WorldScene
           fogRef={fogRef}
           groundRef={groundRef}
-          bloomRef={bloomRef}
-          chapterTarget={chapterTarget}
         />
-        <CameraIntro />
+        <DynamicCameraAndAtmosphereRig
+          fogRef={fogRef}
+          groundRef={groundRef}
+        />
         <EffectComposer>
           <Bloom
-            ref={bloomRef}
             mipmapBlur
             intensity={1.15}
             luminanceThreshold={0.2}

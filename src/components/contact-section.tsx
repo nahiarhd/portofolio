@@ -1,19 +1,16 @@
 import type { Dictionary } from "@/app/[lang]/dictionaries";
-import { GITHUB_URL, HUGGINGFACE_URL, engagement, profile } from "@/content/profile";
-import { BUTTON, CONTAINER, EYEBROW, TEXT } from "@/lib/design";
+import { engagement } from "@/content/profile";
+import { CONTAINER } from "@/lib/design";
 import type { Locale } from "@/lib/locale";
-import { cn } from "@/lib/utils";
 
+import { ContactWidget } from "./contact-widget";
 import { RedactLine } from "./redact-line";
+import { ScrambleText } from "./ui/scramble-text";
 
 /**
- * Two blocks, not one message. A freelance buyer wants scope, capacity and a
- * price floor; someone hiring wants to know whether he is movable at all.
- * Merging them produces copy that answers neither.
- *
- * Left-aligned, unlike the centred closing statement it replaces: this section
- * now carries structured detail, and centred text with four facts in it reads
- * as a poster rather than something to act on.
+ * Contact / Work Together Section.
+ * Upgraded with live operational status radar, Jakarta timezone clock,
+ * interactive email clipboard copy, and tactile magnetic actions.
  */
 export function ContactSection({
   lang,
@@ -26,83 +23,49 @@ export function ContactSection({
     .replace("{from}", String(engagement.hoursPerWeek.from))
     .replace("{to}", String(engagement.hoursPerWeek.to));
 
+  const freelanceRate = engagement.projectMinimumUsd
+    ? dictionary.freelanceRate.replace(
+        "{minimum}",
+        engagement.projectMinimumUsd.toLocaleString("en-US"),
+      )
+    : undefined;
+
+  const freelanceResponse = dictionary.freelanceResponse.replace(
+    "{hours}",
+    String(engagement.responseHours),
+  );
+
   return (
     <section id="contact" className="scroll-mt-24 border-t border-border py-24 sm:py-32">
       <div className={CONTAINER}>
-        <div data-anim="reveal-head">
+        <div data-anim="reveal-head" className="mb-10">
+          <div className="mb-4 flex items-center gap-3">
+            <span className="chapter-stamp chapter-stamp--classified text-[0.62rem] tracking-widest">
+              <ScrambleText
+                text={
+                  lang === "id"
+                    ? "KOLABORASI · INISIASI PROYEK"
+                    : "COLLABORATION · PROJECT INITIATION"
+                }
+              />
+            </span>
+          </div>
+
           <h2 className="font-display text-[clamp(2.5rem,7vw,4.75rem)] font-medium leading-[1.02] tracking-tight text-balance">
             <RedactLine>{dictionary.heading}</RedactLine>
           </h2>
         </div>
 
-        <div data-anim="stagger" className="mt-14 grid gap-12 border-t border-border pt-10 sm:grid-cols-2 sm:gap-16">
-          <div>
-            <p className={EYEBROW}>{dictionary.freelanceHeading}</p>
-            <p className={cn("mt-4 text-base leading-relaxed", TEXT.subtle)}>
-              {dictionary.freelanceScope}
-            </p>
-            <p className={cn("mt-4 text-base leading-relaxed", TEXT.subtle)}>{capacity}</p>
-
-            {/* Omitted entirely until a real figure exists. A placeholder rate
-             * is worse than no rate. */}
-            {engagement.projectMinimumUsd ? (
-              <p className="mt-4 font-display text-lg font-medium tracking-tight text-foreground">
-                {dictionary.freelanceRate.replace(
-                  "{minimum}",
-                  engagement.projectMinimumUsd.toLocaleString("en-US"),
-                )}
-              </p>
-            ) : null}
-
-            <p className={cn("mt-4 font-mono text-[0.65rem] uppercase tracking-[0.16em]", TEXT.faint)}>
-              {dictionary.freelanceResponse.replace("{hours}", String(engagement.responseHours))}
-            </p>
-          </div>
-
-          <div>
-            <p className={EYEBROW}>{dictionary.fulltimeHeading}</p>
-            <p className={cn("mt-4 text-base leading-relaxed", TEXT.subtle)}>
-              {dictionary.fulltimeBody}
-            </p>
-          </div>
-        </div>
-
-        <div className="mt-14 flex flex-wrap items-center gap-3">
-          <a href={`mailto:${profile.email}`} className={BUTTON.primary}>
-            {profile.email}
-          </a>
-          <a
-            href={profile.linkedin}
-            rel="me noreferrer"
-            target="_blank"
-            aria-label="LinkedIn (opens in a new tab)"
-            className={BUTTON.secondary}
-          >
-            LinkedIn
-          </a>
-          <a
-            href={GITHUB_URL}
-            rel="me noreferrer"
-            target="_blank"
-            aria-label="GitHub (opens in a new tab)"
-            className={BUTTON.secondary}
-          >
-            GitHub
-          </a>
-          <a
-            href={HUGGINGFACE_URL}
-            rel="me noreferrer"
-            target="_blank"
-            aria-label="Hugging Face (opens in a new tab)"
-            className={BUTTON.secondary}
-          >
-            Hugging Face
-          </a>
-        </div>
-
-        <p className={cn("mt-8 font-mono text-[0.65rem] uppercase tracking-[0.16em]", TEXT.faint)}>
-          {profile.location[lang]}
-        </p>
+        <ContactWidget
+          lang={lang}
+          freelanceHeading={dictionary.freelanceHeading}
+          freelanceScope={dictionary.freelanceScope}
+          freelanceCapacity={capacity}
+          freelanceRate={freelanceRate}
+          freelanceResponse={freelanceResponse}
+          fulltimeHeading={dictionary.fulltimeHeading}
+          fulltimeBody={dictionary.fulltimeBody}
+        />
       </div>
     </section>
   );

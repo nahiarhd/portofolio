@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ArchitecturePipeline } from "@/components/architecture-pipeline";
 import { MediaFrame } from "@/components/media-frame";
 import { withRedactions } from "@/components/redaction";
 import { projects } from "@/content/projects";
@@ -142,6 +143,13 @@ export default async function CaseStudyPage({ params }: Params) {
             ))}
           </div>
         </section>
+      ) : null}
+
+      {/* Interactive System Architecture & Execution Pipeline */}
+      {project.pipeline && project.pipeline.length > 0 ? (
+        <div className={`${CONTAINER} mt-4`} data-anim="media-in">
+          <ArchitecturePipeline pipeline={project.pipeline} lang={lang} />
+        </div>
       ) : null}
 
       {/* Prose + sticky dossier. Reading progress is the site-wide `.scroll-line`

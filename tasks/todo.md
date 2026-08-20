@@ -136,9 +136,10 @@ hero) moved to R2 — it's choreography, not scene.
 - [x] **Type moments.** Solid/outline pair range via `.text-outline--deep` on
       hero line 2 and statement line 2; contact heading climbs the display
       clamp.
-- [x] **The paper↔ink cut.** Paper bottom rule + ink falloff; heavier top rule
-      on the first ink section; nav flip 0.55s cinematic with shadow; body
-      `data-chapter` drives grain density paper↔ink from the same observer.
+- [x] **Unified obsidian theme & scroll fix.** Unified hero and all chapters to
+      the obsidian editorial palette (`#0d0c0b` ground, `#f4f0ea` text,
+      `#b883ec` bloom glow), eliminating the fixed white canvas scroll glitch
+      and observer lag. Navbar maintains seamless dark frosted glass.
 
 ---
 

@@ -4,16 +4,17 @@ import {
   HUGGINGFACE_URL,
   certifications,
   publications,
-  publishedModels,
 } from "@/content/profile";
 import { BUTTON, CONTAINER, EYEBROW, SECTION, TEXT } from "@/lib/design";
-import { formatMonth } from "@/lib/format";
 import type { Locale } from "@/lib/locale";
-import { mediaDropHint, resolvePublicMedia } from "@/lib/public-media";
+import { resolvePublicMedia } from "@/lib/public-media";
 import { cn } from "@/lib/utils";
 
-import { MediaFrame } from "./media-frame";
 import { RedactLine } from "./redact-line";
+import { LinkPreview } from "./ui/link-preview";
+import { MagneticPill } from "./ui/magnetic-pill";
+import { ProductSlideshow } from "./ui/product-slideshow";
+import { SpotlightCard } from "./ui/spotlight-card";
 
 /**
  * The answer to the site's central problem: four of six case studies are under
@@ -36,7 +37,7 @@ export function EvidenceSection({
         <h2 className="font-display text-title font-medium tracking-tight">
           <RedactLine>{dictionary.heading}</RedactLine>
         </h2>
-        <p className={cn("mt-3 max-w-[52ch] text-base leading-relaxed", TEXT.subtle)}>
+        <p className={cn("mt-3 max-w-[54ch]", TEXT.lead)}>
           {dictionary.lead}
         </p>
       </div>
@@ -48,76 +49,168 @@ export function EvidenceSection({
           {dictionary.modelsLead}
         </p>
 
-        <ul className="mt-8 grid gap-x-8 gap-y-px sm:grid-cols-2">
-          {publishedModels.map((model) => (
-            <li key={model.id} className="border-t border-border">
-              <a
-                href={`https://huggingface.co/${model.id}`}
-                rel="noreferrer"
-                target="_blank"
-                className="group flex items-baseline justify-between gap-4 py-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                <span className="min-w-0">
-                  <span className="block truncate font-mono text-sm text-foreground transition-colors group-hover:text-primary">
-                    {model.id.replace("nahiar/", "")}
-                  </span>
-                  <span className={cn("mt-1 block text-sm", TEXT.subtle)}>
-                    {model.task[lang]}
-                    {model.baseModel ? ` · ${model.baseModel}` : null}
-                  </span>
-                </span>
-                {model.likes ? (
-                  <span
-                    className={cn(
-                      "shrink-0 font-mono text-[0.65rem] uppercase tracking-[0.16em]",
-                      TEXT.faint,
-                    )}
-                  >
-                    {model.likes} {dictionary.likes}
-                  </span>
-                ) : null}
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-            </li>
-          ))}
-        </ul>
+        {/* Editorial Story Block with Rich Inline LinkPreviews */}
+        <div className="mt-8 rounded-2xl border border-border/80 bg-surface-1/70 p-6 backdrop-blur-xs sm:p-8">
+          <span className="chapter-stamp chapter-stamp--classified text-[0.6rem] tracking-widest">
+            {lang === "id"
+              ? "TAKSONOMI MODEL NLP & OPEN-WEIGHTS"
+              : "NLP MODEL TAXONOMY & OPEN WEIGHTS"}
+          </span>
 
-        <a
-          href={HUGGINGFACE_URL}
-          rel="me noreferrer"
-          target="_blank"
-          className={cn(BUTTON.secondary, "mt-8")}
-        >
-          {dictionary.modelsAll} &#8599;
-          <span className="sr-only"> (opens in a new tab)</span>
-        </a>
+          <p className="mt-4 font-display text-lg font-medium leading-relaxed tracking-tight text-foreground sm:text-xl md:text-2xl">
+            {lang === "id" ? (
+              <>
+                Mengembangkan dan melatih arsitektur open-weights NLP khusus teks berbahasa Indonesia & multilingual, mencakup{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar/sentiment-analysis-v2"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Sentiment Analysis
+                </LinkPreview>
+                ,{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar/xlm-roberta-ner-v2"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Named Entity Recognition (NER)
+                </LinkPreview>
+                ,{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Hate Speech Detection
+                </LinkPreview>
+                ,{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Bot Detection
+                </LinkPreview>
+                ,{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Emotion Classification
+                </LinkPreview>
+                ,{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar/spam-detection-xlm-roberta-v3"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Spam Detection
+                </LinkPreview>
+                , dan{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Topic Modelling
+                </LinkPreview>
+                —seluruh bobot model dirilis ke publik di{" "}
+                <LinkPreview
+                  url={HUGGINGFACE_URL}
+                  className="font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300 bg-clip-text text-transparent underline underline-offset-4 decoration-purple-400"
+                >
+                  Hugging Face
+                </LinkPreview>
+                .
+              </>
+            ) : (
+              <>
+                Trained and published specialized open-weights NLP architectures for Indonesian and multilingual text, spanning{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar/sentiment-analysis-v2"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Sentiment Analysis
+                </LinkPreview>
+                ,{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar/xlm-roberta-ner-v2"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Named Entity Recognition (NER)
+                </LinkPreview>
+                ,{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Hate Speech Detection
+                </LinkPreview>
+                ,{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Bot Detection
+                </LinkPreview>
+                ,{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Emotion Classification
+                </LinkPreview>
+                ,{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar/spam-detection-xlm-roberta-v3"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Spam Detection
+                </LinkPreview>
+                , and{" "}
+                <LinkPreview
+                  url="https://huggingface.co/nahiar"
+                  className="font-bold text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary"
+                >
+                  Topic Modelling
+                </LinkPreview>
+                —all weights and checkpoints published publicly on{" "}
+                <LinkPreview
+                  url={HUGGINGFACE_URL}
+                  className="font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300 bg-clip-text text-transparent underline underline-offset-4 decoration-purple-400"
+                >
+                  Hugging Face
+                </LinkPreview>
+                .
+              </>
+            )}
+          </p>
+        </div>
       </div>
 
       {/* Publication. */}
       {publications.map((paper) => (
         <div key={paper.doi} data-anim="stagger" className="mt-20 border-t border-border pt-10">
-          <p className={EYEBROW}>{dictionary.paperHeading}</p>
-          <h3 className="mt-4 max-w-[46ch] font-display text-xl font-medium leading-snug tracking-tight sm:text-2xl">
-            {paper.title}
-          </h3>
-          <p className={cn("mt-3 max-w-[52ch] text-sm leading-relaxed", TEXT.subtle)}>
-            {paper.venue}, {paper.year} ·{" "}
-            {dictionary.paperAuthor
-              .replace("{position}", String(paper.authorPosition))
-              .replace("{count}", String(paper.authorCount))}
-          </p>
-          <p className={cn("mt-4 max-w-[52ch] text-base leading-relaxed", TEXT.subtle)}>
-            {paper.contribution[lang]}
-          </p>
-          <a
-            href={paper.doi}
-            rel="noreferrer"
-            target="_blank"
-            className={cn(BUTTON.secondary, "mt-6")}
-          >
-            {dictionary.paperRead} &#8599;
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
+          <SpotlightCard className="p-6 sm:p-8">
+            <p className={EYEBROW}>{dictionary.paperHeading}</p>
+            <h3 className="mt-4 max-w-[46ch] font-display text-xl font-medium leading-snug tracking-tight sm:text-2xl">
+              <LinkPreview url={paper.doi} className="hover:text-primary transition-colors">
+                {paper.title}
+              </LinkPreview>
+            </h3>
+            <p className={cn("mt-3 max-w-[52ch] text-sm leading-relaxed", TEXT.subtle)}>
+              {paper.venue}, {paper.year} ·{" "}
+              {dictionary.paperAuthor
+                .replace("{position}", String(paper.authorPosition))
+                .replace("{count}", String(paper.authorCount))}
+            </p>
+            <p className={cn("mt-4 max-w-[52ch] text-base leading-relaxed", TEXT.subtle)}>
+              {paper.contribution[lang]}
+            </p>
+            <MagneticPill strength={0.25} className="mt-6 inline-block">
+              <LinkPreview
+                url={paper.doi}
+                className={cn(BUTTON.secondary, "inline-flex items-center gap-1.5")}
+              >
+                {dictionary.paperRead} &#8599;
+              </LinkPreview>
+            </MagneticPill>
+          </SpotlightCard>
         </div>
       ))}
 
@@ -127,79 +220,48 @@ export function EvidenceSection({
         <p className={cn("mt-3 max-w-[46ch] text-base leading-relaxed", TEXT.subtle)}>
           {dictionary.codeLead}
         </p>
-        <a
-          href={GITHUB_URL}
-          rel="me noreferrer"
-          target="_blank"
-          className={cn(BUTTON.secondary, "mt-6")}
-        >
-          {GITHUB_URL.replace(/^https?:\/\//, "")} &#8599;
-          <span className="sr-only"> (opens in a new tab)</span>
-        </a>
+        <MagneticPill strength={0.25} className="mt-6 inline-block">
+          <LinkPreview
+            url={GITHUB_URL}
+            className={cn(BUTTON.secondary, "inline-flex items-center gap-1.5")}
+          >
+            {GITHUB_URL.replace(/^https?:\/\//, "")} &#8599;
+          </LinkPreview>
+        </MagneticPill>
       </div>
 
-      {/* Certifications — ruled rows, not a card grid: a certificate is one
-       * line of information, and six in a three-column grid ends on a gap. */}
-      <div data-anim="stagger" className="mt-20 border-t border-border pt-10">
-        <p className={EYEBROW}>{dictionary.certificationsHeading}</p>
+      {/* Certifications Interactive Product Slideshow */}
+      <div className="mt-20 border-t border-border pt-10">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <span className="chapter-stamp chapter-stamp--classified text-[0.62rem] tracking-widest">
+              {lang === "id"
+                ? "KREDENSIAL TERVERIFIKASI · 7 SERTIFIKASI"
+                : "VERIFIED CREDENTIALS · 07 CERTIFICATIONS"}
+            </span>
+            <h3 className="mt-3 font-display text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
+              {dictionary.certificationsHeading}
+            </h3>
+            <p className="mt-1 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+              {lang === "id"
+                ? "Dataiku AI/MLOps & Kampus Merdeka MSIB · Terverifikasi Publik"
+                : "Dataiku AI/MLOps & Kampus Merdeka MSIB · Publicly Verifiable"}
+            </p>
+          </div>
+        </div>
 
-        <ul className="mt-8">
-          {certifications.map((certification) => (
-            <li
-              key={certification.name}
-              className="group border-t border-border transition-colors duration-300 last:border-b hover:border-primary"
-            >
-              <article className="flex flex-col gap-5 py-6 sm:flex-row sm:items-center sm:gap-8">
-                <MediaFrame
-                  src={resolvePublicMedia(certification.image)}
-                  alt=""
-                  label={dictionary.certificate}
-                  slot={mediaDropHint(certification.image)}
-                  aspectClassName="aspect-[8/5]"
-                  sizes="10rem"
-                  className="w-40 shrink-0 transition-transform duration-200 [transition-timing-function:var(--ease-out-quart)] group-hover:-translate-y-0.5"
-                />
-
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-display text-lg font-medium leading-snug tracking-tight sm:text-xl">
-                    {certification.name}
-                  </h3>
-                  <p
-                    className={cn(
-                      "mt-1.5 font-mono text-[0.65rem] uppercase tracking-[0.16em]",
-                      TEXT.faint,
-                    )}
-                  >
-                    {certification.issuer}
-                    {certification.issued
-                      ? ` · ${formatMonth(certification.issued, lang)}`
-                      : null}
-                  </p>
-                  {certification.credentialId ? (
-                    <p className={cn("mt-2 break-all font-mono text-[0.65rem]", TEXT.faint)}>
-                      {dictionary.credentialId}: {certification.credentialId}
-                    </p>
-                  ) : null}
-                </div>
-
-                {certification.verifyUrl ? (
-                  <a
-                    href={certification.verifyUrl}
-                    rel="noreferrer"
-                    target="_blank"
-                    className={cn(
-                      "shrink-0 font-mono text-xs font-bold uppercase tracking-[0.16em] text-primary",
-                      "transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-                    )}
-                  >
-                    {dictionary.verify} &#8599;
-                    <span className="sr-only"> ({certification.name}, opens in a new tab)</span>
-                  </a>
-                ) : null}
-              </article>
-            </li>
-          ))}
-        </ul>
+        <ProductSlideshow
+          items={certifications.map((c) => ({
+            name: c.name,
+            issuer: c.issuer,
+            issued: c.issued,
+            credentialId: c.credentialId,
+            verifyUrl: c.verifyUrl,
+            image: resolvePublicMedia(c.image),
+          }))}
+          lang={lang}
+          verifyLabel={dictionary.verify}
+        />
       </div>
     </section>
   );

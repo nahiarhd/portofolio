@@ -45,49 +45,61 @@ export function ScrollChoreography() {
         });
 
         /* Hero: bars pull off the headline, then the supporting copy arrives.
-         * `fromTo` with scaleX 1 -> 0 keeps the resting state readable. */
-        const heroBars = gsap.utils.toArray<HTMLElement>(
-          '[data-anim="hero"] [data-anim="redact-bar"]',
-        );
-        const heroCopy = gsap.utils.toArray<HTMLElement>(
-          '[data-anim="hero"] [data-anim="hero-copy"]',
-        );
-
-        const intro = gsap.timeline({ defaults: { ease: "power3.inOut" } });
-
-        intro
-          .fromTo(
-            heroBars,
-            { scaleX: 1 },
-            { scaleX: 0, duration: 0.85, stagger: 0.12 },
-            0.15,
-          )
-          .from(
-            '[data-anim="hero-portrait"]',
-            { opacity: 0, scale: 1.06, duration: 1.4, ease: "power2.out" },
-            0,
-          )
-          .from(
-            heroCopy,
-            { opacity: 0, y: 24, duration: 0.7, stagger: 0.08, ease: "power2.out" },
-            "-=0.45",
+         * `fromTo` with scaleX 1 -> 0 keeps the resting state readable.
+         * Guarded: /work and case studies have no hero, and empty GSAP
+         * targets log "target not found" on every visit. */
+        const hero = document.querySelector<HTMLElement>('[data-anim="hero"]');
+        if (hero) {
+          const heroBars = gsap.utils.toArray<HTMLElement>(
+            '[data-anim="hero"] [data-anim="redact-bar"]',
           );
+          const heroCopy = gsap.utils.toArray<HTMLElement>(
+            '[data-anim="hero"] [data-anim="hero-copy"]',
+          );
+          const heroPortrait = hero.querySelector<HTMLElement>(
+            '[data-anim="hero-portrait"]',
+          );
+          const heroBody = hero.querySelector<HTMLElement>('[data-anim="hero-body"]');
 
-        /* Hero leaves under the next section rather than just scrolling off.
-         * Targeted by attribute — a positional `div:last-child` selector goes
-         * silently dead the moment a non-div child (the chapter-end sentinel
-         * span) trails the content. */
-        gsap.to('[data-anim="hero-body"]', {
-          y: -80,
-          opacity: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: '[data-anim="hero"]',
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-          },
-        });
+          const intro = gsap.timeline({ defaults: { ease: "power3.inOut" } });
+
+          if (heroBars.length) {
+            intro.fromTo(
+              heroBars,
+              { scaleX: 1 },
+              { scaleX: 0, duration: 0.85, stagger: 0.12 },
+              0.15,
+            );
+          }
+          if (heroPortrait) {
+            intro.from(
+              heroPortrait,
+              { opacity: 0, scale: 1.06, duration: 1.4, ease: "power2.out" },
+              0,
+            );
+          }
+          if (heroCopy.length) {
+            intro.from(
+              heroCopy,
+              { opacity: 0, y: 24, duration: 0.7, stagger: 0.08, ease: "power2.out" },
+              "-=0.45",
+            );
+          }
+
+          if (heroBody) {
+            gsap.to(heroBody, {
+              y: -80,
+              opacity: 0,
+              ease: "none",
+              scrollTrigger: {
+                trigger: hero,
+                start: "top top",
+                end: "bottom top",
+                scrub: true,
+              },
+            });
+          }
+        }
 
         /* Section headings: redaction bars pull off the title (signature),
          * then the lead develops through a line mask. Bars alone stay for
@@ -150,30 +162,73 @@ export function ScrollChoreography() {
             );
           });
 
-        /* Statement pins briefly and pulls its two lines apart as you scroll. */
+        /* Statement: pins and pulls lines apart with 3D scale, drift, and gradient glow */
         const statement = document.querySelector<HTMLElement>(
           '[data-anim="statement"]',
         );
         if (statement) {
-          const lines = statement.querySelectorAll('[data-anim="statement-line"]');
-          gsap
+          const line1 = statement.querySelector<HTMLElement>('[data-anim="statement-line-1"]');
+          const line2 = statement.querySelector<HTMLElement>('[data-anim="statement-line-2"]');
+          const fill = statement.querySelector<HTMLElement>('.statement-fill');
+          const badge = statement.querySelector<HTMLElement>('[data-anim="statement-badge"]');
+          const meta = statement.querySelector<HTMLElement>('[data-anim="statement-meta"]');
+
+          const stTl = gsap
             .timeline({
               scrollTrigger: {
                 trigger: statement,
-                start: "top top",
-                end: "+=70%",
+                start: "top 12%",
+                end: "+=48%",
                 pin: true,
-                scrub: 0.4,
+                scrub: 0.45,
                 anticipatePin: 1,
               },
-            })
-            .fromTo(
-              lines[0]!,
-              { xPercent: 0 },
-              { xPercent: -6, ease: "none" },
+            });
+
+          if (line1) {
+            stTl.fromTo(
+              line1,
+              { xPercent: -3, scale: 1, opacity: 1 },
+              { xPercent: 2, scale: 1.02, opacity: 1, ease: "none" },
               0,
-            )
-            .fromTo(lines[1]!, { xPercent: 0 }, { xPercent: 9, ease: "none" }, 0);
+            );
+          }
+
+          if (line2) {
+            stTl.fromTo(
+              line2,
+              { xPercent: 3, scale: 1, opacity: 1 },
+              { xPercent: -2, scale: 1.02, opacity: 1, ease: "none" },
+              0,
+            );
+          }
+
+          if (fill) {
+            stTl.fromTo(
+              fill,
+              { filter: "brightness(0.8) drop-shadow(0 0 0px rgba(184,131,236,0))" },
+              { filter: "brightness(1.25) drop-shadow(0 0 24px rgba(184,131,236,0.5))", ease: "none" },
+              0,
+            );
+          }
+
+          if (badge) {
+            stTl.fromTo(
+              badge,
+              { opacity: 0.4, y: 10 },
+              { opacity: 1, y: 0, ease: "none" },
+              0,
+            );
+          }
+
+          if (meta) {
+            stTl.fromTo(
+              meta,
+              { opacity: 0.4, y: -10 },
+              { opacity: 1, y: 0, ease: "none" },
+              0,
+            );
+          }
         }
 
         /* Cards rise and sharpen as their row enters. The blur stays at 6px —

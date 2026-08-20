@@ -8,17 +8,12 @@ import { cn } from "@/lib/utils";
 
 import { HeroGraph } from "./graph/hero-graph";
 import { RedactLine } from "./redact-line";
+import { MagneticPill } from "./ui/magnetic-pill";
+import { ScrambleText } from "./ui/scramble-text";
 
 /**
- * Paper chapter. The page's one theme switch, and the only place the portrait
- * appears, so the drop into ink at the next section reads as a cut.
- *
- * Headline spans the full container rather than a column, which is what buys
- * the display size. The portrait is inset on the right and the type overlaps
- * it at the baseline; the crop keeps the face clear of the overlap.
- *
- * Server component. GSAP wipes the headline in from `scroll-choreography`;
- * with no JS the copy is simply there.
+ * Paper chapter (Hero). Pure white archival ground with a dynamic technical
+ * drawing graph and high-impact editorial typography.
  */
 export function Hero({
   lang,
@@ -46,18 +41,12 @@ export function Hero({
       className="chapter-paper relative flex min-h-[100dvh] flex-col justify-end overflow-clip"
       aria-label={profile.name}
     >
-      {/* The live graph is the persistent world canvas behind the whole page
-       * (world.tsx, mounted from the layout) — the paper chapter is
-       * translucent so it composites through. This layer only hosts the
-       * static SVG still for the no-WebGL / reduced-motion fallback, at the
-       * strength the live canvas used to carry, so the fallback reads the
-       * same. */}
+      {/* Technical drawing graph layer on archival white paper. */}
       <div className="pointer-events-none absolute inset-0 z-0 opacity-60" aria-hidden>
         <HeroGraph className="h-full w-full" />
       </div>
 
-      {/* Portrait sits behind the type on wide viewports and above it below lg,
-       * so the headline never lands on the face. */}
+      {/* Portrait sits behind the type on wide viewports and above it below lg */}
       <div
         className="pointer-events-none absolute inset-y-0 right-0 hidden w-[46%] max-w-[34rem] lg:block"
         data-anim="hero-portrait"
@@ -70,10 +59,6 @@ export function Hero({
               fill
               priority
               sizes="46vw"
-              /* Raised well above mid-grey — the inverse of what the ink hero
-               * needed. The headline crosses the shirt and jacket as dark type
-               * now, so the portrait has to stay in the light half of the
-               * range for the outline stroke to read over it. */
               className="object-cover object-top grayscale brightness-[1.35] contrast-[0.85]"
             />
           ) : null}
@@ -90,10 +75,22 @@ export function Hero({
 
       <div
         data-anim="hero-body"
-        className="relative z-10 mx-auto w-full max-w-[77.5rem] px-5 pb-14 pt-28 sm:px-8 sm:pb-20"
+        className="relative z-10 mx-auto w-full max-w-[77.5rem] px-5 pb-10 pt-28 sm:px-8 sm:pb-16"
       >
-        {/* Portrait for narrow viewports, where the overlap composition fails. */}
-        <div className="mb-10 w-40 border border-border-strong p-1.5 sm:w-48 lg:hidden">
+        {/* Technical Eyebrow Metadata Badge */}
+        <div className="mb-6 flex flex-wrap items-center gap-3" data-anim="hero-copy">
+          <span className="chapter-stamp chapter-stamp--classified !text-[0.6rem] tracking-widest cursor-pointer">
+            <ScrambleText
+              text={lang === "id" ? "DOSIR 2026 · TERDEKLASIFIKASI" : "2026 DOSSIER · DECLASSIFIED"}
+            />
+          </span>
+          <span className="font-mono text-[0.68rem] font-semibold uppercase tracking-wider text-muted-foreground">
+            {profile.tagline[lang]}
+          </span>
+        </div>
+
+        {/* Portrait for narrow viewports */}
+        <div className="mb-8 w-40 border border-border-strong p-1.5 sm:w-48 lg:hidden">
           <div className="relative aspect-[4/5] w-full overflow-clip bg-surface-3">
             {portraitSrc ? (
               <Image
@@ -108,42 +105,62 @@ export function Hero({
           </div>
         </div>
 
-        <h1 className="font-display text-display font-medium text-foreground">
+        {/* High-Impact Headline */}
+        <h1 className="font-display text-display font-medium text-foreground tracking-tight">
           <RedactLine className="block">{copy.titleLine1}</RedactLine>
-          <RedactLine className="text-outline text-outline--deep mt-1 block pb-2">
+          <RedactLine className="mt-1.5 block pb-2 text-primary font-bold">
             {copy.titleLine2}
           </RedactLine>
         </h1>
 
-        <div className="mt-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           <p
             data-anim="hero-copy"
-            className={cn("max-w-[42ch] text-base leading-relaxed sm:text-lead", TEXT.subtle)}
+            className={cn("max-w-[44ch] text-base leading-relaxed sm:text-lead", TEXT.subtle)}
           >
             {copy.body}
           </p>
 
           <div data-anim="hero-copy" className="flex flex-wrap items-center gap-3">
-            <a href="#work" className={BUTTON.primary}>
-              {copy.ctaPrimary}
-            </a>
-            <a href="#contact" className={BUTTON.secondary}>
-              {copy.ctaSecondary}
-            </a>
+            <MagneticPill strength={0.3}>
+              <a href="#work" className={cn(BUTTON.primary, "group shadow-[0_0_24px_rgba(184,131,236,0.3)] hover:shadow-[0_0_32px_rgba(184,131,236,0.5)]")}>
+                <span>{copy.ctaPrimary}</span>
+                <span className="inline-block transition-transform duration-200 group-hover:translate-x-1" aria-hidden>
+                  &#8594;
+                </span>
+              </a>
+            </MagneticPill>
+            <MagneticPill strength={0.2}>
+              <a href="#contact" className={BUTTON.secondary}>
+                {copy.ctaSecondary}
+              </a>
+            </MagneticPill>
           </div>
         </div>
 
-        <p
+        {/* Technical Dossier Telemetry Footer Bar */}
+        <div
           data-anim="hero-copy"
-          className="mt-10 flex items-center gap-2.5 font-mono text-[0.68rem] uppercase tracking-[0.18em] text-primary"
+          className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-border/70 pt-5 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted-foreground"
         >
-          {/* Real availability state, not decoration. */}
-          <span className="inline-block size-1.5 rounded-full bg-primary" aria-hidden />
-          {copy.status}
-        </p>
+          <div className="flex items-center gap-2">
+            <span className="inline-block size-2 rounded-full bg-primary animate-pulse" aria-hidden />
+            <span className="font-bold text-foreground">{copy.status}</span>
+          </div>
+          <div className="hidden items-center gap-5 text-muted-foreground-faint sm:flex">
+            <span>CORE: ON-PREM AGENT LOOPS</span>
+            <span>•</span>
+            <span>AIR-GAPPED COMPLIANT</span>
+            <span>•</span>
+            <span>06 CASE STUDIES</span>
+          </div>
+          <a href="#work" className="transition-colors hover:text-primary">
+            [EXPLORE WORK &#8595;]
+          </a>
+        </div>
       </div>
 
-      {/* Marks where the paper chapter ends, for the header's token flip. */}
+      {/* Sentinel where the paper chapter ends */}
       <span
         data-hero-chapter-end
         className="pointer-events-none absolute inset-x-0 bottom-0 h-px"

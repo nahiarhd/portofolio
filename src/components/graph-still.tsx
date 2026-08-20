@@ -1,15 +1,8 @@
 /**
- * Static node graph — the hero's resting state.
+ * Technical node graph — the hero's archival paper network.
  *
- * Two jobs. It fills the exact space the R3F canvas will occupy in T13, so
- * swapping in the live scene causes no layout shift. And it is the fallback the
- * live scene needs anyway when WebGL is unavailable or the visitor has asked
- * for reduced motion.
- *
- * Geometry is a literal, generated once from a seeded LCG. Nothing is computed
- * at render: `Math.random()` during render is an error under the React
- * Compiler's purity rule, and a graph that reshuffles on every re-render would
- * be noise rather than a signature.
+ * Renders the crisp vector network with animated signal pulses and a radiant
+ * beacon ring around the primary accent node.
  */
 
 // prettier-ignore
@@ -18,23 +11,28 @@ const NODES: readonly (readonly [number, number])[] = [[374,230],[238,313],[163,
 // prettier-ignore
 const EDGES: readonly (readonly [number, number])[] = [[0,3],[0,4],[1,2],[1,13],[2,13],[2,19],[3,10],[3,11],[4,22],[4,29],[5,13],[5,23],[6,7],[6,10],[7,10],[7,11],[8,21],[8,22],[9,16],[9,18],[10,11],[10,14],[11,12],[11,15],[12,15],[12,18],[13,19],[13,23],[14,15],[14,24],[15,24],[15,30],[16,18],[16,27],[17,19],[17,21],[18,20],[18,32],[19,25],[19,29],[20,32],[20,33],[21,35],[21,39],[22,40],[22,42],[23,28],[23,44],[24,30],[24,31],[25,39],[26,33],[26,41],[27,34],[27,37],[30,31],[30,38],[32,36],[32,43],[33,41],[34,37],[34,43],[36,43],[37,43],[38,44],[38,45],[40,42],[44,45]];
 
-/**
- * The one node rendered in the accent colour. "Baseline and deviation": the
- * page is calm everywhere else so this single point can read as the signal.
- */
 const SIGNAL_NODE = 0;
 
 export function GraphStill({ className }: { className?: string }) {
+  const signalX = NODES[SIGNAL_NODE][0];
+  const signalY = NODES[SIGNAL_NODE][1];
+
   return (
     <svg
       viewBox="0 0 800 480"
-      // Decorative: the graph carries no information a reader needs, and the
-      // hero states everything in text. Announcing 46 circles would be noise.
       aria-hidden="true"
       focusable="false"
       className={className}
     >
-      <g stroke="currentColor" strokeWidth="1" opacity="0.22">
+      <defs>
+        <filter id="hero-glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="4" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      </defs>
+
+      {/* Network Edges */}
+      <g stroke="currentColor" strokeWidth="1" opacity="0.18">
         {EDGES.map(([from, to]) => (
           <line
             key={`${from}-${to}`}
@@ -46,17 +44,54 @@ export function GraphStill({ className }: { className?: string }) {
         ))}
       </g>
 
-      <g fill="currentColor">
+      {/* Standard Nodes */}
+      <g fill="currentColor" opacity="0.45">
         {NODES.map(([x, y], index) =>
-          index === SIGNAL_NODE ? null : <circle key={index} cx={x} cy={y} r="3" />,
+          index === SIGNAL_NODE ? null : (
+            <circle
+              key={index}
+              cx={x}
+              cy={y}
+              r="3"
+              className="transition-transform duration-300"
+            />
+          ),
         )}
       </g>
 
+      {/* Beacon Waves around Signal Node */}
+      <g className="text-primary">
+        <circle
+          cx={signalX}
+          cy={signalY}
+          r="14"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1"
+          opacity="0.3"
+          className="animate-ping"
+          style={{ transformOrigin: `${signalX}px ${signalY}px`, animationDuration: "3s" }}
+        />
+        <circle
+          cx={signalX}
+          cy={signalY}
+          r="24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1"
+          opacity="0.15"
+          className="animate-ping"
+          style={{ transformOrigin: `${signalX}px ${signalY}px`, animationDuration: "3s", animationDelay: "1s" }}
+        />
+      </g>
+
+      {/* Core Signal Node */}
       <circle
-        cx={NODES[SIGNAL_NODE][0]}
-        cy={NODES[SIGNAL_NODE][1]}
-        r="6"
-        className="fill-primary"
+        cx={signalX}
+        cy={signalY}
+        r="7"
+        className="fill-primary shadow-lg"
+        filter="url(#hero-glow)"
       />
     </svg>
   );

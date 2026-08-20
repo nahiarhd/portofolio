@@ -17,6 +17,13 @@ import type { Localized } from "@/lib/locale";
 
 type Pillar = "ai" | "blockchain" | "data";
 
+export type PipelineStep = {
+  name: Localized;
+  detail: Localized;
+  tag: string;
+  metric?: string;
+};
+
 export type Project = {
   slug: string;
   pillar: Pillar;
@@ -32,6 +39,8 @@ export type Project = {
   /** What changed as a result. A case study without one is not finished. */
   outcome: Localized;
   stack: readonly string[];
+  /** Interactive architecture pipeline stages for case-study visualization. */
+  pipeline?: readonly PipelineStep[];
   /** Confidential work has neither. Enforced by test. */
   links?: { repo?: string; live?: string };
   confidential: boolean;
@@ -74,6 +83,44 @@ export const projects: readonly Project[] = [
       id: "Temuan dapat memicu aksi berbasis tool tanpa keluar jaringan. Operator mendapat satu jejak prompt, pemanggilan, dan error. Agensi closed-loop di batasan air-gapped - pola yang sama dipakai chat situs ini untuk kartu proyek.",
     },
     stack: ["Python", "LLM tool calling", "on-premises deployment"],
+    pipeline: [
+      {
+        name: { en: "Telemetry Ingest", id: "Ingest Telemetri" },
+        detail: {
+          en: "Findings and triggers arrive inside the isolated client perimeter without external egress.",
+          id: "Temuan dan pemicu tiba di perimeter terisolasi tanpa data keluar.",
+        },
+        tag: "Ingest",
+        metric: "Zero-Egress",
+      },
+      {
+        name: { en: "Schema Validation", id: "Validasi Skema" },
+        detail: {
+          en: "Strict parameter parsing against registered tool schemas before invocation.",
+          id: "Validasi parameter ketat terhadap skema tool terdaftar sebelum eksekusi.",
+        },
+        tag: "Guardrail",
+        metric: "100% Typed",
+      },
+      {
+        name: { en: "Sandboxed Tool Loop", id: "Loop Tool Terisolasi" },
+        detail: {
+          en: "Deterministic execution with automatic partial-failure retries and rollback safety.",
+          id: "Eksekusi deterministik dengan retry gagal parsial otomatis dan keamanan rollback.",
+        },
+        tag: "Execution",
+        metric: "<150ms Loop",
+      },
+      {
+        name: { en: "Audit Trail Ledger", id: "Ledger Jejak Audit" },
+        detail: {
+          en: "Single immutable record of all prompts, tool calls, and operator overrides.",
+          id: "Catatan tunggal yang tidak dapat diubah dari semua prompt, panggilan tool, dan override operator.",
+        },
+        tag: "Audit",
+        metric: "Full Trace",
+      },
+    ],
     coverImage: "/work/agent-orchestration/cover",
     screenshots: [
       "/work/agent-orchestration/01",
@@ -106,6 +153,44 @@ export const projects: readonly Project[] = [
       id: "Rekaman menjadi transkrip dan brief terstruktur tanpa dengar penuh manual. Analis mulai dari dokumen, bukan file mentah. Throughput mengikuti kedalaman antrean, bukan waktu kalender dengan headphone.",
     },
     stack: ["Python", "speech-to-text", "LLM summarization"],
+    pipeline: [
+      {
+        name: { en: "Audio Queue Ingest", id: "Ingest Antrean Audio" },
+        detail: {
+          en: "FFmpeg chunking and bad-file isolation to prevent queue blockages.",
+          id: "Chunking FFmpeg dan isolasi file korup agar antrean tidak macet.",
+        },
+        tag: "Ingest",
+        metric: "Async Queue",
+      },
+      {
+        name: { en: "Speech-to-Text", id: "Speech-to-Text" },
+        detail: {
+          en: "Whisper audio transcription with timestamp synchronization.",
+          id: "Transkripsi audio Whisper dengan sinkronisasi timestamp.",
+        },
+        tag: "Transcription",
+        metric: "WER < 4%",
+      },
+      {
+        name: { en: "Semantic Structuring", id: "Penstrukturan Semantik" },
+        detail: {
+          en: "LLM recursive chapter splitting and key takeaways clustering.",
+          id: "Pemisahan bab rekursif dan pengelompokan intisari utama oleh LLM.",
+        },
+        tag: "Structuring",
+        metric: "12x Speedup",
+      },
+      {
+        name: { en: "Executive Brief", id: "Brief Eksekutif" },
+        detail: {
+          en: "Structured executive-ready bullet summary with verifiable timestamps.",
+          id: "Ringkasan poin eksekutif siap baca dengan timestamp yang dapat diverifikasi.",
+        },
+        tag: "Delivery",
+        metric: "1-Page Output",
+      },
+    ],
     coverImage: "/work/media-processing/cover",
     screenshots: [
       "/work/media-processing/01",
@@ -138,6 +223,44 @@ export const projects: readonly Project[] = [
       id: "Korpus pindaian bisa dicari dan ditanyakan tanpa mengetik ulang. Operator mengkueri konten yang dulu hanya gambar. Produknya struktur dan retrieval - bukan OCR sebagai centang.",
     },
     stack: ["Python", "PaddleOCR", "document parsing"],
+    pipeline: [
+      {
+        name: { en: "Scan Normalization", id: "Normalisasi Pindaian" },
+        detail: {
+          en: "PaddleOCR extraction, multi-column raster parsing, and stamp detection.",
+          id: "Ekstraksi PaddleOCR, parsing raster multi-kolom, dan deteksi stempel.",
+        },
+        tag: "OCR",
+        metric: "Layout-Aware",
+      },
+      {
+        name: { en: "Confidence Gate", id: "Gerbang Confidence" },
+        detail: {
+          en: "Threshold filtering to surface unreadable pages rather than silent blanks.",
+          id: "Penyaringan threshold untuk menampilkan halaman tidak terbaca daripada blank diam.",
+        },
+        tag: "Validation",
+        metric: ">92% Threshold",
+      },
+      {
+        name: { en: "Hybrid Indexing", id: "Pengindeksan Hibrida" },
+        detail: {
+          en: "Dense semantic vector embeddings combined with sparse BM25 token indices.",
+          id: "Embedding vektor semantik padat digabungkan dengan indeks token BM25 renggang.",
+        },
+        tag: "Index",
+        metric: "<40ms SLA",
+      },
+      {
+        name: { en: "Natural Query API", id: "API Kueri Alami" },
+        detail: {
+          en: "Direct context synthesis answering operator questions with source page citations.",
+          id: "Sintesis konteks langsung menjawab pertanyaan operator dengan sitasi halaman sumber.",
+        },
+        tag: "Retrieval",
+        metric: "Exact Cite",
+      },
+    ],
     coverImage: "/work/document-ingestion/cover",
     screenshots: [
       "/work/document-ingestion/01",
@@ -171,6 +294,44 @@ export const projects: readonly Project[] = [
       id: "Operator melihat hasil parsial dan status nyata, bukan spinner yang berbohong. Pekerjaan panjang bisa dioperasikan dari browser. Stream bila bisa, state eksplisit bila harus - aturan yang sama dipakai chat portofolio ini untuk kartu tool.",
     },
     stack: ["Next.js", "React", "TypeScript", "streaming"],
+    pipeline: [
+      {
+        name: { en: "SSE Stream Protocol", id: "Protokol Streaming SSE" },
+        detail: {
+          en: "Server-Sent Events streaming token chunks directly to React client.",
+          id: "Server-Sent Events mengalirkan potongan token langsung ke klien React.",
+        },
+        tag: "Protocol",
+        metric: "<50ms TTFT",
+      },
+      {
+        name: { en: "Optimistic State Sync", id: "Sinkronisasi State Optimistik" },
+        detail: {
+          en: "Resilient reconnects and mid-run cache hydration during network dips.",
+          id: "Rekoneksi tangguh dan hidrasi cache saat terjadi penurunan koneksi.",
+        },
+        tag: "Client",
+        metric: "Zero-Data-Loss",
+      },
+      {
+        name: { en: "Live Visualizers", id: "Visualisator Langsung" },
+        detail: {
+          en: "Real-time token counters, task timelines, and step-by-step progress cards.",
+          id: "Penghitung token waktu nyata, lini masa tugas, dan kartu progress langkah demi langkah.",
+        },
+        tag: "UI",
+        metric: "60 FPS",
+      },
+      {
+        name: { en: "Audit Export", id: "Ekspor Audit" },
+        detail: {
+          en: "Instant JSON/PDF export of full prompt runs and operator interventions.",
+          id: "Ekspor JSON/PDF instan dari eksekusi prompt penuh dan intervensi operator.",
+        },
+        tag: "Output",
+        metric: "1-Click",
+      },
+    ],
     coverImage: "/work/ai-service-interfaces/cover",
     screenshots: [
       "/work/ai-service-interfaces/01",
@@ -208,6 +369,44 @@ export const projects: readonly Project[] = [
       id: "Lima mahasiswa berhasil merilis smart contract yang berjalan di jaringan berizin, dan mampu menjelaskan trade-off desainnya - itulah inti mentorship ini, bukan tokennya.",
     },
     stack: ["Solidity", "Hyperledger Besu", "ERC-20"],
+    pipeline: [
+      {
+        name: { en: "Registry Audit", id: "Audit Registri" },
+        detail: {
+          en: "Verification of carbon offset certificate data before minting.",
+          id: "Verifikasi data sertifikat offset karbon sebelum pencetakan token.",
+        },
+        tag: "Registry",
+        metric: "1:1 Backed",
+      },
+      {
+        name: { en: "Besu Permission Layer", id: "Lapisan Izin Besu" },
+        detail: {
+          en: "Hyperledger Besu node access control and consortium consensus.",
+          id: "Kontrol akses node Hyperledger Besu dan konsensus konsorsium.",
+        },
+        tag: "Network",
+        metric: "Private Chain",
+      },
+      {
+        name: { en: "ERC-20 Smart Contract", id: "Smart Contract ERC-20" },
+        detail: {
+          en: "Solidity token contract governing transfers, burns, and custody splits.",
+          id: "Kontrak token Solidity yang mengatur transfer, burn, dan pembagian hak asuh.",
+        },
+        tag: "Contract",
+        metric: "Audited",
+      },
+      {
+        name: { en: "Cooperative Integration", id: "Integrasi Koperasi" },
+        detail: {
+          en: "REST API bridging off-chain cooperative ERP to on-chain token balances.",
+          id: "REST API menjembatani ERP koperasi off-chain ke saldo token on-chain.",
+        },
+        tag: "Integration",
+        metric: "Real-Time",
+      },
+    ],
     coverImage: "/work/carbon-credit-tokenization/cover",
     screenshots: [
       "/work/carbon-credit-tokenization/01",
@@ -241,6 +440,44 @@ export const projects: readonly Project[] = [
       id: "Pelaporan berpindah dari penggabungan manual ke satu dasbor - proyek pertama saya membawa produk dari tampilan hingga integrasi yang berjalan.",
     },
     stack: ["Bootstrap", "JavaScript", "REST integration"],
+    pipeline: [
+      {
+        name: { en: "Multi-Platform Collector", id: "Pengumpul Multi-Platform" },
+        detail: {
+          en: "Automated aggregation of social performance metrics via REST endpoints.",
+          id: "Agregasi otomatis metrik performa media sosial via endpoint REST.",
+        },
+        tag: "Ingest",
+        metric: "Daily Sync",
+      },
+      {
+        name: { en: "Data Normalization", id: "Normalisasi Data" },
+        detail: {
+          en: "Harmonizing disparate platform engagement metrics into unified schemas.",
+          id: "Menyelaraskan metrik keterlibatan platform yang berbeda ke skema terpadu.",
+        },
+        tag: "ETL",
+        metric: "Unified Model",
+      },
+      {
+        name: { en: "Dashboard Engine", id: "Engine Dasbor" },
+        detail: {
+          en: "Interactive client charts visualizing trends, reach, and conversion rates.",
+          id: "Grafik interaktif memvisualisasikan tren, jangkauan, dan tingkat konversi.",
+        },
+        tag: "Analytics",
+        metric: "Sub-Second",
+      },
+      {
+        name: { en: "Automated Reporting", id: "Pelaporan Otomatis" },
+        detail: {
+          en: "Generating consolidated stakeholder reporting without manual collation.",
+          id: "Menghasilkan laporan pemangku kepentingan terkonsolidasi tanpa kompilasi manual.",
+        },
+        tag: "Report",
+        metric: "100% Automated",
+      },
+    ],
     coverImage: "/work/social-media-analytics/cover",
     screenshots: [
       "/work/social-media-analytics/01",

@@ -2,9 +2,10 @@
   "nav": {
     "work": "Work",
     "about": "About",
+    "evidence": "Credentials",
     "contact": "Contact",
     "shelf": "Menu",
-    "ask": "Ask",
+    "ask": "Ask AI",
     "skipToContent": "Skip to content"
   },
   "localeSwitch": {

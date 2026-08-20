@@ -79,7 +79,7 @@ export function ChatMount({ lang, copy, work, heading }: Props) {
         <h2 className="font-display text-title font-medium tracking-tight">
           <RedactLine>{heading}</RedactLine>
         </h2>
-        <p className={cn("mt-3 max-w-[52ch] text-base leading-relaxed", TEXT.subtle)}>
+        <p className={cn("mt-3 max-w-[54ch]", TEXT.lead)}>
           {copy.lead}
         </p>
       </div>

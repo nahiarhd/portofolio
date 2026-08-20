@@ -7,6 +7,7 @@ import { ContactSection } from "@/components/contact-section";
 import { EvidenceSection } from "@/components/evidence-section";
 import { Hero } from "@/components/hero";
 import { Statement } from "@/components/statement";
+import { ScrollZoomReveal } from "@/components/ui/scroll-zoom-reveal";
 import { WorkIndex } from "@/components/work-index";
 import { isLocale } from "@/lib/locale";
 
@@ -22,16 +23,27 @@ export default async function HomePage({
 
   const dictionary = await getDictionary(lang);
 
-  // hero → work → ask → about → certs → contact.
-  //
-  // One work section, not two. The stage and the index listed the same six
-  // projects, so "Selected work" and "All work" were the same set under two
-  // headings. Deleting the stage also drops the second continuous <Canvas>,
-  // which is what buys the frame budget for the persistent hero graph.
   return (
     <main id="content" className="flex-1">
       <Hero lang={lang} copy={dictionary.hero} />
       <CapabilityMarquee />
+      <ScrollZoomReveal
+        leftText={lang === "id" ? "© 2026 · TERVERIFIKASI" : "© 2026 · DECLASSIFIED"}
+        rightText={lang === "id" ? "ARSITEKTUR SISTEM AI" : "AI SYSTEMS ARCHITECTURE"}
+        badge={lang === "id" ? "PORTAL · LEVEL-4 CLEARANCE" : "PORTAL · LEVEL-4 CLEARANCE"}
+        title={
+          lang === "id"
+            ? "Sistem AI Produksi & Pipeline On-Premises"
+            : "Production AI Systems & Air-Gapped Pipelines"
+        }
+        subtitle={
+          lang === "id"
+            ? "12 studi kasus terverifikasi dalam orkestrasi agent otonom, data intelligence, dan kepatuhan zero egress."
+            : "12 verifiable case studies in autonomous tool calling, revenue intelligence, and zero data egress architectures."
+        }
+        buttonText={lang === "id" ? "Buka Katalog Produksi ↗" : "Explore Production Catalog ↗"}
+        buttonHref="#work"
+      />
       <WorkIndex
         lang={lang}
         heading={dictionary.work.featuredHeading}
@@ -40,12 +52,6 @@ export default async function HomePage({
         viewAllHref={`/${lang}/work`}
       />
       <Statement lang={lang} />
-      <ChatMount
-        lang={lang}
-        copy={dictionary.chat}
-        work={dictionary.work}
-        heading={dictionary.nav.ask}
-      />
       <AboutSection
         lang={lang}
         heading={dictionary.nav.about}
@@ -53,6 +59,12 @@ export default async function HomePage({
       />
       <EvidenceSection lang={lang} dictionary={dictionary.evidence} />
       <ContactSection lang={lang} dictionary={dictionary.contact} />
+      <ChatMount
+        lang={lang}
+        copy={dictionary.chat}
+        work={dictionary.work}
+        heading={dictionary.nav.ask}
+      />
     </main>
   );
 }

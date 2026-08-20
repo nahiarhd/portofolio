@@ -11,6 +11,7 @@ export const TEXT = {
   base: "text-foreground",
   subtle: "text-muted-foreground",
   faint: "text-muted-foreground-faint",
+  lead: "text-foreground/90 text-base sm:text-lg leading-relaxed text-pretty",
 } as const;
 
 export const EYEBROW =

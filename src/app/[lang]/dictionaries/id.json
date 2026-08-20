@@ -2,9 +2,10 @@
   "nav": {
     "work": "Karya",
     "about": "Tentang",
+    "evidence": "Kredensial",
     "contact": "Kontak",
     "shelf": "Menu",
-    "ask": "Tanya",
+    "ask": "Tanya AI",
     "skipToContent": "Lewati ke konten"
   },
   "localeSwitch": {

@@ -1,15 +1,16 @@
 "use client";
 
 /**
- * Cover / screenshot slot.
+ * Cover / screenshot slot with animated skeleton shimmer loading state.
  *
  * Pass a path already resolved by `resolvePublicMedia` (server). When `src` is
  * missing, shows a skeleton; in development, `slot` names where to drop a file.
  */
 
 import Image from "next/image";
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -52,6 +53,7 @@ export function MediaFrame({
   parallax = false,
   transitionName,
 }: Props) {
+  const [loaded, setLoaded] = useState(false);
   const isSvg = Boolean(src?.endsWith(".svg"));
 
   return (
@@ -73,32 +75,43 @@ export function MediaFrame({
       )}
     >
       {src ? (
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          priority={priority}
-          sizes={sizes}
-          unoptimized={isSvg}
-          className={cn(
-            objectFit === "contain" ? "object-contain p-2" : "object-cover",
-          )}
-        />
+        <>
+          {!loaded && !priority ? (
+            <Skeleton className="absolute inset-0 z-0 h-full w-full rounded-none" />
+          ) : null}
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            priority={priority}
+            sizes={sizes}
+            unoptimized={isSvg}
+            onLoad={() => setLoaded(true)}
+            className={cn(
+              "transition-opacity duration-300",
+              !loaded && !priority ? "opacity-0" : "opacity-100",
+              objectFit === "contain" ? "object-contain p-2" : "object-cover",
+            )}
+          />
+        </>
       ) : (
         <div
-          className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-4 text-center"
+          className="relative flex h-full w-full flex-col items-center justify-center gap-2 overflow-hidden px-4 text-center"
           aria-label={`${label} placeholder`}
         >
-          <div className="h-10 w-14 border border-dashed border-border-strong" aria-hidden />
-          <p className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted-foreground-faint">
-            {label}
-          </p>
-          {process.env.NODE_ENV !== "production" && slot ? (
-            <p className="max-w-[20rem] break-all font-mono text-[0.6rem] leading-relaxed text-muted-foreground-faint">
-              Drop file at{" "}
-              <span className="text-muted-foreground">public/{slot}</span>
+          <Skeleton className="absolute inset-0 z-0 h-full w-full rounded-none opacity-40" />
+          <div className="relative z-10 flex flex-col items-center gap-2">
+            <div className="h-10 w-14 border border-dashed border-border-strong bg-surface-2/40 backdrop-blur-xs" aria-hidden />
+            <p className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-muted-foreground-faint">
+              {label}
             </p>
-          ) : null}
+            {process.env.NODE_ENV !== "production" && slot ? (
+              <p className="max-w-[20rem] break-all font-mono text-[0.6rem] leading-relaxed text-muted-foreground-faint">
+                Drop file at{" "}
+                <span className="text-muted-foreground">public/{slot}</span>
+              </p>
+            ) : null}
+          </div>
         </div>
       )}
     </figure>

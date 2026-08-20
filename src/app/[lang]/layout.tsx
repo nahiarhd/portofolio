@@ -9,6 +9,7 @@ import { WorldGraph } from "@/components/graph/world";
 import { ScrollChoreography } from "@/components/scroll-choreography";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { TelemetryHud } from "@/components/telemetry-hud";
 import { profile } from "@/content/profile";
 import { LOCALES, isLocale } from "@/lib/locale";
 import { buildPageMetadata, titleTemplate } from "@/lib/metadata";
@@ -102,6 +103,8 @@ export default async function RootLayout({
           />
 
           {children}
+
+          <TelemetryHud lang={lang} />
 
           <SiteFooter rights={dictionary.footer.rights} lang={lang} />
         </GraphActivityProvider>
